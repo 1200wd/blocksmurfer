@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    <h2>{{ _('Details') }}</h2>
+    <table class="pure-table" style="width: 800px; font-size: 80%;">
+        <tr>
+            <td width="110px">TXID</td>
+            <td>
+                <a href="{{ url_for('main.transaction', network=network, txid=transaction.hash) }}">
+                    {{ transaction.hash }}
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <td>Input Index #</td>
+            <td>{{ index_n }}</td>
+        </tr>
+        <tr>
+            <td>Value</td>
+            <td>{{ "{:,.8f}".format(input.value / 100000000) }}</td>
+        </tr>
+        <tr>
+            <td>Witness Type</td>
+            <td>{{ input.witness_type }}</td>
+        </tr>
+        <tr>
+            <td>Sequence</td>
+            <td>{{ input.sequence }}</td>
+        </tr>
+        <tr>
+            <td>Previous TXID</td>
+            <td>
+                <a href="{{ url_for('main.transaction', network=network, txid=input.prev_hash.hex()) }}">
+                    {{ input.prev_hash.hex() }}
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <td>Previous Output #</td>
+            <td>{{ input.output_n_int }}</td>
+        </tr>
+        <tr>
+            <td>Address</td>
+            <td><a href="{{ url_for('main.address', network=network, address=input.address) }}">{{ input.address }}</a></td>
+        </tr>
+        <tr>
+            <td>Encoding</td>
+            <td>{{ input.encoding }}</td>
+        </tr>
+        <tr>
+            <td>Public Hash</td>
+            <td>{{ input.public_hash.hex() }}</td>
+        </tr>
+        <tr>
+            <td>Public {% if input.keys|length > 1 %}Keys{% else %} Key{% endif %}</td>
+            <td>
+                {% for key in input.keys %}
+                    <a href="{{ url_for('main.key', network=network, key=key) }}">{{ key }}</a>
+                {% endfor %}
+            </td>
+        </tr>
+    </table>
+    <p></p>
+    <table class="pure-table" style="width: 800px; font-size: 80%;">
+        <thead>
+            <tr>
+                <td colspan="5">{{ _('Locking Script') }}</td>
+            </tr>
+        </thead>
+        <tr>
+            <td>Script Type</td>
+            <td>{{ locking_script_dict['script_type'] }}</td>
+        </tr>
+        {% if locking_script_dict['number_of_sigs_n'] > 1 %}
+        <tr>
+            <td>Signatures</td>
+            <td>
+                {{ locking_script_dict['number_of_sigs_m'] }} of {{ locking_script_dict['number_of_sigs_n'] }}
+                signatures required
+            </td>
+        </tr>
+        {% endif %}
+        <tr>
+            <td>Locking Script Hex</td>
+            <td style="word-break: break-all;">{{ input.unlocking_script_unsigned.hex() }}</td>
+        </tr>
+        <tr>
+            <td>Locking Script OP</td>
+            <td style="word-break: break-all;">{{ locking_script_op }}</td>
+        </tr>
+    </table>
+    <p></p>
+    <table class="pure-table" style="width: 800px; font-size: 80%;">
+        <thead>
+            <tr>
+                <td colspan="5">
+                    {% if input.witness_type == 'segwit' %}
+                        {{ _('Witnesses') }}
+                    {% else %}
+                        {{ _('Unlocking Script') }}
+                    {% endif %}
+                </td>
+            </tr>
+        </thead>
+        <tr>
+            <td>Script Type</td>
+            <td>{{ input.script_type }}</td>
+        </tr>
+        {% if input.unlocking_script %}
+        <tr>
+            <td>Unlocking Script Hex</td>
+            <td style="word-break: break-all;">{{ input.unlocking_script.hex() }}</td>
+        </tr>
+        <tr>
+            <td>Unlocking Script OP</td>
+            <td style="word-break: break-all;">{{ unlocking_script_op }}</td>
+        </tr>
+        {% endif %}
+        {% for witness in input.witnesses %}
+        <tr>
+            <td>Witness</td>
+            <td style="word-break: break-all;">{{ witness.hex() }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+{% endblock %}

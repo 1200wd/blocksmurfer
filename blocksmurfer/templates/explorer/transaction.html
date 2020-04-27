@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    <h2>{{ _('Details') }}</h2>
+    <table class="pure-table" style="width: 800px;">
+        <tr>
+            <td>ID</td>
+            <td>{{ transaction.hash }}</td>
+        </tr>
+        <tr>
+            <td>Network</td>
+            <td>{{ transaction.network.name }}</td>
+        </tr>
+        <tr>
+            <td>Block</td>
+            <td>
+                {% if transaction.block_height and transaction.block_height > 0 %}
+                    {{ transaction.block_height }}
+                {% else %}
+                    {{ _('Unassigned') }}
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <td>Date</td>
+            <td>{{ transaction.date.replace(microsecond=0) }}</td>
+        </tr>
+        <tr>
+            <td>Status</td>
+            <td>{{ transaction.status }}</td>
+        </tr>
+        <tr>
+            <td>Confirmations</td>
+            <td>
+                {% if transaction.confirmations %}
+                    {{ transaction.confirmations }}
+                {% else %}
+                    0
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <td>Type</td>
+            <td>{{ transaction.witness_type }}</td>
+        </tr>
+        <tr>
+            <td>Coinbase</td>
+            <td>{{ transaction.coinbase }}</td>
+        </tr>
+        <tr>
+            <td>Size{% if transaction.vsize %} / VSize{% endif %}</td>
+            <td>{{ transaction.size }}{% if transaction.vsize %} / {{ transaction.vsize }}{% endif %}</td>
+        </tr>
+        <tr>
+            <td>Fee sat.</td>
+            <td>{{ transaction.fee }}</td>
+        </tr>
+        <tr>
+            <td>Version</td>
+            <td>{{ transaction.as_dict()['version'] }}</td>
+        </tr>
+        <tr>
+            <td>Locktime</td>
+            <td>{{ transaction.locktime }}</td>
+        </tr>
+        <tr>
+            <td>Raw</td>
+            <td>
+                <abbr title="{{ transaction.raw_hex() }}">
+                    {{ transaction.raw_hex() | truncate(55) }}</abbr>
+            </td>
+        </tr>
+    </table>
+    <p></p>
+    <table class="pure-table" style="width: 800px; font-size: 80%;">
+        <thead>
+            <tr>
+                <td colspan="5">{{ _('Inputs') }}</td>
+            </tr>
+        </thead>
+        {% for inp in transaction.inputs %}
+        <tbody>
+        <tr>
+            <td>
+                <a href="{{ url_for('main.transaction_input', network=network, txid=transaction.hash,
+                                    index_n=inp.index_n) }}">
+                    {{ inp.index_n }}
+                </a>
+            </td>
+            <td><a href="{{ url_for('main.address', network=network, address=inp.address) }}">{{ inp.address }}</a></td>
+            <td style="text-align:right">{{ "{:,.8f}".format(inp.value / 100000000) }}</td>
+            <td>{{ inp.script_type }}</td>
+            <td>
+                <a href="{{ url_for('main.transaction', network=network, txid=inp.prev_hash.hex()) }}">
+                    <i class="fa fa-arrow-left"></i>
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <p></p>
+    <table class="pure-table" style="width: 800px; font-size: 80%;">
+        <thead>
+            <tr>
+                <td colspan="5">{{ _('Outputs') }}</td>
+            </tr>
+        </thead>
+        <tbody>
+        {% for out in transaction.outputs %}
+        <tr>
+            <td>
+                <a href="{{ url_for('main.transaction_output', network=network, txid=transaction.hash,
+                                    output_n=out.output_n) }}">
+                    {{ out.output_n }}
+                </a>
+            </td>
+            <td style="word-break: break-all;">
+                {% if out.address %}
+                <a href="{{ url_for('main.address', network=network, address=out.address) }}">{{ out.address }}</a>
+                {% else %}
+                    Nulldata: {{ out.lock_script[2:].decode(errors='replace') }}
+                {% endif %}
+            </td>
+            <td style="text-align:right">{{ "{:,.8f}".format(out.value / 100000000) }}</td>
+            <td>{{ out.script_type }}</td>
+            <td>{% if out.spent %}Spent{% elif out.address %}Unspent{% endif %}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+
+{% endblock %}

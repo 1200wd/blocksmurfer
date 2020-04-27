@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    <h2>{{ _('Details') }}</h2>
+    <table class="pure-table" style="width: 800px; font-size: 80%;">
+        <tr>
+            <td width="110px">TXID</td>
+            <td>
+                <a href="{{ url_for('main.transaction', network=network, txid=transaction.hash) }}">
+                    {{ transaction.hash }}
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <td>Output #</td>
+            <td>{{ output_n }}</td>
+        </tr>
+        <tr>
+            <td>Value</td>
+            <td>{{ "{:,.8f}".format(output.value / 100000000) }}</td>
+        </tr>
+        <tr>
+            <td>Witness Type</td>
+            <td>{{ output.witness_type }}</td>
+        </tr>
+        <tr>
+            <td>Address</td>
+            <td><a href="{{ url_for('main.address', network=network, address=output.address) }}">{{ output.address }}</a></td>
+        </tr>
+        <tr>
+            <td>Encoding</td>
+            <td>{{ output.encoding }}</td>
+        </tr>
+        <tr>
+            <td>Public Hash</td>
+            <td>{{ output.public_hash.hex() }}</td>
+        </tr>
+    </table>
+    <p></p>
+    <table class="pure-table" style="width: 800px; font-size: 80%;">
+        <thead>
+            <tr>
+                <td colspan="5">{{ _('Locking Script') }}</td>
+            </tr>
+        </thead>
+        <tr>
+            <td>Script Type</td>
+            <td>{{ locking_script_dict['script_type'] }}</td>
+        </tr>
+        {% if locking_script_dict['number_of_sigs_n'] > 1 %}
+        <tr>
+            <td>Signatures</td>
+            <td>
+                {{ locking_script_dict['number_of_sigs_m'] }} of {{ locking_script_dict['number_of_sigs_n'] }}
+                signatures required
+            </td>
+        </tr>
+        {% endif %}
+        <tr>
+            <td>Locking Script Hex</td>
+            <td style="word-break: break-all;">{{ output.lock_script.hex() }}</td>
+        </tr>
+        <tr>
+            <td>Locking Script OP</td>
+            <td style="word-break: break-all;">{{ locking_script_op }}</td>
+        </tr>
+        {% if locking_script_dict['script_type'] == 'nulldata' %}
+        <tr>
+            <td>Nulldata</td>
+            <td>{{ output.lock_script[2:].decode(errors='replace') }}</td>
+        </tr>
+        {% endif %}
+    </table>
+
+{% endblock %}

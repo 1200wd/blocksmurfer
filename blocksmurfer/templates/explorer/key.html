@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    <h2>{{ _('Details') }}</h2>
+    <table class="pure-table" style="width: 800px;">
+        <tr>
+            <td>Extended WIF</td>
+            <td style="word-break: break-all;">{{ key.wif() }}</td>
+        </tr>
+        <tr>
+            <td>Network</td>
+            <td>{{ key.network.name }}</td>
+        </tr>
+        <tr>
+            <td>Compressed?</td>
+            <td>{{ key.compressed }}</td>
+        </tr>
+        <tr>
+            <td>Public Key (hex)</td>
+            <td>{{ key.public_hex }}</td>
+        </tr>
+        {% if key.secret %}
+        <tr>
+            <td>Private Key (hex)</td>
+            <td>{{ key.private_hex }}</td>
+        </tr>
+        <tr>
+            <td>Private Key (long)</td>
+            <td style="word-break: break-all;">{{ key.secret }}</td>
+        </tr>
+        <tr>
+            <td>WIF Extended Private</td>
+            <td style="word-break: break-all;">{{ key.wif_private() }}</td>
+        </tr>
+        <tr>
+            <td>WIF Private</td>
+            <td style="word-break: break-all;">{{ key.wif_key() }}</td>
+        </tr>
+        {% endif %}
+        <tr>
+            <td>Address (base58)</td>
+            <td>
+                <a href="{{ url_for('main.address', network=key.network.name, address=key.address(encoding='base58')) }}">
+                    {{ key.address(encoding='base58') }}
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <td>Address (bech32)</td>
+            <td>
+                <a href="{{ url_for('main.address', network=key.network.name, address=key.address(encoding='bech32')) }}">
+                    {{ key.address(encoding='bech32') }}
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <td style="word-break: break-all;">Public Point (x, y)</td>
+            <td>{{ key.public_point()[0] }}, {{ key.public_point()[1] }}</td>
+        </tr>
+        <thead>
+        <tr>
+            <td colspan="2">Extended key info</td>
+        </tr>
+        </thead>
+        <tr>
+            <td>Chain code</td>
+            <td>{{ key.chain.hex() }}</td>
+        </tr>
+        <tr>
+            <td>Child Index</td>
+            <td>{{ key.child_index }}</td>
+        </tr>
+        <tr>
+            <td>Parent Fingerprint</td>
+            <td>{{ key.parent_fingerprint.hex() }}</td>
+        </tr>
+        <tr>
+            <td>Depth</td>
+            <td>{{ key.depth }}</td>
+        </tr>
+        <tr>
+            <td>Witness Type</td>
+            <td>{{ key.witness_type }}</td>
+        </tr>
+        <tr>
+            <td>Multisig?</td>
+            <td>{{ key.multisig }}</td>
+        </tr>
+        <tr>
+            <td>Script Type</td>
+            <td>{{ key.script_type }}</td>
+        </tr>
+    </table>
+
+{% endblock %}
+
+
+<!--        print(" Key Type                    %s" % self.key_type)-->
+<!--        print(" Chain code (hex)            %s" % change_base(self.chain, 256, 16))-->
+<!--        print(" Child Index                 %s" % self.child_index)-->
+<!--        print(" Parent Fingerprint (hex)    %s" % change_base(self.parent_fingerprint, 256, 16))-->
+<!--        print(" Depth                       %s" % self.depth)-->
+<!--        print(" Extended Public Key (wif)   %s" % self.wif_public())-->
+<!--        print(" Witness type                %s" % self.witness_type)-->
+<!--        print(" Script type                 %s" % self.script_type)-->
+<!--        print(" Multisig                    %s" % self.multisig)-->

@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    <h2>{{ _('Details') }}</h2>
+    <table style="width: 800px;">
+    <tr>
+        <td>
+            <table class="pure-table" style="width: 550px;">
+            <tr>
+                <td>Address</td>
+                <td>{{ address.address }}</td>
+            </tr>
+            <tr>
+                <td>Network</td>
+                <td>{{ address.network.name }}</td>
+            </tr>
+            <tr>
+                <td>Hashed data</td>
+                <td>{{ address.hashed_data }}</td>
+            </tr>
+            <tr>
+                <td>Script type</td>
+                <td>{{ address.script_type }}</td>
+            </tr>
+            <tr>
+                <td>Witness type</td>
+                <td>
+                    {% if address.witness_type is none %}
+                        {{ _('Irreducible') }}
+                    {% else %}
+                        {{ address.witness_type }}
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td>Encoding</td>
+                <td>{{ address.encoding }}</td>
+            </tr>
+            {% if address.compressed is not none %}
+            <tr>
+                <td>Compressed?</td>
+                <td>{{ address.compressed }}</td>
+            </tr>
+            {% endif %}
+            <tr>
+                <td>Balance</td>
+                <td>{{ "{:,.8f}".format(balance / 100000000) }}</td>
+            </tr>
+        </table>
+        </td>
+        <td>
+            <img src="{{ qrcode(address.address, box_size=7, border=2, fill_color='#090947') }}">
+        </td>
+    </tr>
+    </table>
+    <h2>{{ _('Transactions') }}</h2>
+    {% if not transactions %}
+    <p>{{ _('No transactions found') }}</p>
+    {% endif %}
+    {% for t in transactions %}
+    <table class="pure-table" style="width: 800px; font-size: 80%;">
+        <thead>
+        <tr>
+            <td style="border-left: 0;">
+                TXID:
+                <a href="{{ url_for('main.transaction', network=network, txid=t.hash) }}">{{ t.hash }}</a>
+            </td>
+            <td style="border-left: 0;">
+                {{ t.date.replace(microsecond=0) }}
+            </td>
+            <td style="border-left: 0;">
+                {% if t.confirmations %}
+                    {{ t.confirmations }} confirmations
+                {% else %}
+                    {{ _('Unconfirmed')}}
+                {% endif %}
+            </td>
+        </tr>
+        </thead>
+    </table>
+    <table class="pure-table" style="width: 800px; font-size: 80%">
+        <tbody>
+        {% for inp in t.inputs[:5] %}
+        <tr>
+            <td>in</td>
+            <td><a href="{{ url_for('main.address', network=network, address=inp.address) }}">{{ inp.address }}</a></td>
+            <td style="text-align:right">{{ "{:,.8f}".format(inp.value / 100000000) }}</td>
+            <td>-</td>
+        </tr>
+        {% endfor %}
+        {% if t.inputs|length > 5 %}
+        <tr>
+            <td>in</td>
+            <td>
+                ...truncated, look at full
+                <a href="{{ url_for('main.transaction', network=network, txid=t.hash) }}">transaction</a>
+                for all {{ t.inputs|length }} inputs
+            </td>
+            <td style="text-align:right">{{ "{:,.8f}".format(t.inputs[5:]|sum(attribute='value') / 100000000) }}</td>
+            <td></td>
+        </tr>
+        {% endif %}
+        {% for out in t.outputs[:5] %}
+        <tr>
+            <td>out</td>
+            <td>
+                {% if out.address %}
+                <a href="{{ url_for('main.address', network=network, address=out.address) }}">{{ out.address }}</a></td>
+                {% else %}
+                    Nulldata: {{ out.lock_script[2:].decode() }}
+                {% endif %}
+            <td style="text-align:right">{{ "{:,.8f}".format(out.value / 100000000) }}</td>
+            <td>{% if out.spent %}Spent{% elif out.address %}Unspent{% endif %}</td>
+        </tr>
+        {% endfor %}
+        {% if t.outputs|length > 5 %}
+        <tr>
+            <td>out</td>
+            <td>
+                ...truncated, look at full
+                <a href="{{ url_for('main.transaction', network=network, txid=t.hash) }}">transaction</a>
+                for all {{ t.outputs|length }} outputs
+            </td>
+            <td style="text-align:right">{{ "{:,.8f}".format(t.outputs[5:]|sum(attribute='value') / 100000000) }}</td>
+            <td></td>
+        </tr>
+        {% endif %}
+        </tbody>
+        <tfoot>
+        <tr>
+            <td colspan="2">{{ _('Balance change') }}</td>
+            <td style="text-align:right">{{ "{:,.8f}".format(t.balance_change / 100000000) }}</td>
+            <td></td>
+        </tr>
+        </tfoot>
+    </table>
+    <p></p>
+    {% endfor %}
+    <nav aria-label="...">
+        <ul class="pager">
+            <a href="{{ prev_url or '#' }}" class="pure-button {% if not prev_url %} pure-button-disabled{% endif %}">
+                <i class="fa fa-arrow-left"></i> {{ _('First transactions') }}
+            </a>
+            <a href="{{ next_url or '#' }}" class="pure-button {% if not next_url %} pure-button-disabled{% endif %}">
+                {{ _('Next transactions') }} <i class="fa fa-arrow-right"></i>
+            </a>
+        </ul>
+    </nav>
+
+{% endblock %}
