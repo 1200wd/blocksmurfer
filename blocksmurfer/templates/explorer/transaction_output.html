@@ -35,6 +35,10 @@
             <td>Public Hash</td>
             <td>{{ output.public_hash.hex() }}</td>
         </tr>
+        <tr>
+            <td>Spent</td>
+            <td>{% if output.spent %}Spent{% elif output.address %}Unspent{% endif %}</td>
+        </tr>
     </table>
     <p></p>
     <table class="pure-table" style="width: 800px; font-size: 80%;">

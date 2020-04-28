@@ -66,8 +66,11 @@
         <tr>
             <td>Raw</td>
             <td>
+                <p hidden><input type="text" value="{{ transaction.raw_hex() }}" id="myInput"></p>
                 <abbr title="{{ transaction.raw_hex() }}">
-                    {{ transaction.raw_hex() | truncate(55) }}</abbr>
+                    {{ transaction.raw_hex() | truncate(55) }}
+                </abbr>
+                <i onclick="copytoclip()" class="fa fa-copy"></i>
             </td>
         </tr>
     </table>

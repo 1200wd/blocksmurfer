@@ -55,10 +55,27 @@ def transaction_input(network, txid, index_n):
         flash(_('Transaction input with index number %s not found' % index_n), category='error')
         return redirect(url_for('main.transaction', network=network, txid=txid))
     input = t.inputs[int(index_n)]
-    locking_script_op = script_to_string(input.unlocking_script_unsigned)
-    locking_script_dict = script_deserialize(input.unlocking_script_unsigned)
-    unlocking_script_op = '' if not input.unlocking_script else script_to_string(input.unlocking_script)
-    unlocking_script_dict = '' if not input.unlocking_script else script_deserialize(input.unlocking_script)
+    locking_script_op = ''
+    locking_script_dict = ''
+    unlocking_script_op = ''
+    unlocking_script_dict = ''
+    try:
+        locking_script_op = script_to_string(input.unlocking_script_unsigned)
+    except:
+        pass
+    try:
+        locking_script_dict = script_deserialize(input.unlocking_script_unsigned)
+    except:
+        pass
+    try:
+        unlocking_script_op = script_to_string(input.unlocking_script)
+    except:
+        pass
+    try:
+        unlocking_script_dict = script_deserialize(input.unlocking_script)
+    except:
+        pass
+
     return render_template('explorer/transaction_input.html', title=_('Transaction Input %s' % index_n), subtitle=txid,
                            transaction=t, network=network, input=input, index_n=index_n,
                            locking_script_op=locking_script_op, locking_script_dict=locking_script_dict,
@@ -76,8 +93,16 @@ def transaction_output(network, txid, output_n):
         flash(_('Transaction output with index number %s not found' % output_n), category='error')
         return redirect(url_for('main.transaction', network=network, txid=txid))
     output = t.outputs[int(output_n)]
-    locking_script_op = script_to_string(output.lock_script)
-    locking_script_dict = script_deserialize(output.lock_script)
+    locking_script_op = ''
+    locking_script_dict = ''
+    try:
+        locking_script_op = script_to_string(output.lock_script)
+    except:
+        pass
+    try:
+        locking_script_dict = script_deserialize(output.lock_script)
+    except:
+        pass
     return render_template('explorer/transaction_output.html', title=_('Transaction Output %s' % output_n),
                            subtitle=txid, transaction=t, network=network, output=output, output_n=output_n,
                            locking_script_dict=locking_script_dict, locking_script_op=locking_script_op)

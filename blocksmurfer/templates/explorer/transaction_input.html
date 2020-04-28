@@ -30,9 +30,13 @@
         <tr>
             <td>Previous TXID</td>
             <td>
-                <a href="{{ url_for('main.transaction', network=network, txid=input.prev_hash.hex()) }}">
-                    {{ input.prev_hash.hex() }}
-                </a>
+                {% if input.prev_hash.hex() == '0' * 64 %}
+                    Coinbase
+                {% else %}
+                    <a href="{{ url_for('main.transaction', network=network, txid=input.prev_hash.hex()) }}">
+                        {{ input.prev_hash.hex() }}
+                    </a>
+                {% endif %}
             </td>
         </tr>
         <tr>
@@ -60,6 +64,7 @@
             </td>
         </tr>
     </table>
+    {% if input.unlocking_script_unsigned %}
     <p></p>
     <table class="pure-table" style="width: 800px; font-size: 80%;">
         <thead>
@@ -89,6 +94,7 @@
             <td style="word-break: break-all;">{{ locking_script_op }}</td>
         </tr>
     </table>
+    {% endif %}
     <p></p>
     <table class="pure-table" style="width: 800px; font-size: 80%;">
         <thead>
