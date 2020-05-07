@@ -46,6 +46,18 @@
                 <td>Balance</td>
                 <td>{{ "{:,.8f}".format(balance / 100000000) }}</td>
             </tr>
+            {% if address_info.n_txs is not none %}
+            <tr>
+                <td>Transactions</td>
+                <td>{{ address_info.n_txs }}</td>
+            </tr>
+            {% endif %}
+            {% if address_info.n_utxos is not none %}
+            <tr>
+                <td>Unspent Outputs</td>
+                <td>{{ address_info.n_utxos }}</td>
+            </tr>
+            {% endif %}
         </table>
         </td>
         <td>
@@ -62,7 +74,6 @@
         <thead>
         <tr>
             <td style="border-left: 0;">
-                TXID:
                 <a href="{{ url_for('main.transaction', network=network, txid=t.hash) }}">{{ t.hash }}</a>
             </td>
             <td style="border-left: 0;">
@@ -107,10 +118,22 @@
                 {% if out.address %}
                 <a href="{{ url_for('main.address', network=network, address=out.address) }}">{{ out.address }}</a></td>
                 {% else %}
-                    Nulldata: {{ out.lock_script[2:].decode() }}
+                    Nulldata: {{ out.lock_script[2:].decode(errors='replace') }}
                 {% endif %}
             <td style="text-align:right">{{ "{:,.8f}".format(out.value / 100000000) }}</td>
-            <td>{% if out.spent %}Spent{% elif out.address %}Unspent{% endif %}</td>
+            <td>
+                {% if out.spent %}
+                    {% if out.spending_txid %}
+                        <a href="{{ url_for('main.transaction', network=network, txid=out.spending_txid) }}">
+                            <i class="fa fa-arrow-right"></i>
+                        </a>
+                    {% else %}
+                        Spent
+                    {% endif %}
+                {% elif out.address %}
+                    Unspent
+                {% endif %}
+            </td>
         </tr>
         {% endfor %}
         {% if t.outputs|length > 5 %}

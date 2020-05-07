@@ -57,7 +57,7 @@
         </tr>
         <tr>
             <td>Version</td>
-            <td>{{ transaction.as_dict()['version'] }}</td>
+            <td>{{ transaction.version_int }}</td>
         </tr>
         <tr>
             <td>Locktime</td>
@@ -127,7 +127,19 @@
             </td>
             <td style="text-align:right">{{ "{:,.8f}".format(out.value / 100000000) }}</td>
             <td>{{ out.script_type }}</td>
-            <td>{% if out.spent %}Spent{% elif out.address %}Unspent{% endif %}</td>
+            <td>
+                {% if out.spent %}
+                    {% if out.spending_txid %}
+                        <a href="{{ url_for('main.transaction', network=network, txid=out.spending_txid) }}">
+                            <i class="fa fa-arrow-right"></i>
+                        </a>
+                    {% else %}
+                        Spent
+                    {% endif %}
+                {% elif out.address and out.spent == False %}
+                    Unspent
+                {% endif %}
+            </td>
         </tr>
         {% endfor %}
         </tbody>

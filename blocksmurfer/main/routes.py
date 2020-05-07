@@ -18,6 +18,11 @@ def index():
                            form=form)
 
 
+@bp.route('/search/<search_string>')
+def search(search_string):
+    return search_query(search_string)
+
+
 @bp.route('/bitcoinlib')
 def bitcoinlib():
     return render_template('bitcoinlib.html', title=_('Bitcoinlib'), subtitle=_('Python bitcoin library'))
@@ -60,7 +65,7 @@ def transaction_input(network, txid, index_n):
     unlocking_script_op = ''
     unlocking_script_dict = ''
     try:
-        locking_script_op = script_to_string(input.unlocking_script_unsigned)
+        locking_script_op = script_to_string(input.unlocking_script_unsigned, name_data=True)
     except:
         pass
     try:
@@ -68,7 +73,7 @@ def transaction_input(network, txid, index_n):
     except:
         pass
     try:
-        unlocking_script_op = script_to_string(input.unlocking_script)
+        unlocking_script_op = script_to_string(input.unlocking_script, name_data=True)
     except:
         pass
     try:
@@ -96,7 +101,7 @@ def transaction_output(network, txid, output_n):
     locking_script_op = ''
     locking_script_dict = ''
     try:
-        locking_script_op = script_to_string(output.lock_script)
+        locking_script_op = script_to_string(output.lock_script, name_data=True)
     except:
         pass
     try:
@@ -111,7 +116,7 @@ def transaction_output(network, txid, output_n):
 @bp.route('/<network>/address/<address>')
 def address(network, address):
     srv = SmurferService(network)
-    after_txid = request.args.get('after_txid', 0, type=str)
+    after_txid = request.args.get('after_txid', '', type=str)
 
     address_obj = Address.import_address(address)
     # TODO: Remove after Bitcoinlib update
@@ -122,7 +127,10 @@ def address(network, address):
             address_obj.witness_type = 'segwit'
 
     txs = srv.gettransactions(address, after_txid=after_txid, max_txs=5)
-    balance_tot = srv.getbalance(address)
+    address_info = srv.getcacheaddressinfo(address)
+    balance_tot = address_info['balance']
+    if not balance_tot:
+        balance_tot = srv.getbalance(address)
 
     prev_url = None
     next_url = None
@@ -137,7 +145,7 @@ def address(network, address):
                            
     return render_template('explorer/address.html', title=_('Address'), subtitle=address, transactions=txs,
                            address=address_obj, balance=balance_tot, network=network, next_url=next_url,
-                           prev_url=prev_url)
+                           prev_url=prev_url, address_info=address_info)
 
 
 @bp.route('/<network>/key/<key>')

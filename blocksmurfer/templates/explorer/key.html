@@ -40,7 +40,7 @@
         <tr>
             <td>Address (base58)</td>
             <td>
-                <a href="{{ url_for('main.address', network=key.network.name, address=key.address(encoding='base58')) }}">
+                <a href="{{ url_for('main.address', network=key.network.currency_code.lower(), address=key.address(encoding='base58')) }}">
                     {{ key.address(encoding='base58') }}
                 </a>
             </td>
@@ -48,7 +48,7 @@
         <tr>
             <td>Address (bech32)</td>
             <td>
-                <a href="{{ url_for('main.address', network=key.network.name, address=key.address(encoding='bech32')) }}">
+                <a href="{{ url_for('main.address', network=key.network.currency_code.lower(), address=key.address(encoding='bech32')) }}">
                     {{ key.address(encoding='bech32') }}
                 </a>
             </td>
