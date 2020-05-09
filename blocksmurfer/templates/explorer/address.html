@@ -58,6 +58,14 @@
                 <td>{{ address_info.n_utxos }}</td>
             </tr>
             {% endif %}
+            <tr>
+            <td>API</td>
+            <td>
+                <a href="{{ url_for('api.transactions', network=network, address=address.address) }}">txs</a>,
+                <a href="{{ url_for('api.utxos', network=network, address=address.address) }}">utxos</a>
+                <a href="{{ url_for('api.address_balance', network=network, address=address.address) }}">balance</a>
+            </td>
+        </tr>
         </table>
         </td>
         <td>
@@ -77,7 +85,7 @@
                 <a href="{{ url_for('main.transaction', network=network, txid=t.hash) }}">{{ t.hash }}</a>
             </td>
             <td style="border-left: 0;">
-                {{ t.date.replace(microsecond=0) }}
+                {% if t.date %}{{ t.date.replace(microsecond=0) }}{% endif %}
             </td>
             <td style="border-left: 0;">
                 {% if t.confirmations %}

@@ -1,0 +1,72 @@
+from flask_restful import fields
+
+transaction_input_fields = {
+    'prev_hash': fields.String(attribute=lambda obj: obj.prev_hash.hex()),
+    'output_n': fields.Integer(attribute='output_n_int'),
+    'address': fields.String,
+    'compressed': fields.Boolean,
+    'double_spend': fields.Boolean,
+    'encoding': fields.String,
+    'index_n': fields.Integer,
+    'locktime_cltv': fields.Integer,
+    'locktime_csv': fields.Integer,
+    'public_hash': fields.String(attribute=lambda obj: obj.public_hash.hex()),
+    'redeemscript': fields.String(attribute=lambda obj: obj.redeemscript.hex()),
+    'script': fields.String(attribute=lambda obj: obj.unlocking_script.hex()),
+    'script_code': fields.String(attribute=lambda obj: obj.script_code.hex()),
+    'script_type': fields.String,
+    'sequence': fields.Integer,
+    'signatures': fields.String(attribute=lambda obj: ''.join([s.hex() for s in obj.signatures])),
+    'sigs_required': fields.Integer,
+    'valid': fields.Boolean,
+    'value': fields.Integer,
+    'witness': fields.String(attribute=lambda obj: b''.join(obj.witnesses).hex()),
+    'witness_type': fields.String,
+}
+
+transaction_output_fields = {
+    'address': fields.String,
+    'output_n': fields.Integer(attribute='output_n_int'),
+    'public_hash': fields.String(attribute=lambda obj: obj.public_hash.hex()),
+    'script': fields.String(attribute=lambda obj: obj.lock_script.hex()),
+    'script_type': fields.String,
+    'spent': fields.Boolean,
+    'value': fields.Integer,
+}
+
+transaction_fields = {
+    'txid': fields.String(attribute='hash'),
+    'date': fields.DateTime(dt_format='iso8601'),
+    'block_hash': fields.String,
+    'block_height': fields.Integer,
+    'coinbase': fields.Boolean,
+    'confirmations': fields.Integer,
+    'fee': fields.Integer,
+    'inputs': fields.List(fields.Nested(transaction_input_fields)),
+    'input_total': fields.Integer,
+    'outputs': fields.List(fields.Nested(transaction_output_fields)),
+    'output_total': fields.Integer,
+    'locktime': fields.Integer,
+    'network': fields.String(attribute='network.name'),
+    'raw_hex': fields.String(attribute=lambda obj: obj.raw_hex()),
+    'size': fields.Integer,
+    'status': fields.String,
+    'verified': fields.Boolean,
+    'version': fields.Integer(attribute='version_int'),
+    'vsize': fields.Integer,
+    'witness_type': fields.String,
+}
+
+utxo_fields = {
+    'address': fields.String,
+    'tx_hash': fields.String,
+    'confirmations': fields.Integer,
+    'output_n': fields.Integer,
+    'input_n': fields.Integer,
+    'block_height': fields.Integer,
+    'fee': fields.Integer,
+    'size': fields.Integer,
+    'value': fields.Integer,
+    'script': fields.String,
+    'date': fields.DateTime(dt_format='iso8601'),
+}

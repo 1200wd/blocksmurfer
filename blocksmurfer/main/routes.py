@@ -41,6 +41,9 @@ def about():
 @bp.route('/<network>/transaction/<txid>')
 def transaction(network, txid):
     srv = SmurferService(network)
+    if not check_txid(txid):
+        flash(_('Invalid transaction ID'), category='error')
+        return redirect(url_for('main.index'))
     t = srv.gettransaction(txid)
     if not t:
         flash(_('Transaction %s not found' % txid), category='error')
@@ -119,18 +122,13 @@ def address(network, address):
     after_txid = request.args.get('after_txid', '', type=str)
 
     address_obj = Address.import_address(address)
-    # TODO: Remove after Bitcoinlib update
-    if not address_obj.witness_type:
-        if address_obj.script_type == 'p2pkh':
-            address_obj.witness_type = 'legacy'
-        elif address_obj.script_type in ['p2wpkh', 'p2wkh']:
-            address_obj.witness_type = 'segwit'
 
     txs = srv.gettransactions(address, after_txid=after_txid, max_txs=5)
     address_info = srv.getcacheaddressinfo(address)
-    balance_tot = address_info['balance']
-    if not balance_tot:
-        balance_tot = srv.getbalance(address)
+    # FIXME: Bitcoinlib gives wrong balance if txs list is incomplete
+    # balance_tot = address_info['balance']
+    # if not balance_tot:
+    balance_tot = srv.getbalance(address)
 
     prev_url = None
     next_url = None

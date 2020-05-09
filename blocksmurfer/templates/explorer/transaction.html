@@ -73,6 +73,13 @@
                 <i onclick="copytoclip()" class="fa fa-copy"></i>
             </td>
         </tr>
+        <tr>
+            <td>API</td>
+            <td>
+                <a href="{{ url_for('api.transaction', network=network, txid=transaction.hash) }}">tx</a>,
+                <a href="{{ url_for('api.transaction', network=network, txid=transaction.hash, raw=True) }}">raw</a>
+            </td>
+        </tr>
     </table>
     <p></p>
     <table class="pure-table" style="width: 800px; font-size: 80%;">
