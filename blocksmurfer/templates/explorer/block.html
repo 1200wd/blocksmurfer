@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    <h2>{{ _('Details') }}</h2>
+    <table class="pure-table" style="width: 550px;">
+    <tr>
+        <td>Block</td>
+        <td>{{ block.height }}</td>
+    </tr>
+    <tr>
+        <td>Hash</td>
+        <td>{{ block.hash }}</td>
+    </tr>
+    <tr>
+        <td>Time</td>
+        <td>{{ block.time }}</td>
+    </tr>
+    <tr>
+        <td>Bits</td>
+        <td>{{ block.bits }}</td>
+    </tr>
+    <tr>
+        <td>Nonce</td>
+        <td>{{ block.nonce }}</td>
+    </tr>
+    <tr>
+        <td>Merkle Root</td>
+        <td>{{ block.merkle_root }}</td>
+    </tr>
+    <tr>
+        <td>Version</td>
+        <td>{{ block.version }}</td>
+    </tr>
+    <tr>
+        <td>Transaction count</td>
+        <td>{{ block.total_txs }}</td>
+    </tr>
+    <tr>
+        <td>API</td>
+        <td>
+            <a href="{{ url_for('api.block', network=network, blockid=block.hash) }}">block</a>
+        </td>
+    </tr>
+    </table>
+    <h2>{{ _('Transactions') }}</h2>
+    {% if not block.txs %}
+    <p>{{ _('No transactions found') }}</p>
+    {% endif %}
+    {% for t in block.txs %}
+        {% include 'explorer/_transaction_item.html' %}
+        <p></p>
+    {% endfor %}
+    <nav aria-label="...">
+        <ul class="pager">
+            <a href="{{ prev_url or '#' }}" class="pure-button {% if not prev_url %} pure-button-disabled{% endif %}">
+                <i class="fa fa-arrow-left"></i> {{ _('First transactions') }}
+            </a>
+            <a href="{{ next_url or '#' }}" class="pure-button {% if not next_url %} pure-button-disabled{% endif %}">
+                {{ _('Next transactions') }} <i class="fa fa-arrow-right"></i>
+            </a>
+        </ul>
+    </nav>
+{% endblock %}

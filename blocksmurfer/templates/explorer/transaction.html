@@ -15,7 +15,9 @@
             <td>Block</td>
             <td>
                 {% if transaction.block_height and transaction.block_height > 0 %}
-                    {{ transaction.block_height }}
+                    <a href ="{{ url_for('main.block', network=network, blockid=transaction.block_height) }}">
+                        {{ transaction.block_height }}
+                    </a>
                 {% else %}
                     {{ _('Unassigned') }}
                 {% endif %}

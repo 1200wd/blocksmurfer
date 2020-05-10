@@ -5,6 +5,8 @@ from flask_babel import _
 
 
 def search_query(s):
+    if s.isdigit() or len(s) == 64 and s[:8] == '00000000':
+        return redirect(url_for('main.block', network='btc', blockid=s))
     if check_txid(s):
         return redirect(url_for('main.transaction', network='btc', txid=s))
     try:

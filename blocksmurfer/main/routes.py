@@ -159,3 +159,27 @@ def key(network, key):
         flash(_('Never post your private key online. Only use this for test keys or in an offline environment!'),
               category='error')
     return render_template('explorer/key.html', title=_('Key'), subtitle=k.wif(), key=k, network=network)
+
+
+@bp.route('/<network>/block/<blockid>')
+def block(network, blockid):
+    page = request.args.get('page', 1, type=int)
+    limit = request.args.get('limit', 5, type=int)
+    srv = SmurferService(network)
+    if blockid == 'last':
+        blockid = srv.blockcount()
+    block = srv.getblock(blockid, parse_transactions=True, limit=limit)
+    if not block:
+        flash(_("Block not found"), category='error')
+        return redirect(url_for('main.index'))
+
+    prev_url = None
+    next_url = None
+    txs = block['txs']
+    if not srv.complete and txs and len(txs) >= limit:
+        next_url = url_for('main.block', network=network, blockid=blockid, limit=limit, page=page+1)
+    if page > 1:
+        prev_url = url_for('main.block', network=network, blockid=blockid, limit=limit, page=page-1)
+
+    return render_template('explorer/block.html', title=_('Block'), block=block, network=network, prev_url=prev_url,
+                           next_url=next_url)
