@@ -15,7 +15,7 @@ def transactions(network, address):
     srv = SmurferService(network)
     if not check_address(address):
         return resp_error(501, message="Invalid address provided")
-    txs = srv.gettransactions(address, after_txid=after_txid, max_txs=limit)
+    txs = srv.gettransactions(address, after_txid=after_txid, limit=limit)
     txs_dict = marshal(txs, transaction_fields)
     return jsonify(txs_dict)
 
@@ -29,7 +29,7 @@ def utxos(network, address):
     srv = SmurferService(network)
     if not check_address(address):
         return resp_error(501, message="Invalid address provided")
-    txs = srv.getutxos(address, after_txid=after_txid, max_txs=limit)
+    txs = srv.getutxos(address, after_txid=after_txid, limit=limit)
     txs_dict = marshal(txs, utxo_fields)
     return jsonify(txs_dict)
 

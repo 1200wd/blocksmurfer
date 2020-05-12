@@ -23,11 +23,12 @@ def transaction(network, txid):
 
 
 @bp.route('/<string:network>/fees/<int:blocks>')
+@bp.route('/<string:network>/fees')
 def fees(network, blocks=3):
     srv = SmurferService(network)
     data = {
         'network': network,
         'blocks': blocks,
-        'fees': srv.estimatefee(blocks)
+        'estimated_fee_sat_kb': srv.estimatefee(blocks)
     }
     return jsonify(data)

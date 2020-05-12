@@ -123,7 +123,7 @@ def address(network, address):
 
     address_obj = Address.import_address(address)
 
-    txs = srv.gettransactions(address, after_txid=after_txid, max_txs=5)
+    txs = srv.gettransactions(address, after_txid=after_txid, limit=5)
     address_info = srv.getcacheaddressinfo(address)
     # FIXME: Bitcoinlib gives wrong balance if txs list is incomplete
     # balance_tot = address_info['balance']
