@@ -23,11 +23,6 @@ def search(search_string):
     return search_query(search_string)
 
 
-@bp.route('/bitcoinlib')
-def bitcoinlib():
-    return render_template('bitcoinlib.html', title=_('Bitcoinlib'), subtitle=_('Python bitcoin library'))
-
-
 @bp.route('/api')
 def api():
     return render_template('api.html', title=_('API'), subtitle=_('Bitcoin blockchain API'))
@@ -120,10 +115,11 @@ def transaction_output(network, txid, output_n):
 def address(network, address):
     srv = SmurferService(network)
     after_txid = request.args.get('after_txid', '', type=str)
+    limit = request.args.get('limit', 5, type=int)
 
     address_obj = Address.import_address(address)
 
-    txs = srv.gettransactions(address, after_txid=after_txid, limit=5)
+    txs = srv.gettransactions(address, after_txid=after_txid, limit=limit)
     address_info = srv.getcacheaddressinfo(address)
     # FIXME: Bitcoinlib gives wrong balance if txs list is incomplete
     # balance_tot = address_info['balance']
@@ -132,7 +128,7 @@ def address(network, address):
 
     prev_url = None
     next_url = None
-    if not srv.complete and txs and len(txs) >= 5:
+    if not srv.complete and txs and len(txs) >= limit:
         next_url = url_for('main.address', network=network, address=address, after_txid=txs[-1:][0].hash)
     if after_txid:
         prev_url = url_for('main.address', network=network, address=address)
@@ -143,7 +139,7 @@ def address(network, address):
                            
     return render_template('explorer/address.html', title=_('Address'), subtitle=address, transactions=txs,
                            address=address_obj, balance=balance_tot, network=network, next_url=next_url,
-                           prev_url=prev_url, address_info=address_info)
+                           prev_url=prev_url, address_info=address_info, after_txid=after_txid, limit=limit)
 
 
 @bp.route('/<network>/key/<key>')
