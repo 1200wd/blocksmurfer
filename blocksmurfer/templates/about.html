@@ -1,5 +1,19 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-    <h2>{{ _('About') }}</h2>
+    <h2>Blocksmurfer</h2>
+    <p>The Blocksmurfer explorer is created by Coineva using Flask and Python Bitcoinlib. It can be used to search
+    the blockchain for blocks, transactions, addresses and utxo's. You can easily run it from a local server
+    using the source code from <a href="https://github.com/1200wd/blocksmurfer">Github</a>.</p>
+
+    <p>Just like Bitcoinlib it can retrieve data from various online service providers or work with a local bitcoin
+    or <a href="https://github.com/bcoin-org/bcoin/blob/master/docs/README.md">Bcoin</a> node.</p>
+
+    <h2>{{ _('Bitcoinlib') }}</h2>
+    <p>Python <a href="https://github.com/1200wd/bitcoinlib">Bitcoinlib</a> is an open source bitcoin and other
+    cryptocurrency library. You can use it to create and manage wallets, keys, transactions and interact with
+    the blockchain through various service providers.</p>
+
+    <p>Amsterdam, 2020<br />
+    <a href="https://coineva.com">Coineva</a></p>
 {% endblock %}

@@ -2,4 +2,39 @@
 
 {% block app_content %}
     <h2>{{ _('Blocksmurfer API documentation') }}</h2>
+    <p>Base URL: </p>
+    <p>https://blocksmurfer.io/api/v1/btc/</p>
+
+    <h2>Blocks</h2>
+    <h3>Specific block</h3>
+    <p>Get block with specified blockhash or blockheight.</p>
+    <p>/block/&lt;blockid&gt;</p>
+    <p>Example: <a href="{{ url_for('api.block', network='btc', blockid=300000) }}">
+        {{ url_for('api.block', network='btc', blockid=300000) }}</a>
+    </p>
+    <p>You can use the 'full' parameter to return full transactions instead of just and transaction ID. But this
+    will return only a limited number of transactions. Use 'after_txid' and 'limit' to browse through transactions
+    in a block.</p>
+    <p>Example:
+        <a href="{{ url_for('api.block', network='btc', blockid=300000, full=True,
+        after_txid='dd9aaf33afe6f8364a190904afcc5004fd973527be5a23f68bd7b6bd40f84c59') }}">
+            {{ url_for('api.block', network='btc', blockid=300000, full=True,
+            after_txid='dd9aaf33afe6f8364a190904afcc5004fd973527be5a23f68bd7b6bd40f84c59') }}
+        </a>
+    </p>
+
+    <h3>Latest block</h3>
+    <p>Get block with specified blockhash or blockheight.</p>
+    <p>/block/last</p>
+    <p>Example: <a href="{{ url_for('api.block', network='btc', blockid='last') }}">
+        {{ url_for('api.block', network='btc', blockid='last') }}</a>
+    </p>
+
+    <h3>Blockcount</h3>
+    <p>Get latest block height.</p>
+    <p>/blockcount</p>
+    <p>Example: <a href="{{ url_for('api.blockcount', network='btc') }}">
+        {{ url_for('api.blockcount', network='btc') }}</a>
+    </p>
+
 {% endblock %}
