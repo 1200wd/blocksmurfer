@@ -12,14 +12,12 @@
     <p>Example: <a href="{{ url_for('api.block', network='btc', blockid=300000) }}">
         {{ url_for('api.block', network='btc', blockid=300000) }}</a>
     </p>
-    <p>You can use the 'full' parameter to return full transactions instead of just and transaction ID. But this
-    will return only a limited number of transactions. Use 'after_txid' and 'limit' to browse through transactions
+    <p>You can use the 'parse_transactions' parameter to return full transactions instead of just and transaction ID.
+    This will return only a limited number of transactions. Use 'page' and 'limit' to browse through transactions
     in a block.</p>
     <p>Example:
-        <a href="{{ url_for('api.block', network='btc', blockid=300000, full=True,
-        after_txid='dd9aaf33afe6f8364a190904afcc5004fd973527be5a23f68bd7b6bd40f84c59') }}">
-            {{ url_for('api.block', network='btc', blockid=300000, full=True,
-            after_txid='dd9aaf33afe6f8364a190904afcc5004fd973527be5a23f68bd7b6bd40f84c59') }}
+        <a href="{{ url_for('api.block', network='btc', blockid=300000, parse_transactions=True, page=24, limit=10) }}">
+            {{ url_for('api.block', network='btc', blockid=300000, parse_transactions=True, page=24, limit=10) }}
         </a>
     </p>
 
