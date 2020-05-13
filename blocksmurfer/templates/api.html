@@ -22,11 +22,12 @@
     </p>
 
     <h3>Latest block</h3>
-    <p>Get block with specified blockhash or blockheight.</p>
+    <p>Get newest block from the blockchain.</p>
     <p>/block/last</p>
     <p>Example: <a href="{{ url_for('api.block', network='btc', blockid='last') }}">
         {{ url_for('api.block', network='btc', blockid='last') }}</a>
     </p>
+    <p>The same attributes 'parse_transaction', 'limit' and 'page' can be used with this reqeust.</p>
 
     <h3>Blockcount</h3>
     <p>Get latest block height.</p>
@@ -34,5 +35,77 @@
     <p>Example: <a href="{{ url_for('api.blockcount', network='btc') }}">
         {{ url_for('api.blockcount', network='btc') }}</a>
     </p>
+
+    <h2>Address</h2>
+    <h3>Transactions</h3>
+    <p>Get list of transactions for specified address.</p>
+    <p>/transactions/&lt;address&gt;</p>
+    <p>Example:
+        <a href="{{ url_for('api.transactions', network='btc', address='bc1qxfrgfhs49d7dtcfzlhp7f7cwsp8zpp60hywp0f') }}">
+        {{ url_for('api.transactions', network='btc', address='bc1qxfrgfhs49d7dtcfzlhp7f7cwsp8zpp60hywp0f') }}</a>
+    </p>
+    <p>As with the block request you can specify the 'limit' parameter. For paging the 'after_txid' parameter
+    can be used.</p>
+    <p>Example:
+        <a href="
+            {{ url_for('api.transactions', network='btc', address='bc1qxfrgfhs49d7dtcfzlhp7f7cwsp8zpp60hywp0f',
+                       limit=5, after_txid='333d66019c73c9ca015cb25d81f95ff26d320432c23b94edccb90a7b08c84063') }}">
+            {{ url_for('api.transactions', network='btc', address='bc1qxfrgfhs49d7dtcfzlhp7f7cwsp8zpp60hywp0f',
+                       limit=5, after_txid='333d66019c73c9ca015cb25d81f95ff26d320432c23b94edccb90a7b08c84063') }}
+        </a>
+    </p>
+    <h3>Unspent Outputs</h3>
+    <p>Get list of UTXO's for specified address.</p>
+    <p>/utxos/&lt;address&gt;</p>
+    <p>Example:
+        <a href="{{ url_for('api.utxos', network='btc', address='1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1') }}">
+        {{ url_for('api.utxos', network='btc', address='1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1') }}</a>
+    </p>
+    <p>The 'limit' and 'after_txid' parameter can be used to browse through the UTXO's.</p>
+    <p>Example:
+        <a href="{{ url_for('api.utxos', network='btc', address='1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1',
+                after_txid='1ed74cf9ec10bb9eb881dfcbc97318baadff371e25f227587b8d87466f260cad', limit=2) }}">
+        {{ url_for('api.utxos', network='btc', address='1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1',
+                after_txid='1ed74cf9ec10bb9eb881dfcbc97318baadff371e25f227587b8d87466f260cad', limit=2) }}</a>
+    </p>
+
+    <h3>Balance</h3>
+    <p>Get sum of unspent outputs for specified address.</p>
+    <p>/address_balance/&lt;address&gt;</p>
+    <p>Example:
+        <a href="{{ url_for('api.address_balance', network='btc', address='1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1') }}">
+        {{ url_for('api.address_balance', network='btc', address='1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1') }}</a>
+    </p>
+
+    <h2>Transaction</h2>
+
+    <h3>Specific Transaction</h3>
+    <p>Get specific transaction information with all inputs and outputs.</p>
+    <p>Example:
+        <a href="{{ url_for('api.transaction', network='btc',
+        txid='5fd3d8275afb5b5cc202ae8480daefa4fe16d0cf480ce78545d6dc06c6fb101a') }}">
+            {{ url_for('api.transaction', network='btc',
+            txid='5fd3d8275afb5b5cc202ae8480daefa4fe16d0cf480ce78545d6dc06c6fb101a') }}
+        </a>
+    </p>
+    <p>If you just need the raw transaction use the 'raw' parameter.</p>
+    <p>Example:
+        <a href="{{ url_for('api.transaction', network='btc', raw=True,
+        txid='5fd3d8275afb5b5cc202ae8480daefa4fe16d0cf480ce78545d6dc06c6fb101a') }}">
+            {{ url_for('api.transaction', network='btc', raw=True,
+            txid='5fd3d8275afb5b5cc202ae8480daefa4fe16d0cf480ce78545d6dc06c6fb101a') }}
+        </a>
+    </p>
+
+    <h3>Estimated Transaction Fee</h3>
+    <p>Get the estimated fee you need to pay to get a transaction included within a certain amount of blocks.</p>
+    <p>Example:
+        <a href="{{ url_for('api.fees', network='btc', block=5) }}">
+            {{ url_for('api.fees', network='btc', block=5) }}
+        </a>
+    </p>
+    <p>The estimated fee in Satoshi per kilobyte will be used. </p>
+    <p>If the 'blocks' parameter is omited a default of 3 blocks will be used.</p>
+
 
 {% endblock %}
