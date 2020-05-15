@@ -8,7 +8,7 @@
 #
 
 from bitcoinlib.encoding import *
-from bitcoinlib.keys import Address, HDKey
+from bitcoinlib.keys import Address
 from bitcoinlib.services.services import Service, ServiceError
 
 
@@ -25,7 +25,7 @@ class SmurferService(Service):
     def __init__(self, network_code, *args, **kwargs):
         if network_code in network_code_translation:
             network = network_code_translation[network_code]
-            Service.__init__(self, network=network, *args, **kwargs)
+            Service.__init__(self, network=network, timeout=5, *args, **kwargs)
         else:
             raise ServiceError("Error opening network with specified code")
 

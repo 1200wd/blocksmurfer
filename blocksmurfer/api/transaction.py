@@ -22,6 +22,15 @@ def transaction(network, txid):
     return jsonify(tx_dict)
 
 
+@bp.route('/<string:network>/isspent/<string:txid>/<int:output_n>')
+def isspent(network, txid, output_n):
+    srv = SmurferService(network)
+    data = {
+        'spent': srv.isspent(txid, output_n)
+    }
+    return jsonify(data)
+
+
 @bp.route('/<string:network>/fees/<int:blocks>')
 @bp.route('/<string:network>/fees')
 def fees(network, blocks=3):

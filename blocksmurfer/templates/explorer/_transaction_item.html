@@ -58,7 +58,7 @@
                 {% else %}
                     Spent
                 {% endif %}
-            {% elif out.address %}
+            {% elif out.address and out.spent == False %}
                 Unspent
             {% endif %}
         </td>

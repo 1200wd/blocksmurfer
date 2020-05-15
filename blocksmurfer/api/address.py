@@ -33,6 +33,7 @@ def utxos(network, address):
     txs_dict = marshal(txs, utxo_fields)
     return jsonify(txs_dict)
 
+
 @bp.route('/<string:network>/address_balance/<string:address>')
 def address_balance(network, address):
     srv = SmurferService(network)
