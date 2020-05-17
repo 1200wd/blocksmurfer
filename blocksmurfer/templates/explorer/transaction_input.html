@@ -4,7 +4,7 @@
     <h2>{{ _('Details') }}</h2>
     <table class="pure-table" style="width: 800px; font-size: 80%;">
         <tr>
-            <td width="110px">TXID</td>
+            <td style="width: 110px;">TXID</td>
             <td>
                 <a href="{{ url_for('main.transaction', network=network, txid=transaction.hash) }}">
                     {{ transaction.hash }}

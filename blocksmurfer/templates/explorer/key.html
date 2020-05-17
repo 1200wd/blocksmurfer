@@ -45,6 +45,7 @@
                 </a>
             </td>
         </tr>
+        {%  if key.compressed %}
         <tr>
             <td>Address (bech32)</td>
             <td>
@@ -53,6 +54,7 @@
                 </a>
             </td>
         </tr>
+        {% endif %}
         <tr>
             <td style="word-break: break-all;">Public Point (x, y)</td>
             <td>{{ key.public_point()[0] }}, {{ key.public_point()[1] }}</td>
