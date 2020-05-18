@@ -164,7 +164,7 @@ def block(network, blockid):
     srv = SmurferService(network)
     if blockid == 'last':
         blockid = srv.blockcount()
-    block = srv.getblock(blockid, parse_transactions=True, limit=limit)
+    block = srv.getblock(blockid, parse_transactions=True, limit=limit, page=page)
     if not block:
         flash(_("Block not found"), category='error')
         return redirect(url_for('main.index'))

@@ -8,6 +8,10 @@
             <td style="word-break: break-all;">{{ key.wif() }}</td>
         </tr>
         <tr>
+            <td>Public Key (hex)</td>
+            <td style="word-break: break-all;">{{ key.public_hex }}</td>
+        </tr>
+        <tr>
             <td>Network</td>
             <td>{{ key.network.name }}</td>
         </tr>
@@ -15,14 +19,10 @@
             <td>Compressed?</td>
             <td>{{ key.compressed }}</td>
         </tr>
-        <tr>
-            <td>Public Key (hex)</td>
-            <td>{{ key.public_hex }}</td>
-        </tr>
         {% if key.secret %}
         <tr>
             <td>Private Key (hex)</td>
-            <td>{{ key.private_hex }}</td>
+            <td style="word-break: break-all;">{{ key.private_hex }}</td>
         </tr>
         <tr>
             <td>Private Key (long)</td>
@@ -37,6 +37,10 @@
             <td style="word-break: break-all;">{{ key.wif_key() }}</td>
         </tr>
         {% endif %}
+        <tr>
+            <td>Hash 160</td>
+            <td>{{  key.hash160.hex() }}</td>
+        </tr>
         <tr>
             <td>Address (base58)</td>
             <td>
