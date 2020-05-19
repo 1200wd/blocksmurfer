@@ -100,8 +100,8 @@
     <h3>Estimated Transaction Fee</h3>
     <p>Get the estimated fee you need to pay to get a transaction included within a certain amount of blocks.</p>
     <p>Example:
-        <a href="{{ url_for('api.fees', network='btc', block=5) }}">
-            {{ url_for('api.fees', network='btc', block=5) }}
+        <a href="{{ url_for('api.fees', network='btc', blocks=5) }}">
+            {{ url_for('api.fees', network='btc', blocks=5) }}
         </a>
     </p>
     <p>The estimated fee in Satoshi per kilobyte will be used. </p>
