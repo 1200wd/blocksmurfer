@@ -59,7 +59,7 @@
             <td>Public {% if input.keys|length > 1 %}Keys{% else %} Key{% endif %}</td>
             <td style="word-break: break-all;">
                 {% for key in input.keys %}
-                    <a href="{{ url_for('main.key', network=network, key=key) }}">{{ key }}</a>
+                    <p><a href="{{ url_for('main.key', network=network, key=key) }}">{{ key }}</a></p>
                 {% endfor %}
             </td>
         </tr>
@@ -122,12 +122,16 @@
             <td style="word-break: break-all;">{{ unlocking_script_op }}</td>
         </tr>
         {% endif %}
+        {% if input.witness_type == 'segwit' %}
         {% for witness in input.witnesses %}
+        {% if witness.hex() != '00' %}
         <tr>
             <td>Witness</td>
             <td style="word-break: break-all;">{{ witness.hex() }}</td>
         </tr>
+        {% endif %}
         {% endfor %}
+        {% endif %}
         {% for sig in unlocking_script_dict['signatures'] %}
         <tr>
             <td>Signature</td>
