@@ -1,6 +1,6 @@
 import unittest
 from blocksmurfer import create_app
-from tests.test_custom import CustomAssertions
+from test_custom import CustomAssertions
 
 
 class TestSite(unittest.TestCase):
