@@ -1,8 +1,14 @@
-FROM python:3.7-alphine
+FROM python:3.8
 
-RUN adduser -D blocksmurfer
-
+RUN useradd -ms /bin/bash blocksmurfer
 WORKDIR /home/blocksmurfer
+
+RUN apt-get update && apt-get install -y \
+  build-essential \
+  python-dev \
+  python3-dev \
+  libgmp3-dev \
+  libssl-dev
 
 COPY requirements.txt requirements.txt
 RUN python -m venv venv
