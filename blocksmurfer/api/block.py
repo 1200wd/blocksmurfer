@@ -11,6 +11,8 @@ def block(network, blockid):
     parse_transactions = request.args.get('parse_transactions', False, type=str)
     limit = request.args.get('limit', 10, type=int)
     page = request.args.get('page', 1, type=int)
+    if not blockid.isdigit() and not (isinstance(blockid, str) and len(blockid) == 64):
+        return resp_error(501, message="Invalid Block ID provided")
     srv = SmurferService(network)
     if blockid == 'last':
         blockid = srv.blockcount()

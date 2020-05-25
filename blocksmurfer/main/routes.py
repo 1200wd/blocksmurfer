@@ -49,6 +49,9 @@ def transaction(network, txid):
 
 @bp.route('/<network>/transaction/<txid>/input/<index_n>')
 def transaction_input(network, txid, index_n):
+    if not check_txid(txid) or not index_n.isdigit():
+        flash(_('Invalid transaction ID or input number'), category='error')
+        return redirect(url_for('main.index'))
     srv = SmurferService(network)
     t = srv.gettransaction(txid)
     if not t:
@@ -87,6 +90,9 @@ def transaction_input(network, txid, index_n):
 
 @bp.route('/<network>/transaction/<txid>/output/<output_n>')
 def transaction_output(network, txid, output_n):
+    if not check_txid(txid) or not output_n.isdigit():
+        flash(_('Invalid transaction ID or output number'), category='error')
+        return redirect(url_for('main.index'))
     srv = SmurferService(network)
     t = srv.gettransaction(txid)
     if not t:
@@ -117,7 +123,11 @@ def address(network, address):
     after_txid = request.args.get('after_txid', '', type=str)
     limit = request.args.get('limit', 5, type=int)
 
-    address_obj = Address.import_address(address)
+    try:
+        address_obj = Address.import_address(address)
+    except:
+        flash(_('Invalid address'), category='error')
+        return redirect(url_for('main.index'))
 
     txs = srv.gettransactions(address, after_txid=after_txid, limit=limit)
     address_info = srv.getcacheaddressinfo(address)
@@ -164,6 +174,9 @@ def block(network, blockid):
     srv = SmurferService(network)
     if blockid == 'last':
         blockid = srv.blockcount()
+    if not blockid.isdigit() and not (isinstance(blockid, str) and len(blockid) == 64):
+        flash(_("Invalid Block id"), category='error')
+        return redirect(url_for('main.index'))
     block = srv.getblock(blockid, parse_transactions=True, limit=limit, page=page)
     if not block:
         flash(_("Block not found"), category='error')

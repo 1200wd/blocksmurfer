@@ -24,6 +24,8 @@ def transaction(network, txid):
 
 @bp.route('/<string:network>/isspent/<string:txid>/<int:output_n>')
 def isspent(network, txid, output_n):
+    if not check_txid(txid):
+        return resp_error(501, message="Invalid txid provided")
     srv = SmurferService(network)
     data = {
         'spent': srv.isspent(txid, output_n)
