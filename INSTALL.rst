@@ -24,14 +24,26 @@ Download Blocksmurfer and install requirements.
     $ cd blocksmurfer
     $ pip install -r requirements.txt
 
-Now you can test your install and run flask.
+Now you can test your install and run flask directly
 
 .. code-block:: bash
 
     $ flask run
+
+or with gunicorn
+
+.. code-block:: bash
+
+    $ ./boot.sh
 
 Blocksmurfer should run now on http://localhost:5000
 
 Please note:
 * Remove Blocksmurfer from Bitcoinlib's provider definitions in providers.json to avoid recursive loops.
 
+
+Apache
+------
+
+Check the Apache config file example in blocksmurfer/examples/apache-example.conf
+to see how to configure Blocksmurfer with Apache.
