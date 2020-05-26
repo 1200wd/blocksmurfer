@@ -19,14 +19,16 @@
                         {{ transaction.block_height }}
                     </a>
                 {% else %}
-                    {{ _('Unassigned') }}
+                    {{ _('mempool') }}
                 {% endif %}
             </td>
         </tr>
+        {% if transaction.date %}
         <tr>
             <td>Date</td>
             <td>{{ transaction.date.replace(microsecond=0) }}</td>
         </tr>
+        {% endif %}
         <tr>
             <td>Status</td>
             <td>{{ transaction.status }}</td>
@@ -54,8 +56,12 @@
             <td>{{ transaction.size }}{% if transaction.vsize %} / {{ transaction.vsize }}{% endif %}</td>
         </tr>
         <tr>
-            <td>Fee sat.</td>
-            <td>{{ transaction.fee }}</td>
+            <td>Fee</td>
+            <td>
+                {{ transaction.fee }} satoshi{% if transaction.size and transaction.fee %},
+                    {{ (transaction.fee / transaction.size)|int }} sat/B
+                {% endif %}
+            </td>
         </tr>
         <tr>
             <td>Version</td>

@@ -1,6 +1,7 @@
 import unittest
 from blocksmurfer import create_app
 from test_custom import CustomAssertions
+from blocksmurfer.explorer.service import SmurferService
 
 
 class TestSite(unittest.TestCase):
@@ -102,6 +103,16 @@ class TestSite(unittest.TestCase):
                       b'b4c789e1ec07185a369d4a40fd71fd9116761fcac31fecadd0010000000000000000266a24b9e11b6dfae908d0'
                       b'8429e68cf06c601a329a3bfae282bcb4fd0379759738971ea341b1050000000000', response.data)
         self.assertEqual(response.status_code, 200)
+
+    def test_explorer_transaction_unconfirmed(self):
+        srv = SmurferService()
+        mempool = srv.mempool()
+        if not isinstance(mempool, list):
+            pass
+        else:
+            response = self.app.get('/btc/transaction/%s' % mempool[0])
+            self.assertEqual(response.status_code, 200)
+            self.assertIn(b'unconfirmed', response.data)
 
     def test_explorer_transaction_input(self):
         response = self.app.get('btc/transaction/f59f7d4f1a0df81ad48e2dc4dd6320b15744ed38e16ab9a7f16507eca0c6a6de/'
