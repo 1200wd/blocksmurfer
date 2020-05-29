@@ -1,6 +1,6 @@
-from blocksmurfer import create_app
+from blocksmurfer import current_app
 
-app = create_app()
+app = current_app()
 
 if __name__ == "__main__":
     app.run()

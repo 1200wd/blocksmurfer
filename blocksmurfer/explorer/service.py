@@ -7,6 +7,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+from flask import abort
 from bitcoinlib.encoding import *
 from bitcoinlib.keys import Address
 from bitcoinlib.services.services import Service, ServiceError
@@ -27,7 +28,7 @@ class SmurferService(Service):
             network = network_code_translation[network_code]
             Service.__init__(self, network=network, timeout=5, *args, **kwargs)
         else:
-            raise ServiceError("Error opening network with specified code")
+            abort(422, "Error opening network with specified code")
 
 
 def check_txid(txid=None, error_on_empty=False):

@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    <h2>{{ code }}</h2>
+    <p>{{ description }}</p>
+
+    <p>
+    <a href="{{ url_for('main.index') }}">Go home and smurf again...</a>
+
+    <img src="{{ url_for('static', filename='images/weepy-smurf.jpg') }}">
+    </p>
+
+{% endblock %}

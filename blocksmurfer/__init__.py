@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_babel import Babel
-from blocksmurfer.main import bp
+from blocksmurfer.main import errors
 from config import Config
 from flask_qrcode import QRcode
 
@@ -8,9 +8,10 @@ babel = Babel()
 qrcode = QRcode()
 
 
-def create_app(config_class=Config):
+def current_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
+    app.register_blueprint(errors.blueprint)
 
     from blocksmurfer.main import bp as main_bp
     app.register_blueprint(main_bp)
