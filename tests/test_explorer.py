@@ -1,13 +1,13 @@
 import unittest
-from blocksmurfer import create_app
-from test_custom import CustomAssertions
+from blocksmurfer import current_app
+from tests.test_custom import CustomAssertions
 from blocksmurfer.explorer.service import SmurferService
 
 
 class TestSite(unittest.TestCase):
 
     def setUp(self):
-        self.app = create_app().test_client()
+        self.app = current_app().test_client()
 
     def test_main_page(self):
         response = self.app.get('/', follow_redirects=True)
@@ -193,7 +193,7 @@ class TestSite(unittest.TestCase):
 class TestAPI(unittest.TestCase, CustomAssertions):
 
     def setUp(self):
-        self.app = create_app().test_client()
+        self.app = current_app().test_client()
 
     def test_api_block(self):
         response = self.app.get('/api/v1/btc/block/120000')

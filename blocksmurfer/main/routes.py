@@ -95,6 +95,9 @@ def transaction_output(network, txid, output_n):
         return redirect(url_for('main.index'))
     srv = SmurferService(network)
     t = srv.gettransaction(txid)
+    for n, o in enumerate(t.outputs[:5]):
+        if o.spent is None:
+            o.spent = srv.isspent(t.hash, n)
     if not t:
         flash(_('Transaction %s not found' % txid), category='error')
         return redirect(url_for('main.index'))

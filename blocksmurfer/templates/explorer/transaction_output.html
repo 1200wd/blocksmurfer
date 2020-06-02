@@ -37,7 +37,19 @@
         </tr>
         <tr>
             <td>Spent</td>
-            <td>{% if output.spent %}Spent{% elif output.address %}Unspent{% endif %}</td>
+            <td>
+            {% if output.spent %}
+                {% if output.spending_txid %}
+                    <a href="{{ url_for('main.transaction', network=network, txid=output.spending_txid) }}">
+                        <i class="fa fa-arrow-right"></i>
+                    </a>
+                {% else %}
+                    Spent
+                {% endif %}
+            {% elif output.address and output.spent == False %}
+                Unspent
+            {% endif %}
+            </td>
         </tr>
     </table>
     <p></p>

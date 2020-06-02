@@ -950,3 +950,7 @@ td, th {
 .aside-error {
     background-color: #ffe2e2;
 }
+
+.aside-notice {
+    background-color: #e2e7ff;
+}
