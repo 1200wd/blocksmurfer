@@ -11,11 +11,14 @@ from bitcoinlib.transactions import script_to_string, script_deserialize
 @bp.route('/', methods=['GET', 'POST'])
 @bp.route('/index', methods=['GET', 'POST'])
 def index():
+    network = 'btc'
     form = SearchForm()
     if form.validate_on_submit():
         return search_query(form.search.data)
+    srv = SmurferService(network)
+    blockcount = srv.blockcount()
     return render_template('index.html', title=_('Explorer'), subtitle=_('Smurfing the blockchain since 2020'),
-                           form=form)
+                           form=form, blockcount=blockcount, network=network)
 
 
 @bp.route('/search/<search_string>')
