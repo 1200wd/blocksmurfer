@@ -104,13 +104,26 @@
                     {{ inp.index_n }}
                 </a>
             </td>
-            <td><a href="{{ url_for('main.address', network=network, address=inp.address) }}">{{ inp.address }}</a></td>
+            <td>
+                {% if inp.address %}
+                    <a href="{{ url_for('main.address', network=network, address=inp.address) }}">{{ inp.address }}</a>
+                {% elif transaction.coinbase %}
+                    {{ _('Coinbase, newly generated coins') }}
+                {% else %}
+                    <a href="{{ url_for('main.transaction_output', network=network, txid=inp.prev_hash.hex(),
+                                    output_n=inp.output_n_int) }}">
+                        {{ inp.prev_hash.hex() }}:{{ inp.output_n_int }}
+                    </a>
+                {% endif %}
+            </td>
             <td style="text-align:right">{{ "{:,.8f}".format(inp.value / 100000000) }}</td>
             <td>{{ inp.script_type }}</td>
             <td>
-                <a href="{{ url_for('main.transaction', network=network, txid=inp.prev_hash.hex()) }}">
-                    <i class="fa fa-arrow-left"></i>
-                </a>
+                {% if not transaction.coinbase %}
+                    <a href="{{ url_for('main.transaction', network=network, txid=inp.prev_hash.hex()) }}">
+                        <i class="fa fa-arrow-left"></i>
+                    </a>
+                {% endif %}
             </td>
         </tr>
         {% endfor %}
