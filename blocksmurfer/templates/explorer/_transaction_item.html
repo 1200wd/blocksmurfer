@@ -2,7 +2,7 @@
     <thead>
     <tr>
         <td style="border-left: 0;">
-            <a href="{{ url_for('main.transaction', network=network, txid=t.hash) }}">{{ t.hash }}</a>
+            <a href="{{ url_for('main.transaction', network=network, txid=t.txid) }}">{{ t.txid }}</a>
         </td>
         <td style="border-left: 0;">
             {% if t.date %}{{ t.date.replace(microsecond=0) }}{% endif %}
@@ -32,7 +32,7 @@
         <td>in</td>
         <td>
             ...truncated, look at full
-            <a href="{{ url_for('main.transaction', network=network, txid=t.hash) }}">transaction</a>
+            <a href="{{ url_for('main.transaction', network=network, txid=t.txid) }}">transaction</a>
             for all {{ t.inputs|length }} inputs
         </td>
         <td style="text-align:right">{{ "{:,.8f}".format(t.inputs[5:]|sum(attribute='value') / 100000000) }}</td>
@@ -69,7 +69,7 @@
         <td>out</td>
         <td>
             ...truncated, look at full
-            <a href="{{ url_for('main.transaction', network=network, txid=t.hash) }}">transaction</a>
+            <a href="{{ url_for('main.transaction', network=network, txid=t.txid) }}">transaction</a>
             for all {{ t.outputs|length }} outputs
         </td>
         <td style="text-align:right">{{ "{:,.8f}".format(t.outputs[5:]|sum(attribute='value') / 100000000) }}</td>

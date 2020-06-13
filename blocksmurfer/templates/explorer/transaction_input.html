@@ -6,8 +6,8 @@
         <tr>
             <td style="width: 110px;">TXID</td>
             <td>
-                <a href="{{ url_for('main.transaction', network=network, txid=transaction.hash) }}">
-                    {{ transaction.hash }}
+                <a href="{{ url_for('main.transaction', network=network, txid=transaction.txid) }}">
+                    {{ transaction.txid }}
                 </a>
             </td>
         </tr>

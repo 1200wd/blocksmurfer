@@ -5,7 +5,7 @@
     <table class="pure-table" style="width: 800px;">
         <tr>
             <td>ID</td>
-            <td>{{ transaction.hash }}</td>
+            <td>{{ transaction.txid }}</td>
         </tr>
         <tr>
             <td>Network</td>
@@ -83,8 +83,8 @@
         <tr>
             <td>API</td>
             <td>
-                <a href="{{ url_for('api.transaction', network=network, txid=transaction.hash) }}">tx</a>,
-                <a href="{{ url_for('api.transaction', network=network, txid=transaction.hash, raw=True) }}">raw</a>
+                <a href="{{ url_for('api.transaction', network=network, txid=transaction.txid) }}">tx</a>,
+                <a href="{{ url_for('api.transaction', network=network, txid=transaction.txid, raw=True) }}">raw</a>
             </td>
         </tr>
     </table>
@@ -99,7 +99,7 @@
         <tbody>
         <tr>
             <td>
-                <a href="{{ url_for('main.transaction_input', network=network, txid=transaction.hash,
+                <a href="{{ url_for('main.transaction_input', network=network, txid=transaction.txid,
                                     index_n=inp.index_n) }}">
                     {{ inp.index_n }}
                 </a>
@@ -127,7 +127,7 @@
         {% for out in transaction.outputs %}
         <tr>
             <td>
-                <a href="{{ url_for('main.transaction_output', network=network, txid=transaction.hash,
+                <a href="{{ url_for('main.transaction_output', network=network, txid=transaction.txid,
                                     output_n=out.output_n) }}">
                     {{ out.output_n }}
                 </a>

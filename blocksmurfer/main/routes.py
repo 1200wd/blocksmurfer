@@ -100,7 +100,7 @@ def transaction_output(network, txid, output_n):
     t = srv.gettransaction(txid)
     for n, o in enumerate(t.outputs[:5]):
         if o.spent is None:
-            o.spent = srv.isspent(t.hash, n)
+            o.spent = srv.isspent(t.txid, n)
     if not t:
         flash(_('Transaction %s not found' % txid), category='error')
         return redirect(url_for('main.index'))
@@ -145,7 +145,7 @@ def address(network, address):
     prev_url = None
     next_url = None
     if not srv.complete and txs and len(txs) >= limit:
-        next_url = url_for('main.address', network=network, address=address, after_txid=txs[-1:][0].hash)
+        next_url = url_for('main.address', network=network, address=address, after_txid=txs[-1:][0].txid)
     if after_txid:
         prev_url = url_for('main.address', network=network, address=address)
 
