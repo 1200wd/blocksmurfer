@@ -46,8 +46,8 @@ def transaction(network, txid):
     if not t:
         flash(_('Transaction %s not found' % txid), category='error')
         return redirect(url_for('main.index'))
-    return render_template('explorer/transaction.html', title=_('Transaction'), subtitle=txid, transaction=t,
-                           network=network)
+    return render_template('explorer/transaction.html', title=_('Transaction'),
+                           subtitle=txid, transaction=t, network=network)
 
 
 @bp.route('/<network>/transaction/<txid>/input/<index_n>')
@@ -196,5 +196,5 @@ def block(network, blockid):
     if page > 1:
         prev_url = url_for('main.block', network=network, blockid=blockid, limit=limit, page=page-1)
 
-    return render_template('explorer/block.html', title=_('Block'), block=block, network=network, prev_url=prev_url,
-                           next_url=next_url)
+    return render_template('explorer/block.html', title=_('Block'), subtitle=blockid, block=block, network=network,
+                           prev_url=prev_url, next_url=next_url)

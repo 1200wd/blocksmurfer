@@ -7,7 +7,11 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="description" content="Smurf the Bitcoin Blockchain!">
         {% endblock meta %}
-        <title>{% if title %}{{ title }} - {% endif %} Blocksmurfer</title>
+        <title>
+            {% if title %}{{ title }}{% endif %}
+            {% if subtitle %}{{ subtitle }}{% endif %}
+            Blocksmurfer
+        </title>
         {% block styles %}
             <link rel="stylesheet" href="{{url_for('static', filename='pure-min.css')}}">
             <link rel="stylesheet" href="{{url_for('static', filename='side-menu.css')}}">
