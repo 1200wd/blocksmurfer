@@ -9,7 +9,7 @@
     </tr>
     <tr>
         <td>Hash</td>
-        <td>{{ block.hash }}</td>
+        <td>{{ block.blockhash.hex() }}</td>
     </tr>
     <tr>
         <td>Time</td>
@@ -17,27 +17,27 @@
     </tr>
     <tr>
         <td>Previous Block</td>
-        <td>{{ block.previous_block }}</td>
+        <td>{{ block.prev_block.hex() }}</td>
     </tr>
     <tr>
         <td>Bits</td>
-        <td>{{ block.bits }}</td>
+        <td>{{ block.bits_int }}</td>
     </tr>
     <tr>
         <td>Nonce</td>
-        <td>{{ block.nonce }}</td>
+        <td>{{ block.nonce_int }}</td>
     </tr>
     <tr>
         <td>Merkle Root</td>
-        <td>{{ block.merkle_root }}</td>
+        <td>{{ block.merkle_root.hex() }}</td>
     </tr>
     <tr>
         <td>Version</td>
-        <td>{{ block.version }}</td>
+        <td>{{ block.version_int }}</td>
     </tr>
     <tr>
         <td>Transaction count</td>
-        <td>{{ block.total_txs }}</td>
+        <td>{{ block.tx_count }}</td>
     </tr>
     <tr>
         <td>API</td>
@@ -49,10 +49,10 @@
     </tr>
     </table>
     <h2>{{ _('Transactions') }}</h2>
-    {% if not block.txs %}
+    {% if not block.transactions %}
     <p>{{ _('No transactions found') }}</p>
     {% endif %}
-    {% for t in block.txs %}
+    {% for t in block.transactions %}
         {% include 'explorer/_transaction_item.html' %}
         <p></p>
     {% endfor %}

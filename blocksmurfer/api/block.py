@@ -1,7 +1,7 @@
 from flask import jsonify, abort
 from flask_restful import marshal, request
 from blocksmurfer.api import bp
-from blocksmurfer.api.structures import transaction_fields
+from blocksmurfer.api.structures import transaction_fields_block, block_fields
 from blocksmurfer.explorer.service import *
 
 
@@ -21,8 +21,9 @@ def block(network, blockid):
         bk = srv.getblock(blockid)
     if not bk:
         abort(422, "Block with this ID not found on the network")
+    bk = marshal(bk, block_fields)
     if parse_transactions:
-        bk['txs'] = marshal(bk['txs'], transaction_fields)
+        bk['txs'] = marshal(bk['txs'], transaction_fields_block)
     return bk
 
 

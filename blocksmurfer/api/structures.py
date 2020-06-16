@@ -35,7 +35,7 @@ transaction_output_fields = {
 }
 
 transaction_fields = {
-    'txid': fields.String(attribute='hash'),
+    'txid': fields.String,
     'date': fields.DateTime(dt_format='iso8601'),
     'block_hash': fields.String,
     'block_height': fields.Integer,
@@ -57,6 +57,24 @@ transaction_fields = {
     'witness_type': fields.String,
 }
 
+transaction_fields_block = {
+    'txid': fields.String,
+    'coinbase': fields.Boolean,
+    'fee': fields.Integer,
+    'inputs': fields.List(fields.Nested(transaction_input_fields)),
+    'input_total': fields.Integer,
+    'outputs': fields.List(fields.Nested(transaction_output_fields)),
+    'output_total': fields.Integer,
+    'locktime': fields.Integer,
+    'raw_hex': fields.String(attribute=lambda obj: obj.raw_hex()),
+    'size': fields.Integer,
+    'status': fields.String,
+    'verified': fields.Boolean,
+    'version': fields.Integer(attribute='version_int'),
+    'vsize': fields.Integer,
+    'witness_type': fields.String,
+}
+
 utxo_fields = {
     'address': fields.String,
     'tx_hash': fields.String,
@@ -69,4 +87,18 @@ utxo_fields = {
     'value': fields.Integer,
     'script': fields.String,
     'date': fields.DateTime(dt_format='iso8601'),
+}
+
+block_fields = {
+    'bits': fields.Integer,
+    'depth': fields.Integer,
+    'hash': fields.String,
+    'height': fields.Integer,
+    'merkle_root': fields.String,
+    'nonce': fields.Integer,
+    'prev_block': fields.String,
+    'time': fields.Integer,
+    'total_txs': fields.Integer,
+    'txs': fields.List,
+    'version': fields.Integer,
 }

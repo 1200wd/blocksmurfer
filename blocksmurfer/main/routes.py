@@ -190,7 +190,7 @@ def block(network, blockid):
 
     prev_url = None
     next_url = None
-    txs = block['txs']
+    txs = block.transactions
     if not srv.complete and txs and len(txs) >= limit:
         next_url = url_for('main.block', network=network, blockid=blockid, limit=limit, page=page+1)
     if page > 1:
