@@ -2,6 +2,7 @@ from flask import jsonify, abort
 from flask_restful import marshal, request
 from blocksmurfer.api import bp
 # from blocksmurfer.api.errors import resp_error
+from blocksmurfer.main import MAX_TRANSACTIONS_REQUESTS
 from blocksmurfer.api.structures import transaction_fields, utxo_fields
 from blocksmurfer.explorer.service import *
 
@@ -12,8 +13,8 @@ def transactions(network, address):
     if after_txid and not check_txid(after_txid):
         abort(422, "Invalid after_txid provided")
     limit = request.args.get('limit', 10, type=int)
-    if limit > 10:
-        limit = 10
+    limit = MAX_TRANSACTIONS_REQUESTS if limit > MAX_TRANSACTIONS_REQUESTS else limit
+
     srv = SmurferService(network)
     if not check_address(address):
         abort(422, message="Invalid address")
@@ -28,8 +29,8 @@ def utxos(network, address):
     if after_txid and not check_txid(after_txid):
         abort(422, "Invalid after_txid provided")
     limit = request.args.get('limit', 10, type=int)
-    if limit > 10:
-        limit = 10
+    limit = MAX_TRANSACTIONS_REQUESTS if limit > MAX_TRANSACTIONS_REQUESTS else limit
+
     srv = SmurferService(network)
     if not check_address(address):
         abort(422, message="Invalid address")

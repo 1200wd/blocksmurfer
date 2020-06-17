@@ -1,6 +1,6 @@
 from flask import render_template, flash, redirect, url_for, request
 from flask_babel import _
-from blocksmurfer.main import bp
+from blocksmurfer.main import bp, MAX_TRANSACTIONS_REQUESTS
 from blocksmurfer.main.forms import SearchForm
 from blocksmurfer.explorer.search import search_query
 from blocksmurfer.explorer.service import *
@@ -128,6 +128,7 @@ def address(network, address):
     srv = SmurferService(network)
     after_txid = request.args.get('after_txid', '', type=str)
     limit = request.args.get('limit', 5, type=int)
+    limit = MAX_TRANSACTIONS_REQUESTS if limit > MAX_TRANSACTIONS_REQUESTS else limit
 
     try:
         address_obj = Address.import_address(address)
@@ -177,6 +178,7 @@ def key(network, key):
 def block(network, blockid):
     page = request.args.get('page', 1, type=int)
     limit = request.args.get('limit', 5, type=int)
+    limit = MAX_TRANSACTIONS_REQUESTS if limit > MAX_TRANSACTIONS_REQUESTS else limit
     srv = SmurferService(network)
     if blockid == 'last':
         blockid = srv.blockcount()
