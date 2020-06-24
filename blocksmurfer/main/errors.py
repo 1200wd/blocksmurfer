@@ -17,7 +17,9 @@ def handle_errors(e):
                 'code': e.code,
             }
             _logger.warning("Error %d: %s (%s). Request URL: %s" % (e.code, e.name, e.description, request.path))
-            return jsonify(payload)
+            resp = jsonify(payload)
+            resp.status_code = e.code
+            return resp
         name = e.name
         description = e.description
         code = e.code
@@ -25,4 +27,4 @@ def handle_errors(e):
         name = e
         description = ''
         code = ''
-    return render_template("error.html", title=_('Error: %s' % name), description=description, code=code)
+    return render_template("error.html", title=('Error: %s' % name), description=description, code=code), code

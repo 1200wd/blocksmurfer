@@ -1,3 +1,4 @@
+import datetime
 from flask import Flask
 from flask_babel import Babel
 from blocksmurfer.main import errors
@@ -14,6 +15,10 @@ def current_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
     app.register_blueprint(errors.blueprint)
+
+    @app.template_filter('ctime')
+    def timectime(s):
+        return datetime.datetime.fromtimestamp(s)
 
     # Limit request, set to slow now because we're still in development phase
     limiter = Limiter(

@@ -92,12 +92,12 @@ utxo_fields = {
 block_fields = {
     'bits': fields.Integer,
     'depth': fields.Integer(attribute='confirmations'),
-    'blockhash': fields.String,
+    'block_hash': fields.String,
     'height': fields.Integer,
     'merkle_root': fields.String,
     'nonce': fields.Integer,
     'prev_block': fields.String,
     'time': fields.Integer(attribute='timestamp'),
-    'total_txs': fields.Integer(attribute='tx_count'),
+    'tx_count': fields.Integer,
     'version': fields.Integer,
 }

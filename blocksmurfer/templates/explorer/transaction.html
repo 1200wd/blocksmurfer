@@ -110,7 +110,7 @@
                 {% elif transaction.coinbase %}
                     {{ _('Coinbase, newly generated coins') }}
                 {% else %}
-                    <a href="{{ url_for('main.transaction_output', network=network, txid=inp.prev_hash.hex(),
+                    <a href="{{ url_for('main.transaction_input', network=network, txid=inp.prev_hash.hex(),
                                     output_n=inp.output_n_int) }}">
                         {{ inp.prev_hash.hex() }}:{{ inp.output_n_int }}
                     </a>

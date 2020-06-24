@@ -4,28 +4,36 @@
     <h2>{{ _('Details') }}</h2>
     <table class="pure-table" style="width: 550px;">
     <tr>
-        <td>Block</td>
+        <td>Hash</td>
+        <td>{{ block.block_hash.hex() }}</td>
+    </tr>
+    <tr>
+        <td>Height</td>
         <td>{{ block.height }}</td>
     </tr>
     <tr>
-        <td>Hash</td>
-        <td>{{ block.blockhash.hex() }}</td>
+        <td>Network</td>
+        <td>{{ block.network.name }}</td>
     </tr>
     <tr>
         <td>Time</td>
-        <td>{{ block.time }}</td>
+        <td>{{ block.time | ctime }}</td>
     </tr>
     <tr>
         <td>Previous Block</td>
-        <td>{{ block.prev_block.hex() }}</td>
+        <td>
+            <a href ="{{ url_for('main.block', network=network, blockid=block.prev_block.hex()) }}">
+                {{ block.prev_block.hex() }}
+            </a>
+        </td>
     </tr>
     <tr>
         <td>Bits</td>
-        <td>{{ block.bits_int }}</td>
+        <td>{{ block.bits_int }} ({{ block.bits.hex() }})</td>
     </tr>
     <tr>
         <td>Nonce</td>
-        <td>{{ block.nonce_int }}</td>
+        <td>{{ block.nonce_int }} ({{  block.nonce.hex() }})</td>
     </tr>
     <tr>
         <td>Merkle Root</td>
@@ -33,7 +41,16 @@
     </tr>
     <tr>
         <td>Version</td>
-        <td>{{ block.version_int }}</td>
+        <td>0b{{ block.version_bin }} (0x{{ block.version.hex() }})</td>
+    </tr>
+    <tr>
+        <td>Version Protocols</td>
+        <td>
+            {% for bip in block.version_bips() %}
+                {{ bip }}
+                {{ "," if not loop.last }}
+            {% endfor %}
+        </td>
     </tr>
     <tr>
         <td>Transaction count</td>
