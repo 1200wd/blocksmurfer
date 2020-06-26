@@ -11,11 +11,13 @@ def search_query(s):
         return redirect(url_for('main.transaction', network='btc', txid=s))
     try:
         key_dict = get_key_format(s)
-        if not key_dict or 'networks' not in key_dict or 'format' not in key_dict or not key_dict['networks']:
+        if not key_dict or 'networks' not in key_dict or 'format' not in key_dict:
             flash(_('Invalid search query, not a valid address or key'), category='error')
             return redirect(url_for('main.index'))
         network_name = key_dict['networks']
-        if isinstance(network_name, list):
+        if not network_name:
+            network_name = 'bitcoin'
+        elif isinstance(network_name, list):
             network_name = 'bitcoin' if 'bitcoin' in network_name else network_name[0]
         network = [x for x, y in network_code_translation.items() if y == network_name][0]
         if key_dict['format'] == 'address':

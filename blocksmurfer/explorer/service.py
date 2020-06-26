@@ -23,10 +23,10 @@ network_code_translation = {
 
 class SmurferService(Service):
 
-    def __init__(self, network_code='btc', *args, **kwargs):
+    def __init__(self, network_code='btc', timeout=5, *args, **kwargs):
         if network_code in network_code_translation:
             network = network_code_translation[network_code]
-            Service.__init__(self, network=network, timeout=5, *args, **kwargs)
+            Service.__init__(self, network=network, timeout=timeout, *args, **kwargs)
         else:
             abort(422, "Error opening network with specified code")
 

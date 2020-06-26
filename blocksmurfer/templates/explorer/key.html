@@ -3,10 +3,12 @@
 {% block app_content %}
     <h2>{{ _('Details') }}</h2>
     <table class="pure-table" style="width: 800px;">
-        <tr>
-            <td>Extended WIF</td>
-            <td style="word-break: break-all;">{{ key.wif() }}</td>
-        </tr>
+        {% if key.wif() and key.compressed %}
+            <tr>
+                <td>Extended WIF</td>
+                <td style="word-break: break-all;">{{ key.wif() }}</td>
+            </tr>
+        {% endif %}
         <tr>
             <td>Public Key (hex)</td>
             <td style="word-break: break-all;">{{ key.public_hex }}</td>

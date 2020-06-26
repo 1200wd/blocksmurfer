@@ -1,5 +1,5 @@
 import datetime
-from flask import Flask
+from flask import Flask, send_from_directory, request
 from flask_babel import Babel
 from blocksmurfer.main import errors
 from config import Config
@@ -19,6 +19,11 @@ def current_app(config_class=Config):
     @app.template_filter('ctime')
     def timectime(s):
         return datetime.datetime.fromtimestamp(s)
+
+    @app.route('/robots.txt')
+    # @app.route('/sitemap.xml')
+    def static_from_root():
+        return send_from_directory(app.static_folder, request.path[1:])
 
     # Limit request, set to slow now because we're still in development phase
     limiter = Limiter(

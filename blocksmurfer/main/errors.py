@@ -10,19 +10,20 @@ _logger = logging.getLogger(__name__)
 @blueprint.app_errorhandler(Exception)
 def handle_errors(e):
     try:
+        _logger.error(str(e))
+        name = e.get('name')
+        description = e.get('description', str(e))
+        code = e.get('code')
         if '/api/' in request.path:
             payload = {
-                'error': "API request error: %s" % e.name,
-                'description': e.description,
-                'code': e.code,
+                'error': "API request error: %s" % name,
+                'description': description,
+                'code': code,
             }
             _logger.warning("Error %d: %s (%s). Request URL: %s" % (e.code, e.name, e.description, request.path))
             resp = jsonify(payload)
-            resp.status_code = e.code
-            return resp
-        name = e.name
-        description = e.description
-        code = e.code
+            resp.status_code = code
+            return resp, code
     except:
         name = e
         description = ''

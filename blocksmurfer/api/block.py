@@ -21,7 +21,7 @@ def block(network, blockid):
     if parse_transactions:
         bk = srv.getblock(blockid, parse_transactions=True, limit=limit, page=page)
     else:
-        bk = srv.getblock(blockid)
+        bk = srv.getblock(blockid, parse_transactions=False)
     if not bk:
         abort(422, "Block with this ID not found on the network")
     bdict = marshal(bk.as_dict(), block_fields)
