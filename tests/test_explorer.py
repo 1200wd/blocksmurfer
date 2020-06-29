@@ -55,9 +55,9 @@ class TestSite(unittest.TestCase):
 
     def test_explorer_address(self):
         response = self.app.get('/btc/address/1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1')
-        self.assertIn(b'50.01477486', response.data)
+        self.assertIn(b'b3407d4b4d1fca87fb930abe3fa6c2baed6e6fd8', response.data)
         self.assertIn(b'2013-09-11 22:05:17', response.data)
-        self.assertIn(b'btc/transaction/9b0fc92260312ce44e74ef369f5c66bbb85848f2eddd5a7a1cde251e54ccfdd5',
+        self.assertIn(b'/btc/transaction/5fd3d8275afb5b5cc202ae8480daefa4fe16d0cf480ce78545d6dc06c6fb101a',
                       response.data)
         self.assertEqual(response.status_code, 200)
 
@@ -96,12 +96,8 @@ class TestSite(unittest.TestCase):
     def test_explorer_transaction_coinbase(self):
         response = self.app.get('/btc/transaction/ce242be116c5caf016185f4f4e75628843ecb18faeb2935c9a9c848464f693a4')
         self.assertIn(b'2020-01-08 03:52:41', response.data)
-        self.assertIn(b'020000000001010000000000000000000000000000000000000000000000000000000000000000ffffffff4e03'
-                      b'fe5509040a52155e434e2f54545454545433333333fabe6d6deaccb8c04410ac109e44b1df7f8ff22cb137b78c'
-                      b'8a1876bf4b12326f2a3b0ff6020000004204cb9a84039e40a770b35d60ad2300ffffffff03b862244b00000000'
-                      b'17a914f870b7fbb0ce391d9ddc16ad98479d8cbbbd5c41870000000000000000266a24aa21a9ed6d23356a7beb'
-                      b'b4c789e1ec07185a369d4a40fd71fd9116761fcac31fecadd0010000000000000000266a24b9e11b6dfae908d0'
-                      b'8429e68cf06c601a329a3bfae282bcb4fd0379759738971ea341b1050000000000', response.data)
+        self.assertIn(b'611838', response.data)
+        self.assertIn(b'3QLeXx1J9Tp3TBnQyHrhVxne9KqkAS9JSR', response.data)
         self.assertEqual(response.status_code, 200)
 
     def test_explorer_transaction_unconfirmed(self):
@@ -305,24 +301,15 @@ class TestAPI(unittest.TestCase, CustomAssertions):
         response = self.app.get('/api/v1/btc/transactions/1KoAvaL3wfpcNvGCQYkqFJG9Ccqm52sZHa?limit=1')
         expected = {
             "height": 246976,
-            "coinbase": True, "date": "2013-07-17T07:00:49", "fee": 0,
+            "coinbase": True, "fee": 0,
             "inputs": [   # FIXME: Add "input_total": 0,
-                {"address": "", "compressed": True, "double_spend": False, "encoding": "base58", "index_n": 0,
-                 "locktime_cltv": 0, "locktime_csv": 0, "output_n": 4294967295,
-                 "prev_hash": "0000000000000000000000000000000000000000000000000000000000000000", "public_hash": "",
-                 "redeemscript": "", "script": "03c0c403042641e65108880028e9f25d000000", "script_code": "",
-                 "script_type": "coinbase", "sequence": 0, "signatures": "", "sigs_required": 1, "valid": None,
-                 "value": 0, "witness": "", "witness_type": "legacy"}], "locktime": 0, "network": "bitcoin",
-            "output_total": 2509821000, "outputs": [{"address": "1KoAvaL3wfpcNvGCQYkqFJG9Ccqm52sZHa", "output_n": 0,
-                                                     "public_hash": "ce2daea72b5b48fc85d9bba2263225cbe98985e0",
-                                                     "script": "76a914ce2daea72b5b48fc85d9bba2263225cbe98985e088ac",
-                                                     "script_type": "p2pkh", "spent": None, "value": 2509821000}],  # FIXME: Check for spent=True
-            "raw_hex": "01000000010000000000000000000000000000000000000000000000000000000000000000ffffffff1303c0c"
-                       "403042641e65108880028e9f25d000000000000000148d49895000000001976a914ce2daea72b5b48fc85d9bb"
-                       "a2263225cbe98985e088ac00000000",
+                {"address": "", "encoding": "base58", "index_n": 0, "script_type": "coinbase",
+                 "value": 0, "witness_type": "legacy"}],
+            "locktime": 0, "network": "bitcoin", "output_total": 2509821000,
+            "outputs": [{"address": "1KoAvaL3wfpcNvGCQYkqFJG9Ccqm52sZHa", "output_n": 0, "script_type": "p2pkh",
+                         "value": 2509821000}],  # FIXME: Check for spent=True
             "size": 104, "status": "confirmed",
-            "txid": "fc27565334c7faa7ceeb457dfb5c8ba459e42c1cd8551a99af41f336fc4fd64d", "verified": False,
-            "version": 1, "vsize": 104, "witness_type": "legacy"}
+            "txid": "fc27565334c7faa7ceeb457dfb5c8ba459e42c1cd8551a99af41f336fc4fd64d", "witness_type": "legacy"}
         self.assertDictEqualExt(expected, response.json[0])
 
     def test_api_transactions_after_txid(self):
@@ -354,23 +341,23 @@ class TestAPI(unittest.TestCase, CustomAssertions):
                     #  "date": "2009-01-09T02:55:44", "input_n": 0, "output_n": 0,
                     #  "tx_hash": "9b0fc92260312ce44e74ef369f5c66bbb85848f2eddd5a7a1cde251e54ccfdd5",
                     #  "value": 5000000000},
-                    {"address": "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1", "output_n": 1,
+                    {"address": "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1",
                      "tx_hash": "5fd3d8275afb5b5cc202ae8480daefa4fe16d0cf480ce78545d6dc06c6fb101a", "value": 1},
-                    {"address": "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1", "output_n": 1,
+                    {"address": "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1",
                      "tx_hash": "b9a84cffd3766bb642a697065b477eed032e36c377db80faac79b18e61b43b0d", "value": 1},
-                    {"address": "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1", "output_n": 0,
+                    {"address": "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1",
                      "tx_hash": "0986d70aaa03213135998cf1a9b8a33012c033c6607584e84b8ae33d49fadce3", "value": 1},
-                    {"address": "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1", "output_n": 7,
+                    {"address": "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1",
                      "tx_hash": "d658ab87cc053b8dbcfd4aa2717fd23cc3edfe90ec75351fadd6a0f7993b461d", "value": 911},
-                    {"address": "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1", "output_n": 0,
+                    {"address": "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1",
                      "tx_hash": "4be9e8f3a35a7c597ae9641b2767242aca0d0abe20bf419b9168ea373b88fe48", "value": 1},
-                    {"address": "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1", "output_n": 0,
+                    {"address": "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1",
                      "tx_hash": "8f5351233a89bdce6dcf73fbfe295204f8ea67775be0ecd294d30e9932667f76", "value": 10000},
-                    {"address": "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1", "output_n": 0,
+                    {"address": "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1",
                      "tx_hash": "201d27f660a82b7bee7f00e93dfb7b8cb722ac4ce6e22af502f6047fc7da0a32", "value": 10000},
-                    {"address": "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1", "output_n": 2,
+                    {"address": "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1",
                      "tx_hash": "7cd30ddf7ec214c80b6accc22f33ddafd42d04d5f583f4d5d0a35c29f8f296d9", "value": 5757},
-                    {"address": "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1", "output_n": 2,
+                    {"address": "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1",
                      "tx_hash": "1ed74cf9ec10bb9eb881dfcbc97318baadff371e25f227587b8d87466f260cad", "value": 5757}]
         n = 0
         results = sorted(response.json, key=lambda x: x['block_height'])
