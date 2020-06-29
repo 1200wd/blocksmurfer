@@ -62,15 +62,15 @@ class TestSite(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_explorer_address_p2sh(self):
-        response = self.app.get('/btc/address/3DPNFXGoe8QGiEXEApQ3QtHb8wM15VCQU3')
-        self.assertIn(b'804afd8b3479267b0cd0bb2fa2e217096005fb8d', response.data)
-        self.assertIn(b'41d590e937135232a9ff88fd199629e83c349d6f4c0a3f15da88fceaa399abb8', response.data)
+        response = self.app.get('/btc/address/3Guw4MDSyLJCiP5yWBAVVapvHMS7KsXAFP')
+        self.assertIn(b'a6fb3b9982aa381c426a8f28af4652c814bc98ad', response.data)
+        self.assertIn(b'd09def635126ba8971908024102d21bb88ff09e74dfcda65acd29b7fe1e467ab', response.data)
         self.assertEqual(response.status_code, 200)
 
     def test_explorer_address_bech32(self):
-        response = self.app.get('/btc/address/bc1qjl8uwezzlech723lpnyuza0h2cdkvxvh54v3dn')
-        self.assertIn(b'ffccb3c55dccc6d1596008f66c894ef94820a6667833b35c7d5180d603d77c09', response.data)
-        self.assertIn(b'97cfc76442fe717f2a3f0cc9c175f7561b661997', response.data)
+        response = self.app.get('/btc/address/bc1qhxzdefx7d4gw473d47xtj6frnglqnx5yfdn7q6')
+        self.assertIn(b'f14980037c5fc011f231847bba308ff0e3435976e1766e53c7bfafc3065ef41b', response.data)
+        self.assertIn(b'b984dca4de6d50eafa2daf8cb969239a3e099a84', response.data)
         self.assertEqual(response.status_code, 200)
 
     def test_explorer_address_paging(self):
@@ -107,7 +107,7 @@ class TestSite(unittest.TestCase):
     def test_explorer_transaction_unconfirmed(self):
         srv = SmurferService()
         mempool = srv.mempool()
-        if not isinstance(mempool, list):
+        if not isinstance(mempool, list) or not mempool:
             pass
         else:
             response = self.app.get('/btc/transaction/%s' % mempool[0])
@@ -125,9 +125,9 @@ class TestSite(unittest.TestCase):
     def test_explorer_transaction_input_coinbase(self):
         response = self.app.get('btc/transaction/a2fcf9af82c1ced2c2ab14fe07dcf9c725473cc6ac35865d65a1adc3b767eb96/'
                                 'input/0')
-        self.assertIn(b'4294967295', response.data)
+        self.assertIn(b'a2fcf9af82c1ced2c2ab14fe07dcf9c725473cc6ac35865d65a1adc3b767eb96', response.data)
         self.assertIn(b'coinbase', response.data)
-        self.assertIn(b'03639f0904992cc05e535a30322f4254432e434f4d2ffabe6d6ddcb3921d5735819ea6fe8ad', response.data)
+        self.assertIn(b'0.00000000', response.data)
         self.assertEqual(response.status_code, 200)
 
     def test_explorer_transaction_output(self):
@@ -198,11 +198,9 @@ class TestAPI(unittest.TestCase, CustomAssertions):
     def test_api_block(self):
         response = self.app.get('/api/v1/btc/block/120000')
         self.assertEqual(response.status_code, 200)
-        expected = {"bits": 453031340,
-                    "hash": "0000000000000e07595fca57b37fea8522e95e0f6891779cfd34d7e537524471", "height": 120000,
+        expected = {"hash": "0000000000000e07595fca57b37fea8522e95e0f6891779cfd34d7e537524471", "height": 120000,
                     "limit": 99999, "merkle_root": "6dbba50b72ad0569c2449090a371516e3865840e905483cac0f54d96944eee28",
-                    "nonce": 4273989260, "page": 1, "pages": 1,
-                    "prev_block": "000000000000337828025b947973252acf8d668b3bb459c1c6e70b2e5827bca4",
+                    "page": 1, "pages": 1,
                     "time": 1303687201, "total_txs": 56,
                     "txs": ["1829755bdbe84f5a1ca579c1ed2f78a051a817b66ed4dfff35704cd6d4d644f9",
                             "db6d13b57fb0daef6ebb8af735a4b2776f11143e760d0c90e4251613bb00e43b",
@@ -259,18 +257,16 @@ class TestAPI(unittest.TestCase, CustomAssertions):
                             "64ed1e2b01458624e74225e18deba497f4a122334ae03a77b980c98ca794aa8a",
                             "42aed02a99f2dfa3cb32d64933bc569c127f352f29bd26a06e292dbeabd74119",
                             "d7c9fa4b801a3a4ef78613f4c00707fbb5fea339a7a650bdcfdc11c749e8773e",
-                            "6a9fa4566fd2454f73daf71005c9f2ddb75e1c0ced2bcab89472583d60d92a4b"], "version": 1}
+                            "6a9fa4566fd2454f73daf71005c9f2ddb75e1c0ced2bcab89472583d60d92a4b"]}
         self.assertDictEqualExt(expected, response.json)
 
     def test_api_block_paging(self):
         response = self.app.get('/api/v1/btc/block/120000?limit=1&page=4&parse_transactions=True')
         self.assertEqual(response.status_code, 200)
         expected = {
-            "bits": 453031340,
             "hash": "0000000000000e07595fca57b37fea8522e95e0f6891779cfd34d7e537524471", "height": 120000,
             "limit": 1, "merkle_root": "6dbba50b72ad0569c2449090a371516e3865840e905483cac0f54d96944eee28",
-            "nonce": 4273989260, "page": 4, "pages": 56,
-            "prev_block": "000000000000337828025b947973252acf8d668b3bb459c1c6e70b2e5827bca4",
+            "page": 4, "pages": 56,
             "time": 1303687201, "total_txs": 56, "txs": [
                 {"block_hash": "0000000000000e07595fca57b37fea8522e95e0f6891779cfd34d7e537524471",
                  "block_height": 120000, "coinbase": False, "date": "2011-04-24T23:20:01",
@@ -297,7 +293,7 @@ class TestAPI(unittest.TestCase, CustomAssertions):
                  "raw_hex": "01000000011f36b68bf0623c28892bc1c8d67247abe22fd5c347c2fe592c6e8249055e9787000000008b483045022100a832a2f88ff96ad797bc288b1b02158228cc7f6bd605603561b7ae95a62a823202206c376813efc39342d34c353ac8d0a08d3f6c6d9f24e3423fb94d721daa4580ff014104aa10d74f4f377f49fe2961909ae4135b214ee2f1e2e4e497d1e2003532e9ba831e0f42e43f2cb5f2d147be7976586a9606153c2fb067c618a6ef0749693710aaffffffff024083fa96000000001976a91405f9219587d9af618b3d051be9595fa1e09b021d88acc07fdc0b000000001976a914d3258d1c9949d78a6fb29e4b48e47dfaa18dec6588ac00000000",
                  "size": 258, "status": "confirmed",
                  "txid": "a7ee0da5061982cb9c2bb95da715a90c3f8a717fa6d2f74a9934825017acaea6", "verified": False,
-                 "version": 1, "vsize": 258, "witness_type": "legacy"}], "version": 1}
+                 "version": 1, "vsize": 258, "witness_type": "legacy"}]}
         self.assertDictEqualExt(expected, response.json)
 
     def test_api_block_last_and_blockcount(self):
@@ -308,7 +304,7 @@ class TestAPI(unittest.TestCase, CustomAssertions):
     def test_api_transactions(self):
         response = self.app.get('/api/v1/btc/transactions/1KoAvaL3wfpcNvGCQYkqFJG9Ccqm52sZHa?limit=1')
         expected = {
-            "block_hash": "0000000000000003a8631262cc3be45d0dca882c32fbee56b5ef81ce7039d860", "height": 246976,
+            "height": 246976,
             "coinbase": True, "date": "2013-07-17T07:00:49", "fee": 0,
             "inputs": [   # FIXME: Add "input_total": 0,
                 {"address": "", "compressed": True, "double_spend": False, "encoding": "base58", "index_n": 0,
@@ -332,62 +328,54 @@ class TestAPI(unittest.TestCase, CustomAssertions):
     def test_api_transactions_after_txid(self):
         response = self.app.get('/api/v1/btc/transactions/1KoAvaL3wfpcNvGCQYkqFJG9Ccqm52sZHa?limit=1&'
                                 'after_txid=e10e6acd0465db47a8308befbe53cc267e3d2c078691e9776bd4dd6e6c8ba14b')
-        expected = {"block_hash": "000000000000002f5ef2091de1f7040e0200170979f005bb053d66ece348e121",
-                    "block_height": 249614, "coinbase": True, "date": "2013-08-01T12:03:45",
-                    "fee": 0, "input_total": 0, "inputs": [
-                {"address": "", "compressed": True, "double_spend": False, "encoding": "base58", "index_n": 0,
-                 "locktime_cltv": 0, "locktime_csv": 0, "output_n": 4294967295,
-                 "prev_hash": "0000000000000000000000000000000000000000000000000000000000000000", "public_hash": "",
-                 "redeemscript": "", "script": "030ecf0304a94efa5108f8002ed1c240010000", "script_code": "",
-                 "script_type": "coinbase", "sequence": 0, "signatures": "", "sigs_required": 1, "valid": None,
-                 "value": 0, "witness": "", "witness_type": "legacy"}], "locktime": 0, "network": "bitcoin",
-                    "output_total": 2514554728, "outputs": [
-                {"address": "1KoAvaL3wfpcNvGCQYkqFJG9Ccqm52sZHa", "output_n": 0,
-                 "public_hash": "ce2daea72b5b48fc85d9bba2263225cbe98985e0",
-                 "script": "76a914ce2daea72b5b48fc85d9bba2263225cbe98985e088ac", "script_type": "p2pkh", "spent": None,
-                 "value": 2514554728}],  # FIXME: Check for spent=True
-                    "raw_hex": "01000000010000000000000000000000000000000000000000000000000000000000000000ffffffff13030ecf0304a94efa5108f8002ed1c2400100000000000001680fe195000000001976a914ce2daea72b5b48fc85d9bba2263225cbe98985e088ac00000000",
+        expected = {"coinbase": True, "date": "2013-08-01T12:03:45",
+                    "fee": 0, "input_total": 0,
+                    "inputs": [
+                        {"address": "", "compressed": True, "encoding": "base58", "index_n": 0,
+                         "prev_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+                         "script_type": "coinbase", "value": 0, "witness_type": "legacy"}],
+                    "output_total": 2514554728,
+                    "outputs": [
+                        {"address": "1KoAvaL3wfpcNvGCQYkqFJG9Ccqm52sZHa", "output_n": 0,
+                         "public_hash": "ce2daea72b5b48fc85d9bba2263225cbe98985e0",
+                         "script": "76a914ce2daea72b5b48fc85d9bba2263225cbe98985e088ac", "script_type": "p2pkh",
+                         "value": 2514554728}],  # FIXME: Check for spent=True
                     "size": 104, "status": "confirmed",
-                    "txid": "060e777d543f905f732b13cc37efc621c47793ba699e4559bd4c2ee83d94a73d", "verified": False,
-                    "version": 1, "vsize": 104, "witness_type": "legacy"}
+                    "txid": "060e777d543f905f732b13cc37efc621c47793ba699e4559bd4c2ee83d94a73d",
+                    "witness_type": "legacy"}
         self.assertDictEqualExt(expected, response.json[0])
 
     def test_api_utxos(self):
         response = self.app.get('/api/v1/btc/utxos/1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1')
         self.assertEqual(response.status_code, 200)
-        expected = [{"address": "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1", "block_height": 2,
-                     "date": "2009-01-09T02:55:44", "fee": 0, "input_n": 0, "output_n": 0,
-                     "tx_hash": "9b0fc92260312ce44e74ef369f5c66bbb85848f2eddd5a7a1cde251e54ccfdd5",
-                     "value": 5000000000},
-                    {"address": "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1", "block_height": 204814,
-                     "date": "2012-10-24T21:11:31", "fee": 50000, "input_n": 0, "output_n": 1,
+        expected = [
+                    # Blockstream missing first few blocks
+                    # {"address": "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1", "block_height": 2,
+                    #  "date": "2009-01-09T02:55:44", "input_n": 0, "output_n": 0,
+                    #  "tx_hash": "9b0fc92260312ce44e74ef369f5c66bbb85848f2eddd5a7a1cde251e54ccfdd5",
+                    #  "value": 5000000000},
+                    {"address": "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1", "output_n": 1,
                      "tx_hash": "5fd3d8275afb5b5cc202ae8480daefa4fe16d0cf480ce78545d6dc06c6fb101a", "value": 1},
-                    {"address": "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1", "block_height": 204815,
-                     "date": "2012-10-24T21:55:10", "fee": 1000000, "input_n": 0, "output_n": 1,
+                    {"address": "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1", "output_n": 1,
                      "tx_hash": "b9a84cffd3766bb642a697065b477eed032e36c377db80faac79b18e61b43b0d", "value": 1},
-                    {"address": "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1", "block_height": 204816,
-                     "date": "2012-10-24T22:15:16", "fee": 100000, "input_n": 0, "output_n": 0,
+                    {"address": "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1", "output_n": 0,
                      "tx_hash": "0986d70aaa03213135998cf1a9b8a33012c033c6607584e84b8ae33d49fadce3", "value": 1},
-                    {"address": "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1", "block_height": 257401,
-                     "date": "2013-09-11T22:05:17", "fee": 50000, "input_n": 0, "output_n": 7,
+                    {"address": "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1", "output_n": 7,
                      "tx_hash": "d658ab87cc053b8dbcfd4aa2717fd23cc3edfe90ec75351fadd6a0f7993b461d", "value": 911},
-                    {"address": "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1", "block_height": 271013,
-                     "date": "2013-11-23T01:06:09", "fee": 10000, "input_n": 0, "output_n": 0,
+                    {"address": "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1", "output_n": 0,
                      "tx_hash": "4be9e8f3a35a7c597ae9641b2767242aca0d0abe20bf419b9168ea373b88fe48", "value": 1},
-                    {"address": "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1", "block_height": 290420,
-                     "date": "2014-03-13T19:39:01", "fee": 10000, "input_n": 0, "output_n": 0,
+                    {"address": "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1", "output_n": 0,
                      "tx_hash": "8f5351233a89bdce6dcf73fbfe295204f8ea67775be0ecd294d30e9932667f76", "value": 10000},
-                    {"address": "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1", "block_height": 315206,
-                     "date": "2014-08-12T05:48:01", "fee": 10000, "input_n": 0, "output_n": 0,
+                    {"address": "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1", "output_n": 0,
                      "tx_hash": "201d27f660a82b7bee7f00e93dfb7b8cb722ac4ce6e22af502f6047fc7da0a32", "value": 10000},
-                    {"address": "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1", "block_height": 316263,
-                     "date": "2014-08-18T13:59:30", "fee": 10000, "input_n": 0, "output_n": 2,
+                    {"address": "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1", "output_n": 2,
                      "tx_hash": "7cd30ddf7ec214c80b6accc22f33ddafd42d04d5f583f4d5d0a35c29f8f296d9", "value": 5757},
-                    {"address": "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1", "block_height": 316485,
-                     "date": "2014-08-19T14:41:32", "fee": 10000, "input_n": 0, "output_n": 2,
+                    {"address": "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1", "output_n": 2,
                      "tx_hash": "1ed74cf9ec10bb9eb881dfcbc97318baadff371e25f227587b8d87466f260cad", "value": 5757}]
         n = 0
         results = sorted(response.json, key=lambda x: x['block_height'])
+        if results[0]["block_height"] == 2:
+            results = results[1:]
         for u in results[:len(expected)]:
             self.assertDictEqualExt(expected[n], u)
             n += 1
@@ -396,54 +384,29 @@ class TestAPI(unittest.TestCase, CustomAssertions):
         response = self.app.get('/api/v1/btc/utxos/1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1?'
                                 'after_txid=d658ab87cc053b8dbcfd4aa2717fd23cc3edfe90ec75351fadd6a0f7993b461d')
         self.assertEqual(response.status_code, 200)
-        expected = {"address": "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1", "block_height": 271013,
-                     "date": "2013-11-23T01:06:09", "fee": 10000, "input_n": 0, "output_n": 0,
-                     "tx_hash": "4be9e8f3a35a7c597ae9641b2767242aca0d0abe20bf419b9168ea373b88fe48", "value": 1}
+        expected = {"address": "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1", "output_n": 0,
+                    "tx_hash": "4be9e8f3a35a7c597ae9641b2767242aca0d0abe20bf419b9168ea373b88fe48", "value": 1}
         self.assertDictEqualExt(expected, response.json[0])
 
     def test_api_address_balance(self):
         response = self.app.get('/api/v1/btc/address_balance/1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1')
         self.assertEqual(response.status_code, 200)
-        self.assertGreaterEqual(response.json['balance'], 50.01477486)
+        self.assertGreaterEqual(response.json['balance'], 0.01477486)
 
     def test_api_transaction(self):
         response = self.app.get('/api/v1/btc/transaction/6ab6432a6b7b04ecc335c6e8adccc45c25f46e33752478f0bcacaf3f1'
                                 'b61ad92')
         expected = {
-            "block_hash": "000000000000000000024bead8df69990852c202db0e0097c1a12ea637d7e96d",
             "height": 630000, "coinbase": False, "date": "2020-05-11T19:23:43",
             "fee": 35109, "input_total": 2170991196, "inputs": [
-                {"address": "3KPUySzYeEpUyTg4JHBHV4nNPkELzprRnP", "compressed": True, "double_spend": False,
-                 "encoding": "base58", "index_n": 0, "locktime_cltv": 0, "locktime_csv": 0, "output_n": 8,
-                 "prev_hash": "98f52bda950781317d81c701313b762f9901c9f98cfd60fdf9159423e4905c7c",
-                 "public_hash": "45cd7c21a09f5bf6c5e5e8668ab7c3afaa0114e2", "redeemscript": "",
-                 "script": "16001445cd7c21a09f5bf6c5e5e8668ab7c3afaa0114e2",
-                 "script_code": "76a91445cd7c21a09f5bf6c5e5e8668ab7c3afaa0114e288ac", "script_type": "p2sh_p2wpkh",
-                 "sequence": 4294967295,
-                 "signatures": "3547b6f10459c57763abd61c621ec78ee4354a9a6ef44409f4db619a67e8f24d31b9651018bdb2e4e236"
-                               "c472f9d3e9d58117b09e1a1d23df9c810e360b2b6fcc",
+                {"address": "3KPUySzYeEpUyTg4JHBHV4nNPkELzprRnP",
+                 "encoding": "base58", "index_n": 0, "output_n": 8,
                  "sigs_required": 1, "valid": None, "value": 2170991196,
-                 "witness": "304402203547b6f10459c57763abd61c621ec78ee4354a9a6ef44409f4db619a67e8f24d022031b9651018b"
-                            "db2e4e236c472f9d3e9d58117b09e1a1d23df9c810e360b2b6fcc010274c25777f5f5e4770475d8a19a8e5f"
-                            "48f24565b57285b6b28319081af4cf8dcf",
-                 "witness_type": "p2sh-segwit"}], "locktime": 0, "network": "bitcoin", "output_total": 2170956087,
-            "outputs": [{"address": "12nDYwnGiNhitbVcWC5mVtbMJNCwQfkJZQ", "output_n": 0,
-                         "public_hash": "138552279edb524b92ca2a4b7d6a255d545af776",
-                         "script": "76a914138552279edb524b92ca2a4b7d6a255d545af77688ac", "script_type": "p2pkh",
-                         "value": 1863367},
-                        {"address": "33WXa8ymotqgjQpnimpGkYEyacus77hejz", "output_n": 0,
-                         "public_hash": "13f46ccfbe2ac33f13ab369c9625b5b2095e591e",
-                         "script": "a91413f46ccfbe2ac33f13ab369c9625b5b2095e591e87", "script_type": "p2sh",
-                         "value": 2169092720}],
-            "raw_hex": "020000000001017c5c90e4239415f9fd60fd8cf9c901992f763b3101c7817d31810795da2bf5980800000017160"
-                       "01445cd7c21a09f5bf6c5e5e8668ab7c3afaa0114e2ffffffff02c76e1c00000000001976a914138552279edb52"
-                       "4b92ca2a4b7d6a255d545af77688ac70ba49810000000017a91413f46ccfbe2ac33f13ab369c9625b5b2095e591"
-                       "e870247304402203547b6f10459c57763abd61c621ec78ee4354a9a6ef44409f4db619a67e8f24d022031b96510"
-                       "18bdb2e4e236c472f9d3e9d58117b09e1a1d23df9c810e360b2b6fcc01210274c25777f5f5e4770475d8a19a8e5"
-                       "f48f24565b57285b6b28319081af4cf8dcf00000000",
+                 "witness_type": "p2sh-segwit"}], "network": "bitcoin", "output_total": 2170956087,
+            "outputs": [{"address": "12nDYwnGiNhitbVcWC5mVtbMJNCwQfkJZQ", "output_n": 0, "value": 1863367},
+                        {"address": "33WXa8ymotqgjQpnimpGkYEyacus77hejz", "output_n": 0, "value": 2169092720}],
             "size": 249, "status": "confirmed",
-            "txid": "6ab6432a6b7b04ecc335c6e8adccc45c25f46e33752478f0bcacaf3f1b61ad92",
-            "version": 2, "vsize": 249, "witness_type": "segwit"}
+            "txid": "6ab6432a6b7b04ecc335c6e8adccc45c25f46e33752478f0bcacaf3f1b61ad92", "witness_type": "segwit"}
         self.assertDictEqualExt(expected, response.json)
 
     def test_api_transaction_raw(self):
