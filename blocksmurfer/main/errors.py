@@ -27,5 +27,5 @@ def handle_errors(e):
     except:
         name = e
         description = ''
-        code = ''
+        code = 500
     return render_template("error.html", title=('Error: %s' % name), description=description, code=code), code

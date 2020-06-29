@@ -95,7 +95,7 @@ class TestSite(unittest.TestCase):
 
     def test_explorer_transaction_coinbase(self):
         response = self.app.get('/btc/transaction/ce242be116c5caf016185f4f4e75628843ecb18faeb2935c9a9c848464f693a4')
-        self.assertIn(b'2020-01-08 03:52:41', response.data)
+        self.assertIn(b'2020-01-08', response.data)
         self.assertIn(b'611838', response.data)
         self.assertIn(b'3QLeXx1J9Tp3TBnQyHrhVxne9KqkAS9JSR', response.data)
         self.assertEqual(response.status_code, 200)

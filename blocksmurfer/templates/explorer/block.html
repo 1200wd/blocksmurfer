@@ -32,16 +32,18 @@
     <tr>
         <td>Bits</td>
         <td>
+            {{ block.bits_int }}
             {% if block.bits %}
-                {{ block.bits_int }} ({{ block.bits.hex() }})
+                 ({{ block.bits.hex() }})
             {% endif %}
         </td>
     </tr>
     <tr>
         <td>Nonce</td>
         <td>
+            {{ block.nonce_int }}
             {% if block.nonce %}
-                {{ block.nonce_int }} ({{  block.nonce.hex() }})
+                ({{  block.nonce.hex() }})
             {% endif %}
         </td>
     </tr>

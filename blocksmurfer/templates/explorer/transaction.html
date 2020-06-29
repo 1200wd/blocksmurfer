@@ -14,7 +14,7 @@
         <tr>
             <td>Block</td>
             <td>
-                {% if transaction.block_height and transaction.block_height > 0 %}
+                {% if transaction.block_height and transaction.block_height|int > 0 %}
                     <a href ="{{ url_for('main.block', network=network, blockid=transaction.block_height) }}">
                         {{ transaction.block_height }}
                     </a>
