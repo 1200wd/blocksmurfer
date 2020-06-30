@@ -5,7 +5,6 @@
     <form action="" method="post" novalidate>
         {{ form.hidden_tag() }}
         <p>
-            {{ form.search.label }}<br>
             {{ form.search(size=64) }}
         </p>
         <p>{{ form.submit() }}</p>
