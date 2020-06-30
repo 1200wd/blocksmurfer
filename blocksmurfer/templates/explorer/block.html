@@ -2,7 +2,7 @@
 
 {% block app_content %}
     <h2>{{ _('Details') }}</h2>
-    <table class="pure-table" style="width: 550px;">
+    <table class="pure-table" style="width: 800px; font-size: 80%">
     <tr>
         <td>Hash</td>
         <td>{{ block.block_hash.hex() }}</td>
@@ -69,6 +69,14 @@
             {% endfor %}
         </td>
     </tr>
+    {% if coinbase_data %}
+        <tr>
+            <td>Coinbase Data</td>
+            <td style="word-break: break-all;">
+                <p>{{ coinbase_data.decode(errors='replace') }}</p>
+            </td>
+        </tr>
+    {% endif %}
     <tr>
         <td>Transaction count</td>
         <td>{{ block.tx_count }}</td>

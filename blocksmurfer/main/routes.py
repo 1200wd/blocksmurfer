@@ -193,10 +193,15 @@ def block(network, blockid):
     prev_url = None
     next_url = None
     txs = block.transactions
+
+    coinbase_data = ''
+    if txs and len(txs) and txs[0].coinbase:
+        coinbase_data = txs[0].inputs[0].unlocking_script
+
     if not srv.complete and txs and len(txs) >= limit:
         next_url = url_for('main.block', network=network, blockid=blockid, limit=limit, page=page+1)
     if page > 1:
         prev_url = url_for('main.block', network=network, blockid=blockid, limit=limit, page=page-1)
 
     return render_template('explorer/block.html', title=_('Block'), subtitle=blockid, block=block, network=network,
-                           prev_url=prev_url, next_url=next_url)
+                           coinbase_data=coinbase_data, prev_url=prev_url, next_url=next_url)
