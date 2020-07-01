@@ -6,18 +6,18 @@
     with the highest priority are queried first. If a method is not available or the API query was unsuccessful
     the next provider in the list is used.</p>
     <p>For details about the providers and methods used check out the Python code at
-        <a href="https://github.com/1200wd/bitcoinlib/tree/master/bitcoinlib/services">Github</a></p>
+        <a href="https://github.com/1200wd/bitcoinlib/tree/master/bitcoinlib/services">Github</a>.</p>
     <table class="pure-table" style="width: 800px; font-size: 80%">
-    <tr>
-        <th>Provider</th>
-        <th>url</th>
-        <th>priority</th>
-    </tr>
+    <thead>
+        <tr>
+            <th>Provider</th>
+            <th>url</th>
+            <th>priority</th>
+        </tr>
+    </thead>
     {% for provider in providers %}
     <tr>
-        <td>
-            <a href="{{ provider[1]['url'] }}">{{ provider[0] }}</a>
-        </td>
+        <td>{{ provider[0] }}</td>
         <td>{{ provider[1]['url'] }}</td>
         <td>{{ provider[1]['priority'] }}</td>
     </tr>
