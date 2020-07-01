@@ -6,15 +6,26 @@
     the blockchain for blocks, transactions, addresses and utxo's. You can easily run it from a local server
     using the source code from <a href="https://github.com/1200wd/blocksmurfer">Github</a>.</p>
 
-    <p>Just like Bitcoinlib it can retrieve data from various online service providers or work with a local bitcoin
+    <h2>Providers</h2>
+    <p>Just like Bitcoinlib it retrieves blockchain data from various online service providers or a local bitcoin
     or <a href="https://github.com/bcoin-org/bcoin/blob/master/docs/README.md">Bcoin</a> node.</p>
 
-    <h2>{{ _('Bitcoinlib') }}</h2>
+    For this website the following <a href="{{ url_for('main.providers', network=network) }}">providers</a>
+    are used for the bitcoin network:
+    {% for provider in providers %}
+        {{ provider[0] -}}
+        {% if loop.index == loop.length - 1 %} and
+        {% elif not loop.last %}, {% endif %}
+    {% endfor -%}. To avoid too many request to external service providers the local providers bcoin and bitcoind are
+    used whenever possible. Also transaction, block and address data are cached in a local SQLite or PostgreSQL
+    database.
+
+    <h2>Bitcoinlib</h2>
     <p>Python <a href="https://github.com/1200wd/bitcoinlib">Bitcoinlib</a> is an open source bitcoin and other
     cryptocurrency library. You can use it to create and manage wallets, keys, transactions and interact with
     the blockchain through various service providers.</p>
 
     <p>Amsterdam, 2020<br />
     <a href="mailto:explorer@blocksmurfer.io">explorer@blocksmurfer.io</a><br />
-    <a href="https://coineva.com">Coineva</a></p>
+    <a href="https://blocksmurfer.io">Blocksmurfer</a> (Coineva)</p>
 {% endblock %}

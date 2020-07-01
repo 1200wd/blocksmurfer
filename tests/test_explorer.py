@@ -23,8 +23,16 @@ class TestSite(unittest.TestCase):
 
     def test_about_page(self):
         response = self.app.get('/about', follow_redirects=True)
-        expected_str = b'Coineva'
-        self.assertIn(expected_str, response.data)
+        self.assertIn(b'Coineva', response.data)
+        self.assertIn(b'blockstream', response.data)
+        self.assertIn(b'explorer@blocksmurfer.io', response.data)
+        self.assertEqual(response.status_code, 200)
+
+    def test_provider_page(self):
+        response = self.app.get('/providers', follow_redirects=True)
+        self.assertIn(b'providers', response.data)
+        self.assertIn(b'blockcypher', response.data)
+        self.assertIn(b'https://api.smartbit.com.au/v1/', response.data)
         self.assertEqual(response.status_code, 200)
 
     def test_search_address(self):

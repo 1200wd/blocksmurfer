@@ -32,8 +32,24 @@ def api():
 
 
 @bp.route('/about')
-def about():
-    return render_template('about.html', title=_('About'), subtitle=_('Keep on smurfing!'))
+def about(network='btc'):
+    srv = SmurferService(network)
+    providers = sorted(srv.providers.items(), key=lambda x: x[1]['priority'], reverse=True)
+    for provider in providers:
+        if '@' in provider[1]['url']:
+            provider[1]['url'] = ''
+    return render_template('about.html', title=_('About'), subtitle=_('Keep on smurfing!'), providers=providers)
+
+
+@bp.route('/providers')
+def providers(network='btc'):
+    srv = SmurferService(network)
+    providers = sorted(srv.providers.items(), key=lambda x: x[1]['priority'], reverse=True)
+    for provider in providers:
+        if '@' in provider[1]['url']:
+            provider[1]['url'] = ''
+    return render_template('providers.html', title=_('Providers'), subtitle=_('Service providers overview'),
+                           providers=providers)
 
 
 @bp.route('/<network>/transaction/<txid>')
