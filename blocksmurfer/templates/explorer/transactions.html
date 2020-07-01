@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    {% if not block.transactions %}
+    <p>{{ _('No transactions found') }}</p>
+    {% else %}
+    <p>List of transactions from last block on the Blockchain with height
+        <a href="{{ url_for('main.block', network=network, blockid=block.height) }}">
+            {{ block.height }}</a>
+    </p>
+    {% endif %}
+    {% for t in block.transactions %}
+        {% include 'explorer/_transaction_item.html' %}
+        <p></p>
+    {% endfor %}
+    <nav aria-label="...">
+        <ul class="pager">
+            <a href="{{ prev_url or '#' }}" class="pure-button {% if not prev_url %} pure-button-disabled{% endif %}">
+                <i class="fa fa-arrow-left"></i> {{ _('First transactions') }}
+            </a>
+            <a href="{{ next_url or '#' }}" class="pure-button {% if not next_url %} pure-button-disabled{% endif %}">
+                {{ _('Next transactions') }} <i class="fa fa-arrow-right"></i>
+            </a>
+        </ul>
+    </nav>
+
+    <h2>{{ _('Search Transactions') }}</h2>
+    <form action="" method="post" novalidate>
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.search(size=64) }}
+        </p>
+        <p>{{ form.submit() }}</p>
+    </form>
+{% endblock %}

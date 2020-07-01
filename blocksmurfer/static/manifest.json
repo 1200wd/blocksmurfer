@@ -15,7 +15,7 @@
     {
       "src": "/static/favicon.ico",
       "sizes": "16x16",
-      "type": "image/ico"
+      "type": "image/x-icon"
     },
     {
       "src": "/static/favicon-16x16.png",

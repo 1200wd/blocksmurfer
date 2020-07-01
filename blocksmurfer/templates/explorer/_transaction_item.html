@@ -9,7 +9,7 @@
         </td>
         <td style="border-left: 0;">
             {% if t.confirmations %}
-                {{ t.confirmations }} confirmations
+                {{ t.confirmations }} confirmation{% if t.confirmations > 1 %}s{% endif %}
             {% else %}
                 {{ _('Unconfirmed')}}
             {% endif %}

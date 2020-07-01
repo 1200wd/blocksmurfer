@@ -46,6 +46,9 @@
                 <li class="pure-menu-item menu-item-divided{% if title=='Explorer' %} pure-menu-selected{% endif %}">
                     <a href="{{ url_for('main.index') }}" class="pure-menu-link">Explorer</a>
                 </li>
+                <li class="pure-menu-item{% if title=='Transactions' %} pure-menu-selected{% endif %}">
+                    <a href="{{ url_for('main.transactions', network='btc') }}" class="pure-menu-link">Transactions</a>
+                </li>
                 <li class="pure-menu-item{% if title=='API' %} pure-menu-selected{% endif %}">
                     <a href="{{ url_for('main.api') }}" class="pure-menu-link">API</a>
                 </li>

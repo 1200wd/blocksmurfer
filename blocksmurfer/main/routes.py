@@ -52,6 +52,31 @@ def providers(network='btc'):
                            providers=providers)
 
 
+@bp.route('/<network>/transactions', methods=['GET', 'POST'])
+def transactions(network='btc'):
+    page = request.args.get('page', 1, type=int)
+
+    form = SearchForm()
+    form.search.render_kw = {'placeholder': 'enter transaction id'}
+    if form.validate_on_submit():
+        return search_query(form.search.data)
+
+    srv = SmurferService(network)
+    blockid = srv.blockcount()
+    block = srv.getblock(blockid, parse_transactions=True, limit=10, page=page)
+    if not block:
+        flash(_("Block not found"), category='error')
+        return redirect(url_for('main.index'))
+
+    prev_url = None
+    next_url = None
+    txs = block.transactions
+
+    return render_template('explorer/transactions.html', title=_('Transactions'),
+                           subtitle=_('Latest confirmed transactions'), block=block, network=network,
+                           form=form, prev_url=prev_url, next_url=next_url)
+
+
 @bp.route('/<network>/transaction/<txid>')
 def transaction(network, txid):
     srv = SmurferService(network)
