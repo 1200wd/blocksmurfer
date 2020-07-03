@@ -55,6 +55,7 @@ def providers(network='btc'):
 @bp.route('/<network>/transactions', methods=['GET', 'POST'])
 def transactions(network='btc'):
     page = request.args.get('page', 1, type=int)
+    limit = 10
 
     form = SearchForm()
     form.search.render_kw = {'placeholder': 'enter transaction id'}
@@ -70,7 +71,10 @@ def transactions(network='btc'):
 
     prev_url = None
     next_url = None
-    txs = block.transactions
+    if not srv.complete and block.transactions and block.tx_count >= limit:
+        next_url = url_for('main.transactions', network=network, blockid=blockid, page=page+1)
+    if page > 1:
+        prev_url = url_for('main.transactions', network=network, blockid=blockid, page=page-1)
 
     return render_template('explorer/transactions.html', title=_('Transactions'),
                            subtitle=_('Latest confirmed transactions'), block=block, network=network,

@@ -55,14 +55,17 @@
             <td>Size{% if transaction.vsize %} / VSize{% endif %}</td>
             <td>{{ transaction.size }}{% if transaction.vsize %} / {{ transaction.vsize }}{% endif %}</td>
         </tr>
+        {% if transaction.fee != None %}
         <tr>
             <td>Fee</td>
             <td>
-                {{ transaction.fee }} satoshi{% if transaction.size and transaction.fee %},
+                {{ transaction.fee }} satoshi
+                {% if transaction.size and transaction.fee %},
                     {{ (transaction.fee / transaction.size)|int }} sat/B
                 {% endif %}
             </td>
         </tr>
+        {% endif %}
         <tr>
             <td>Version</td>
             <td>{{ transaction.version_int }}</td>
