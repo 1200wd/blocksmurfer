@@ -261,6 +261,35 @@ def key(network, key):
     return render_template('explorer/key.html', title=_('Key'), subtitle=k.wif(), key=k, network=network)
 
 
+@bp.route('/<network>/blocks', methods=['GET', 'POST'])
+def blocks(network):
+    srv = SmurferService(network)
+    blockcount = srv.blockcount()
+    from_block = request.args.get('from_block', blockcount, type=int)
+
+    form = SearchForm()
+    form.search.render_kw = {'placeholder': 'enter block hash or block height'}
+    if form.validate_on_submit():
+        return search_query(form.search.data)
+
+    blocks = []
+    for blockid in range(from_block, from_block-10, -1):
+        blocks.append(srv.getblock(blockid, parse_transactions=False))
+
+    prev_url = None
+    if blockcount > from_block:
+        prev_block = from_block + 10
+        if prev_block > blockcount:
+            prev_block = blockcount
+        prev_url = url_for('main.blocks', network=network, from_block=prev_block)
+    next_url = url_for('main.blocks', network=network, from_block=from_block-10)
+
+    return render_template('explorer/blocks.html', title=_('Blocks'),
+                           subtitle=_('Latest blocks in the %s blockchain' % srv.network.name.capitalize()),
+                           next_url=next_url, prev_url=prev_url,
+                           blockcount=blockcount, blocks=blocks, network=network, form=form)
+
+
 @bp.route('/<network>/block/<blockid>')
 def block(network, blockid):
     page = request.args.get('page', 1, type=int)

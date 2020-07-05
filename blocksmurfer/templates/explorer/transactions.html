@@ -16,7 +16,7 @@
     <nav aria-label="...">
         <ul class="pager">
             <a href="{{ prev_url or '#' }}" class="pure-button {% if not prev_url %} pure-button-disabled{% endif %}">
-                <i class="fa fa-arrow-left"></i> {{ _('First transactions') }}
+                <i class="fa fa-arrow-left"></i> {{ _('Newest transactions') }}
             </a>
             <a href="{{ next_url or '#' }}" class="pure-button {% if not next_url %} pure-button-disabled{% endif %}">
                 {{ _('Next transactions') }} <i class="fa fa-arrow-right"></i>
@@ -39,8 +39,10 @@
 
     <p>To send or decompose a raw transaction select one of the options below.</p>
     <p>
-        <a href="{{ url_for('main.transaction_broadcast', network=network) }}" class="pure-button">{{ _("Send Transaction") }}</a>
-        <a href="{{ url_for('main.transaction_decompose', network=network) }}" class="pure-button">{{ _("Decompose Transaction") }}</a>
+        <a href="{{ url_for('main.transaction_broadcast', network=network) }}" class="pure-button">
+            {{ _("Send Transaction") }}</a>
+        <a href="{{ url_for('main.transaction_decompose', network=network) }}" class="pure-button">
+            {{ _("Decompose Transaction") }}</a>
     </p>
 
 {% endblock %}

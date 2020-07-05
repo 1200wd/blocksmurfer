@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    <p>
+    {% if blocks[0].height == blockcount  %}
+        Below is a list of blocks recently included in the {{ blocks[0].network.name|capitalize }} blockchain.
+    {% else %}
+        Below is a list blocks from the {{ blocks[0].network.name|capitalize }} blockchain.
+        Also check out the <a href="{{ url_for('main.blocks', network=network) }}">latest blocks</a>.
+    {% endif %}
+    Click on the block hash for more details about a block and its transactions.</p>
+    <table class="pure-table" style="width: 800px; font-size: 80%">
+    <thead>
+        <tr>
+            <td>Date</td>
+            <td>Height</td>
+            <td>Hash</td>
+            <td># Txs</td>
+        </tr>
+    </thead>
+    {% for block in blocks %}
+    <tr>
+        <td>{{ block.time | ctime }}</td>
+        <td>{{ block.height }}</td>
+        <td>
+            <a href ="{{ url_for('main.block', network=network, blockid=block.block_hash.hex()) }}">
+                {{ block.block_hash.hex() }}
+            </a>
+        </td>
+        <td>{{ block.tx_count }}</td>
+    </tr>
+    {% endfor %}
+    </table>
+
+    <p>&nbsp;</p>
+
+        <nav aria-label="...">
+        <ul class="pager">
+            <a href="{{ prev_url or '#' }}" class="pure-button {% if not prev_url %} pure-button-disabled{% endif %}">
+                <i class="fa fa-arrow-left"></i> {{ _('Newer Blocks') }}
+            </a>
+            <a href="{{ next_url or '#' }}" class="pure-button {% if not next_url %} pure-button-disabled{% endif %}">
+                {{ _('Older Blocks') }} <i class="fa fa-arrow-right"></i>
+            </a>
+        </ul>
+    </nav>
+
+    <p>&nbsp;</p>
+
+    <h2>{{ _('Search Blocks') }}</h2>
+    <form action="" method="post" novalidate class="pure-form">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.search(size=64, class="pure-input") }}
+        </p>
+        <p>{{ form.submit(class_="pure-button") }}</p>
+    </form>
+
+{% endblock %}
