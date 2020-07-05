@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    <div style="text-align: left;">
+        <pre style="font-size: 80%;">
+            {{ transaction_dict }}
+        </pre>
+    </div>
+    <p>
+        If you are ready to send this transaction, go to the
+        <a href="{{ url_for('main.transaction_broadcast', network=network, rawtx=rawtx) }}">
+            Broadcast Transaction</a> page.
+    </p>
+
+{% endblock %}

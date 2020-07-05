@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    <div style="text-align: center;">
+    <h2>{{ form.rawtx.label }}</h2>
+    <form action="" method="post" novalidate class="pure-form">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.rawtx(rows="8", cols="100") }}
+        </p>
+        <p>{{ form.submit(class_="pure-button pure-button-primary") }}</p>
+    </form>
+    <p>This will deserialize the raw transaction and show all elements in JSON format.</p>
+    <p>
+        Or if you are ready to send this transaction, go to the
+        <a href="{{ url_for('main.transaction_broadcast', network=network, rawtx=rawtx) }}">
+            Broadcast Transaction</a> page.
+    </p>
+    </div>
+
+{% endblock %}

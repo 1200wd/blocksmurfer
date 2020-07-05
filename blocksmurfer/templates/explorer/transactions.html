@@ -24,12 +24,23 @@
         </ul>
     </nav>
 
+    <p>&nbsp;</p>
+
     <h2>{{ _('Search Transactions') }}</h2>
-    <form action="" method="post" novalidate>
+    <form action="" method="post" novalidate class="pure-form">
         {{ form.hidden_tag() }}
         <p>
-            {{ form.search(size=64) }}
+            {{ form.search(size=64, class="pure-input") }}
         </p>
-        <p>{{ form.submit() }}</p>
+        <p>{{ form.submit(class_="pure-button") }}</p>
     </form>
+
+    <p>&nbsp;</p>
+
+    <p>To send or decompose a raw transaction select one of the options below.</p>
+    <p>
+        <a href="{{ url_for('main.transaction_broadcast', network=network) }}" class="pure-button">{{ _("Send Transaction") }}</a>
+        <a href="{{ url_for('main.transaction_decompose', network=network) }}" class="pure-button">{{ _("Decompose Transaction") }}</a>
+    </p>
+
 {% endblock %}

@@ -1,11 +1,11 @@
 from flask import render_template, flash, redirect, url_for, request
 from flask_babel import _
 from blocksmurfer.main import bp, MAX_TRANSACTIONS_REQUESTS
-from blocksmurfer.main.forms import SearchForm
+from blocksmurfer.main.forms import *
 from blocksmurfer.explorer.search import search_query
 from blocksmurfer.explorer.service import *
 from bitcoinlib.keys import HDKey
-from bitcoinlib.transactions import script_to_string, script_deserialize
+from bitcoinlib.transactions import script_to_string, script_deserialize, Transaction
 
 
 @bp.route('/', methods=['GET', 'POST'])
@@ -93,6 +93,48 @@ def transaction(network, txid):
         return redirect(url_for('main.index'))
     return render_template('explorer/transaction.html', title=_('Transaction'),
                            subtitle=txid, transaction=t, network=network)
+
+
+@bp.route('/<network>/transaction_broadcast', methods=['GET', 'POST'])
+def transaction_broadcast(network):
+    rawtx = request.args.get('rawtx', type=str)
+    form = TransactionSendForm()
+    form.rawtx.data = rawtx
+    if form.validate_on_submit():
+        srv = SmurferService(network)
+        try:
+            Transaction.import_raw(form.rawtx.data)
+        except Exception:
+            flash(_('Invalid raw transaction hex, could not parse raw hex'), category='error')
+        else:
+            res = srv.sendrawtransaction(form.rawtx.data)
+            if not res or 'txid' not in res:
+                # TODO: Get decent error message, without private details
+                flash(_('Could not send raw transaction. %s' % srv.errors['bcoin']), category='error')
+            return render_template('explorer/transaction_send.html', title=_('Transaction Send'),
+                                   subtitle=_('Your Transaction was broadcasted successfully!'),
+                                   txid=res['txid'], network=network)
+    return render_template('explorer/transaction_broadcast.html', title=_('Send Transaction'), rawtx=rawtx,
+                           subtitle=_('Broadcast your transaction on the network'), form=form, network=network)
+
+
+@bp.route('/<network>/transaction_decompose', methods=['GET', 'POST'])
+def transaction_decompose(network):
+    rawtx = request.args.get('rawtx', type=str)
+    form = TransactionDecomposeForm()
+    form.rawtx.data = rawtx
+    if form.validate_on_submit():
+        try:
+            t = Transaction.import_raw(form.rawtx.data)
+        except Exception:
+            flash(_('Invalid raw transaction hex, could not parse raw hex'), category='error')
+        else:
+            t_json = t.as_json()
+            return render_template('explorer/transaction_elements.html', title=_('Decomposed Transaction'),
+                                   subtitle=_('Transaction elements as dictionary'),
+                                   transaction_dict=t_json, rawtx=form.rawtx.data, network=network)
+    return render_template('explorer/transaction_decompose.html', title=_('Decompose Transaction'),
+                           subtitle=_('Decompose your raw transaction hex'), form=form, network=network)
 
 
 @bp.route('/<network>/transaction/<txid>/input/<index_n>')

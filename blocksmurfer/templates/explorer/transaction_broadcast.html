@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    <div style="text-align: center;">
+    <h2>{{ form.rawtx.label }}</h2>
+    <form action="" method="post" novalidate class="pure-form">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.rawtx(rows="8", cols="100") }}
+        </p>
+        <p>{{ form.submit(class_="pure-button pure-button-primary") }}</p>
+    </form>
+    <p>
+        When you click broadcast, the transaction will be pushed to the network through a service providers or Bitcoin
+        node. There is no guarantee your transaction will be included in a block, the transaction needs to be valid and
+        accepted by the network, and the transaction fee needs to be sufficient.
+    </p>
+    <p>
+        Or go to the
+                <a href="{{ url_for('main.transaction_decompose', network=network, rawtx=rawtx) }}">
+            Decompose Transaction</a> page first to analyse this transaction before sending it.
+    </p>
+    </div>
+
+{% endblock %}

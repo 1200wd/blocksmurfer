@@ -1,13 +1,14 @@
 {% extends "base.html" %}
 
 {% block app_content %}
+    <div style="text-align: center;">
     <h2>{{ _('Search the Bitcoin Blockchain') }}</h2>
-    <form action="" method="post" novalidate>
+    <form action="" method="post" novalidate class="pure-form">
         {{ form.hidden_tag() }}
         <p>
-            {{ form.search(size=64) }}
+            {{ form.search(size=75) }}
         </p>
-        <p>{{ form.submit() }}</p>
+        <p>{{ form.submit(class_="pure-button pure-button-primary") }}</p>
     </form>
     <p style="font-size:80%">Some suggestions:
     <a href="{{ url_for('main.search', search_string='bc1qxfrgfhs49d7dtcfzlhp7f7cwsp8zpp60hywp0f') }}">
@@ -26,5 +27,6 @@
     <a href="{{ url_for('main.search', search_string='420024') }}">
         420024
     </a></p>
+    </div>
 
 {% endblock %}
