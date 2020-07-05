@@ -99,13 +99,12 @@ def transaction(network, txid):
 def transaction_broadcast(network):
     rawtx = request.args.get('rawtx', type=str)
     form = TransactionSendForm()
-    form.rawtx.data = rawtx
     if form.validate_on_submit():
         srv = SmurferService(network)
         try:
             Transaction.import_raw(form.rawtx.data)
-        except Exception:
-            flash(_('Invalid raw transaction hex, could not parse raw hex'), category='error')
+        except Exception as e:
+            flash(_('Invalid raw transaction hex, could not parse: %s' % e), category='error')
         else:
             res = srv.sendrawtransaction(form.rawtx.data)
             if not res or 'txid' not in res:
@@ -114,6 +113,7 @@ def transaction_broadcast(network):
             return render_template('explorer/transaction_send.html', title=_('Transaction Send'),
                                    subtitle=_('Your Transaction was broadcasted successfully!'),
                                    txid=res['txid'], network=network)
+    form.rawtx.data = rawtx
     return render_template('explorer/transaction_broadcast.html', title=_('Send Transaction'), rawtx=rawtx,
                            subtitle=_('Broadcast your transaction on the network'), form=form, network=network)
 
@@ -122,17 +122,17 @@ def transaction_broadcast(network):
 def transaction_decompose(network):
     rawtx = request.args.get('rawtx', type=str)
     form = TransactionDecomposeForm()
-    form.rawtx.data = rawtx
     if form.validate_on_submit():
         try:
             t = Transaction.import_raw(form.rawtx.data)
-        except Exception:
-            flash(_('Invalid raw transaction hex, could not parse raw hex'), category='error')
+        except Exception as e:
+            flash(_('Invalid raw transaction hex, could not parse %s' % e), category='error')
         else:
             t_json = t.as_json()
             return render_template('explorer/transaction_elements.html', title=_('Decomposed Transaction'),
                                    subtitle=_('Transaction elements as dictionary'),
                                    transaction_dict=t_json, rawtx=form.rawtx.data, network=network)
+    form.rawtx.data = rawtx
     return render_template('explorer/transaction_decompose.html', title=_('Decompose Transaction'),
                            subtitle=_('Decompose your raw transaction hex'), form=form, network=network)
 
