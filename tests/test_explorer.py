@@ -1,13 +1,22 @@
 import unittest
+from flask import Config
 from blocksmurfer import current_app
 from tests.test_custom import CustomAssertions
 from blocksmurfer.explorer.service import SmurferService
 
 
-class TestSite(unittest.TestCase):
+class TestingConfig(Config):
+    TESTING = True
+    WTF_CSRF_ENABLED = False
+
+
+class TestSite(unittest.TestCase, TestingConfig):
 
     def setUp(self):
-        self.app = current_app().test_client()
+        app = current_app()
+        app.config['TESTING'] = True
+        app.config['WTF_CSRF_ENABLED'] = False
+        self.app = app.test_client()
 
     def test_main_page(self):
         response = self.app.get('/', follow_redirects=True)
@@ -145,6 +154,77 @@ class TestSite(unittest.TestCase):
                                 'output/0')
         self.assertIn(b'1 wallet_create_or_open\nfrom bitcoinlib.encoding import varstr\n\nwallet = wa', response.data)
         self.assertIn(b'Nulldata', response.data)
+        self.assertEqual(response.status_code, 200)
+
+    def test_explorer_transactions(self):
+        response = self.app.get('btc/transactions')
+        self.assertIn(b'List of transactions from last block on the Blockchain with height', response.data)
+        self.assertIn(b'Next transactions', response.data)
+        self.assertEqual(response.status_code, 200)
+
+    def test_explorer_transaction_decompose(self):
+        response = self.app.get('btc/transaction_decompose')
+        self.assertIn(b'Decompose your raw transaction hex', response.data)
+        self.assertIn(b'value="Decompose Transaction"', response.data)
+        self.assertIn(b'/form', response.data)
+        self.assertEqual(response.status_code, 200)
+
+    def test_explorer_transaction_decompose_elements(self):
+        rawtx = b"01000000000101ec586b1cf01aba564477a61b2e7a11dd59554c5ea0d64ad4a7f103565995cc280200000000ffffffff" \
+                b"02801a06000000000017a914854524c5771602013ca18fba1e0ca55629182d5287c870030000000000220020701a8d40" \
+                b"1c84fb13e6baf169d59684e17abd9fa216c8cc5b9fc63d622ff8c58d0400473044022072fd6a56f4b802c884f1598c56" \
+                b"5d10627a186fad22318e6227470c7e96187e4202206c18f6e388098ff25886736900c748c423f3a2efaf0f76221f175c" \
+                b"f563ce39f60147304402207ed1d1be7fb9643fc44651600ee5ca14290c8e3a166abc8be6f29ec288344fc602202acb3d" \
+                b"c999dea286dcce3bbcd2fa868345b1c5195f66dc47cd429315843c206d016952210375e00eb72e29da82b89367947f29" \
+                b"ef34afb75e8654f6ea368e0acdfd92976b7c2103a1b26313f430c4b15bb1fdce663207659d8cac749a0e53d70eff0187" \
+                b"4496feff2103c96d495bfdd5ba4145e3e046fee45e84a8a48ad05bd8dbb395c011a32cf9f88053ae00000000"
+        data = {'rawtx': rawtx}
+        response = self.app.post('btc/transaction_decompose', data=data)
+        self.assertIn(b'bc1qwqdg6squsna38e46795at95yu9atm8azzmyvckulcc7kytlcckxswvvzej', response.data)
+        self.assertIn(rawtx, response.data)
+        self.assertIn(b'&#34;size&#34;: 380,', response.data)
+        self.assertEqual(response.status_code, 200)
+
+    def test_explorer_transaction_decompose_elements_invalid(self):
+        rawtx = b"01000000000101ec586b1cf01aba564477a61b2e7a11dd59554c5ea0d64ad4a7f103565995cc280200000000ffffff"
+        data = {'rawtx': rawtx}
+        response = self.app.post('btc/transaction_decompose', data=data)
+        self.assertIn(b'Invalid raw transaction hex, could not parse', response.data)
+        self.assertIn(b'unpack requires a buffer of 4 bytes', response.data)
+        self.assertIn(b'textarea', response.data)
+        self.assertEqual(response.status_code, 200)
+
+    def test_explorer_transaction_broadcast(self):
+        response = self.app.get('btc/transaction_broadcast')
+        self.assertIn(b'Broadcast your transaction on the network', response.data)
+        self.assertIn(b'class="pure-form"', response.data)
+        self.assertIn(b'value="Broadcast Transaction"', response.data)
+        self.assertEqual(response.status_code, 200)
+
+    def test_explorer_transaction_broadcast_invalid(self):
+        rawtx = "02000000019d727de37afe481c62b44f270791cb1d5e1451775084f77cd9778a0a3e8f840d020000008a473044022046f4efa2529217b4a7935cfad2111a2295dbe501e3ce847873b7f5ddd53ed8b10220135ba849f157620f19e510bebb9888fafacb006e372927f24fd46976544e7bad0141047146f0e0fcb3139947cf0beb870fe251930ca10d4545793d31033e801b5219abf56c11a3cf3406ca590e4c14b0dab749d20862b3adc4709153c280c2a78be10cffffffff03cd3033000000000017a9144fd0311db33cf5dbb125a35180db0bd55c59045987bc2a6000000000001976a914ae429abaa37eba8cad0cbe85bfee0bca613bca0c88ac86c6e9eb2a0000001976a91443849383122ebb8a28268a89700c9f723663b5b888ac00000000"
+        data = {'rawtx': rawtx}
+        response = self.app.post('btc/transaction_broadcast', data=data)
+        # TODO: Add more test
+        self.assertIn(b'70c947908888729290cb2eb5bd38ebb1585ab2bd8389221b946e4f61e1ce5f82', response.data)
+        self.assertEqual(response.status_code, 200)
+
+    def test_explorer_transaction_broadcast_post(self):
+        rawtx = "01000000000000000000"
+        data = {'rawtx': rawtx}
+        response = self.app.post('btc/transaction_broadcast', data=data)
+        self.assertIn(b'Broadcast your transaction on the network', response.data)
+        self.assertIn(b'Invalid raw transaction hex, could not parse: Error no outputs found in this transaction',
+                      response.data)
+        self.assertIn(b'class="pure-form"', response.data)
+        self.assertIn(b'value="Broadcast Transaction"', response.data)
+        self.assertEqual(response.status_code, 200)
+
+    def test_explorer_blocks(self):
+        response = self.app.get('btc/blocks')
+        self.assertIn(b'Latest blocks in the Bitcoin blockchain', response.data)
+        self.assertIn(b'Older Blocks', response.data)
+        self.assertIn(b'<form', response.data)
         self.assertEqual(response.status_code, 200)
 
     def test_explorer_block(self):
@@ -323,7 +403,7 @@ class TestAPI(unittest.TestCase, CustomAssertions):
     def test_api_transactions_after_txid(self):
         response = self.app.get('/api/v1/btc/transactions/1KoAvaL3wfpcNvGCQYkqFJG9Ccqm52sZHa?limit=1&'
                                 'after_txid=e10e6acd0465db47a8308befbe53cc267e3d2c078691e9776bd4dd6e6c8ba14b')
-        expected = {"coinbase": True, "date": "2013-08-01T12:03:45",
+        expected = {"coinbase": True,
                     "fee": 0, "input_total": 0,
                     "inputs": [
                         {"address": "", "compressed": True, "encoding": "base58", "index_n": 0,
@@ -349,27 +429,29 @@ class TestAPI(unittest.TestCase, CustomAssertions):
                     #  "date": "2009-01-09T02:55:44", "input_n": 0, "output_n": 0,
                     #  "tx_hash": "9b0fc92260312ce44e74ef369f5c66bbb85848f2eddd5a7a1cde251e54ccfdd5",
                     #  "value": 5000000000},
-                    {"address": "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1",
+                    {"address": "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1", "block_height": 204814,
                      "tx_hash": "5fd3d8275afb5b5cc202ae8480daefa4fe16d0cf480ce78545d6dc06c6fb101a", "value": 1},
-                    {"address": "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1",
+                    {"address": "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1", "block_height": 204815,
                      "tx_hash": "b9a84cffd3766bb642a697065b477eed032e36c377db80faac79b18e61b43b0d", "value": 1},
-                    {"address": "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1",
+                    {"address": "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1", "block_height": 204816,
                      "tx_hash": "0986d70aaa03213135998cf1a9b8a33012c033c6607584e84b8ae33d49fadce3", "value": 1},
-                    {"address": "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1",
+                    {"address": "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1", "block_height": 257401,
                      "tx_hash": "d658ab87cc053b8dbcfd4aa2717fd23cc3edfe90ec75351fadd6a0f7993b461d", "value": 911},
-                    {"address": "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1",
+                    {"address": "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1", "block_height": 271013,
                      "tx_hash": "4be9e8f3a35a7c597ae9641b2767242aca0d0abe20bf419b9168ea373b88fe48", "value": 1},
-                    {"address": "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1",
+                    {"address": "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1", "block_height": 290420,
                      "tx_hash": "8f5351233a89bdce6dcf73fbfe295204f8ea67775be0ecd294d30e9932667f76", "value": 10000},
-                    {"address": "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1",
+                    {"address": "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1", "block_height": 315206,
                      "tx_hash": "201d27f660a82b7bee7f00e93dfb7b8cb722ac4ce6e22af502f6047fc7da0a32", "value": 10000},
-                    {"address": "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1",
+                    {"address": "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1", "block_height": 316263,
                      "tx_hash": "7cd30ddf7ec214c80b6accc22f33ddafd42d04d5f583f4d5d0a35c29f8f296d9", "value": 5757},
-                    {"address": "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1",
+                    {"address": "1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1", "block_height": 316485,
                      "tx_hash": "1ed74cf9ec10bb9eb881dfcbc97318baadff371e25f227587b8d87466f260cad", "value": 5757}]
         n = 0
         results = sorted(response.json, key=lambda x: x['block_height'])
-        if results[0]["block_height"] == 2:
+        if not results[0]["block_height"]:
+            self.skipTest("Provider does not supply block_heights, skip test")
+        elif results[0]["block_height"] == 2:
             results = results[1:]
         for u in results[:len(expected)]:
             self.assertDictEqualExt(expected[n], u)
@@ -389,8 +471,8 @@ class TestAPI(unittest.TestCase, CustomAssertions):
         self.assertGreaterEqual(response.json['balance'], 0.01477486)
 
     def test_api_transaction(self):
-        response = self.app.get('/api/v1/btc/transaction/6ab6432a6b7b04ecc335c6e8adccc45c25f46e33752478f0bcacaf3f1'
-                                'b61ad92')
+        response = self.app.get('/api/v1/btc/transaction/6ab6432a6b7b04ecc335c6e8adccc45c25f46e33752478f0bcacaf3f1b'
+                                '61ad92')
         expected = {
             "height": 630000, "coinbase": False, "date": "2020-05-11T19:23:43",
             "fee": 35109, "input_total": 2170991196, "inputs": [

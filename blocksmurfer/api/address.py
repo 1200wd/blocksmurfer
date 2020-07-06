@@ -1,11 +1,13 @@
-from flask import jsonify, abort
+from flask import jsonify
 from flask_restful import marshal, request
 from blocksmurfer.api import bp
-# from blocksmurfer.api.errors import resp_error
 from blocksmurfer.main import MAX_TRANSACTIONS_REQUESTS
 from blocksmurfer.api.structures import transaction_fields, utxo_fields
 from blocksmurfer.explorer.service import *
+# import logging
 
+
+# _logger = logging.getLogger(__name__)
 
 @bp.route('/<string:network>/transactions/<string:address>')
 def transactions(network, address):
@@ -19,6 +21,7 @@ def transactions(network, address):
     if not check_address(address):
         abort(422, message="Invalid address")
     txs = srv.gettransactions(address, after_txid=after_txid, limit=limit)
+    # _logger.debug("Got transactions from provider: %s" % srv.results.items())
     txs_dict = marshal(txs, transaction_fields)
     return jsonify(txs_dict)
 
@@ -36,6 +39,7 @@ def utxos(network, address):
         abort(422, message="Invalid address")
 
     txs = srv.getutxos(address, after_txid=after_txid, limit=limit)
+    # _logger.debug("Got UTXOS from provider: %s" % srv.results.items())
     txs_dict = marshal(txs, utxo_fields)
     return jsonify(txs_dict)
 

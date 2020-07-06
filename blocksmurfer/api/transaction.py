@@ -3,6 +3,10 @@ from flask_restful import marshal, request
 from blocksmurfer.api import bp
 from blocksmurfer.api.structures import transaction_fields
 from blocksmurfer.explorer.service import *
+# import logging
+
+
+# _logger = logging.getLogger(__name__)
 
 
 @bp.route('/<string:network>/transaction/<string:txid>')
@@ -12,6 +16,7 @@ def transaction(network, txid):
     if not check_txid(txid):
         abort(422, "Invalid txid provided")
     t = srv.gettransaction(txid)
+    # _logger.debug("Read transaction %s from provider %s" % (t.txid, srv.results.items()))
     if not t:
         abort(404, "Could not find transaction")
     if raw:
