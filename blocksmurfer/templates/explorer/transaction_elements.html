@@ -11,5 +11,8 @@
         <a href="{{ url_for('main.transaction_broadcast', network=network, rawtx=rawtx) }}">
             Broadcast Transaction</a> page.
     </p>
+    <p>
+        Or go back to the <a href="{{ url_for('main.transaction_decompose', network=network) }}">
+            Decompose Transaction</a> page to analyse another transaction.</p>
 
 {% endblock %}

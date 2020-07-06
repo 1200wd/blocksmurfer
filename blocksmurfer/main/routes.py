@@ -102,17 +102,21 @@ def transaction_broadcast(network):
     if form.validate_on_submit():
         srv = SmurferService(network)
         try:
-            Transaction.import_raw(form.rawtx.data)
+            t = Transaction.import_raw(form.rawtx.data)
         except Exception as e:
             flash(_('Invalid raw transaction hex, could not parse: %s' % e), category='error')
         else:
-            res = srv.sendrawtransaction(form.rawtx.data)
-            if not res or 'txid' not in res:
-                # TODO: Get decent error message, without private details
-                flash(_('Could not send raw transaction. %s' % srv.errors['bcoin']), category='error')
-            return render_template('explorer/transaction_send.html', title=_('Transaction Send'),
-                                   subtitle=_('Your Transaction was broadcasted successfully!'),
-                                   txid=res['txid'], network=network)
+            known_tx = srv.gettransaction(t.txid)
+            if known_tx:
+                flash(_('This transaction %s is already included in the blockchain' % t.txid), category='error')
+            else:
+                res = srv.sendrawtransaction(form.rawtx.data)
+                if not res or 'txid' not in res:
+                    # TODO: Get decent error message, without private details
+                    flash(_('Could not send raw transaction. %s' % srv.errors.get('bcoin', '')), category='error')
+                return render_template('explorer/transaction_send.html', title=_('Transaction Send'),
+                                       subtitle=_('Your Transaction was broadcasted successfully!'),
+                                       txid=res['txid'], network=network)
     form.rawtx.data = rawtx
     return render_template('explorer/transaction_broadcast.html', title=_('Send Transaction'), rawtx=rawtx,
                            subtitle=_('Broadcast your transaction on the network'), form=form, network=network)

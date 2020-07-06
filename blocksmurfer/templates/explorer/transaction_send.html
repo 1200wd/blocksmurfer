@@ -4,7 +4,8 @@
     <div style="text-align: center;">
     <h2>Transaction Broadcasted</h2>
     <p>
-        Your transaction is broadcasted the network, the transaction ID is {{ txid }}.
+        Your transaction is broadcasted the network, the transaction ID is
+        <a href="{{ url_for('main.transaction', network=network, txid=txid) }}">{{ txid }}</a>.
     </p>
     <p>
         Check if it has been included in the mempool or a block on the
