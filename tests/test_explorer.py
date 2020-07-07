@@ -18,10 +18,17 @@ class TestSite(unittest.TestCase, TestingConfig):
         app.config['WTF_CSRF_ENABLED'] = False
         self.app = app.test_client()
 
-    def test_main_page(self):
+    def test_index_page(self):
         response = self.app.get('/', follow_redirects=True)
         expected_str = b'Smurfing'
         self.assertIn(expected_str, response.data)
+        self.assertEqual(response.status_code, 200)
+
+    def test_index_page_search(self):
+        data = {'search': '100000'}
+        response = self.app.post('/', data=data, follow_redirects=True)
+        self.assertIn(b'<h1>Block</h1>', response.data)
+        self.assertIn(b'000000000003ba27aa200b1cecaad478d2b00432346c3f1f3986da1afd33e506', response.data)
         self.assertEqual(response.status_code, 200)
 
     def test_api_page(self):
@@ -158,8 +165,21 @@ class TestSite(unittest.TestCase, TestingConfig):
 
     def test_explorer_transactions(self):
         response = self.app.get('btc/transactions')
+        self.assertIn(b'Latest unconfirmed transaction from the mempool. Total mempool size is', response.data)
+        self.assertIn(b'Next transactions', response.data)
+        self.assertEqual(response.status_code, 200)
+
+    def test_explorer_transactions_last_block(self):
+        response = self.app.get('btc/transactions?blockid=last')
         self.assertIn(b'List of transactions from last block on the Blockchain with height', response.data)
         self.assertIn(b'Next transactions', response.data)
+        self.assertEqual(response.status_code, 200)
+
+    def test_explorer_transactions_post(self):
+        data = {'search': '100000'}
+        response = self.app.post('btc/transactions', data=data, follow_redirects=True)
+        self.assertIn(b'<h1>Block</h1>', response.data)
+        self.assertIn(b'000000000003ba27aa200b1cecaad478d2b00432346c3f1f3986da1afd33e506', response.data)
         self.assertEqual(response.status_code, 200)
 
     def test_explorer_transaction_decompose(self):
@@ -225,6 +245,13 @@ class TestSite(unittest.TestCase, TestingConfig):
         self.assertIn(b'Latest blocks in the Bitcoin blockchain', response.data)
         self.assertIn(b'Older Blocks', response.data)
         self.assertIn(b'<form', response.data)
+        self.assertEqual(response.status_code, 200)
+
+    def test_explorer_blocks_post(self):
+        data = {'search': '100000'}
+        response = self.app.post('btc/blocks', data=data, follow_redirects=True)
+        self.assertIn(b'<h1>Block</h1>', response.data)
+        self.assertIn(b'000000000003ba27aa200b1cecaad478d2b00432346c3f1f3986da1afd33e506', response.data)
         self.assertEqual(response.status_code, 200)
 
     def test_explorer_block(self):
