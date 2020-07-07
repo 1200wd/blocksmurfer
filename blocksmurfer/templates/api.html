@@ -2,6 +2,11 @@
 
 {% block app_content %}
     <h2>{{ _('Blocksmurfer API documentation') }}</h2>
+    <p>Below is a list of API commands that can be used to query the blockchain. At this moment only
+    the Bitcoin network is supported.</p>
+
+    <p>PLEASE NOTE: This API is still in development. API commands may change without notice.</p>
+
     <p>Base URL: </p>
     <p>https://blocksmurfer.io/api/v1/btc/</p>
 
@@ -96,6 +101,14 @@
             txid='5fd3d8275afb5b5cc202ae8480daefa4fe16d0cf480ce78545d6dc06c6fb101a') }}
         </a>
     </p>
+
+    <h3>Broadcast Transaction</h3>
+    <p>Broadcast raw transaction in hex format to the Blockchain. Use POST method.</p>
+    <p>Example:
+        {{ url_for('api.transaction_broadcast', network='btc') }}
+    </p>
+    <p>Returns a dictionary with "success" is True and the transaction hash in "txid" if successful.
+    If some errors occur more details are places in the "error" element.</p>
 
     <h3>Estimated Transaction Fee</h3>
     <p>Get the estimated fee you need to pay to get a transaction included within a certain amount of blocks.</p>
