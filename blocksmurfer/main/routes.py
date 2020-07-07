@@ -55,7 +55,14 @@ def providers(network='btc'):
 @bp.route('/<network>/transactions', methods=['GET', 'POST'])
 def transactions(network='btc'):
     page = request.args.get('page', 1, type=int)
+    blockid = request.args.get('blockid', type=str)
+    block = None
     limit = 10
+    mempool = []
+    show_mempool = True
+
+    if blockid:
+        show_mempool = False
 
     form = SearchForm()
     form.search.render_kw = {'placeholder': 'enter transaction id'}
@@ -63,22 +70,34 @@ def transactions(network='btc'):
         return search_query(form.search.data)
 
     srv = SmurferService(network)
-    blockid = srv.blockcount()
-    block = srv.getblock(blockid, parse_transactions=True, limit=10, page=page)
-    if not block:
-        flash(_("Block not found"), category='error')
-        return redirect(url_for('main.index'))
+    if show_mempool:
+        transactions = []
+        mempool = srv.mempool()
+        for txid in mempool[:limit]:
+            transactions.append(srv.gettransaction(txid))
+        total_txs = len(mempool)
+    else:
+        if not blockid or blockid == 'last':
+            blockid = srv.blockcount()
+        block = srv.getblock(blockid, parse_transactions=True, limit=10, page=page)
+        if not block:
+            flash(_("Block not found"), category='error')
+            return redirect(url_for('main.index'))
+        total_txs = block.tx_count
+        transactions = block.transactions
 
     prev_url = None
     next_url = None
-    if not srv.complete and block.transactions and block.tx_count >= limit:
+    if (mempool and len(mempool) > limit) or \
+            (not mempool and not srv.complete and block.transactions and block.tx_count >= limit):
         next_url = url_for('main.transactions', network=network, blockid=blockid, page=page+1)
     if page > 1:
         prev_url = url_for('main.transactions', network=network, blockid=blockid, page=page-1)
 
-    return render_template('explorer/transactions.html', title=_('Transactions'),
+    return render_template('explorer/transactions.html', title=_('Transactions'), total_txs=total_txs,
                            subtitle=_('Latest confirmed transactions'), block=block, network=network,
-                           form=form, prev_url=prev_url, next_url=next_url)
+                           form=form, transactions=transactions, page=page, limit=limit,
+                           prev_url=prev_url, next_url=next_url)
 
 
 @bp.route('/<network>/transaction/<txid>')

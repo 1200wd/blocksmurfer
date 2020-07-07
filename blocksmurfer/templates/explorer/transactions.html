@@ -1,15 +1,28 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-    {% if not block.transactions %}
-    <p>{{ _('No transactions found') }}</p>
+    {% if not transactions %}
+        <p>{{ _('No transactions found') }}</p>
+    {% elif block %}
+        <p>List of transactions from last block on the Blockchain with height
+            <a href="{{ url_for('main.block', network=network, blockid=block.height) }}">
+                {{ block.height }}</a>. Block contains {{ total_txs }} transactions.
+        </p>
+        <p>
+            You can also view the latest unconfirmed from the
+            <a href="{{ url_for('main.transactions', network=network) }}">mempool</a>.
+        </p>
     {% else %}
-    <p>List of transactions from last block on the Blockchain with height
-        <a href="{{ url_for('main.block', network=network, blockid=block.height) }}">
-            {{ block.height }}</a>
-    </p>
+        <p>
+            Latest unconfirmed transaction from the mempool. Total mempool size is {{ total_txs }} transactions.
+        </p>
+        <p>
+            You can also view confirmed transactions from the
+            <a href="{{ url_for('main.transactions', network=network, blockid='last') }}">latest block</a>.
+        </p>
     {% endif %}
-    {% for t in block.transactions %}
+
+    {% for t in transactions %}
         {% include 'explorer/_transaction_item.html' %}
         <p></p>
     {% endfor %}
@@ -23,6 +36,8 @@
             </a>
         </ul>
     </nav>
+
+    <p>Showing page {{ page }} of {{ (total_txs // limit) + 1 }}</p>
 
     <p>&nbsp;</p>
 
