@@ -43,7 +43,7 @@ install_requires = [
     'flask_wtf==0.14.3',
     'Flask-Limiter',
     'Werkzeug==1.0.1',
-    'WTForms==2.3.1'
+    'WTForms==2.3.1',
 ]
 
 kwargs['install_requires'] = install_requires

@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    <h3>{{ _('Network Status') }}</h3>
+    <table class="pure-table" style="width: 800px;">
+        <tr>
+            <td>Block count</td>
+            <td>
+                <a href ="{{ url_for('main.block', network=network, blockid=network_info['blockcount']) }}">
+                    {{ network_info['blockcount'] }}
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <td>Mempool Size</td>
+            <td>
+                <a href="{{ url_for('main.transactions', network=network) }}">
+                    {{ network_info['mempool_size'] }}</a> transactions
+            </td>
+        </tr>
+        <tr>
+            <td>Chain Name</td>
+            <td>
+                {{ network_info['chain'] }}
+            </td>
+        </tr>
+        <tr>
+            <td>Hashrate</td>
+            <td>
+                {{ hashrate }}
+
+            </td>
+        </tr>
+        <tr>
+            <td>Difficulty</td>
+            <td>
+                {{ '{:,.0f}'.format(network_info['difficulty']) }}
+            </td>
+        </tr>
+    </table>
+
+    <h3>{{ _('Network Definitions') }}</h3>
+    <table class="pure-table" style="width: 800px;">
+        <tr>
+            <td>Network name</td>
+            <td>{{ network_details.name }}</td>
+        </tr>
+        <tr>
+            <td>Description</td>
+            <td>{{ network_details.description }}</td>
+        </tr>
+        <tr>
+            <td>Currency Code</td>
+            <td>{{ network_details.currency_code }}, {{ network_details.currency_symbol }}</td>
+        </tr>
+        <tr>
+            <td>Currency Name</td>
+            <td>{{ network_details.currency_name }} / {{ network_details.currency_name_plural }}</td>
+        </tr>
+        <tr>
+            <td>Fee min / max</td>
+            <td>{{ network_details.fee_min }} / {{ network_details.fee_max }}</td>
+        </tr>
+        <tr>
+            <td>BIP44 cointype</td>
+            <td>{{ network_details.bip44_cointype }}</td>
+        </tr>
+        <tr>
+            <td>Denominator (smallest unit)</td>
+            <td>{{ "%.8f"|format(network_details.denominator) }}</td>
+        </tr>
+        <tr>
+            <td>Address prefix</td>
+            <td>{{ network_details.prefix_address.hex() }}</td>
+        </tr>
+        <tr>
+            <td>Address prefix P2SH (multisig / scripts)</td>
+            <td>{{ network_details.prefix_address_p2sh.hex() }}</td>
+        </tr>
+        <tr>
+            <td>Address prefix Bech32</td>
+            <td>{{ network_details.prefix_bech32 }}</td>
+        </tr>
+        <tr>
+            <td>Address prefix WIF</td>
+            <td>{{ network_details.prefix_wif.hex() }}</td>
+        </tr>
+
+    </table>
+
+    <h3>{{ _('WIF Prefixes') }}</h3>
+    <table class="pure-table" style="width: 800px;">
+        <thead>
+            <tr>
+                <td>Prefix</td>
+                <td>Hex</td>
+                <td>Public</td>
+                <td>Multisig</td>
+                <td>Type</td>
+                <td>Script</td>
+            </tr>
+        </thead>
+        {% for prefix in network_details.prefixes_wif %}
+        <tr>
+            <td>{{ prefix[1] }}</td>
+            <td>{{ prefix[0] }}</td>
+            <td>{{ prefix[2] }}</td>
+            <td>{{ prefix[3] }}</td>
+            <td>{{ prefix[4] }}</td>
+            <td>{{ prefix[5] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

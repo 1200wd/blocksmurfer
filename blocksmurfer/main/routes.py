@@ -6,6 +6,7 @@ from blocksmurfer.explorer.search import search_query
 from blocksmurfer.explorer.service import *
 from bitcoinlib.keys import HDKey
 from bitcoinlib.transactions import script_to_string, script_deserialize, Transaction
+from bitcoinlib.encoding import Quantity
 
 
 @bp.route('/', methods=['GET', 'POST'])
@@ -344,3 +345,16 @@ def block(network, blockid):
 
     return render_template('explorer/block.html', title=_('Block'), subtitle=blockid, block=block, network=network,
                            coinbase_data=coinbase_data, prev_url=prev_url, next_url=next_url)
+
+
+@bp.route('/<network>/network')
+def network(network):
+    srv = SmurferService(network)
+    network_details = srv.network
+    network_info = srv.getinfo()
+    hashrate = Quantity(network_info['hashrate'], 'H/s')
+
+    return render_template('explorer/network.html', title=_('Network'),
+                           network=network, network_info=network_info, network_details=network_details,
+                           hashrate=hashrate,
+                           subtitle='Nerdy details about the %s network' % network_details.name)

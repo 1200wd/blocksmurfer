@@ -46,11 +46,14 @@
                 <li class="pure-menu-item menu-item-divided{% if title=='Explorer' %} pure-menu-selected{% endif %}">
                     <a href="{{ url_for('main.index') }}" class="pure-menu-link">Explorer</a>
                 </li>
+                <li class="pure-menu-item{% if title=='Transactions' %} pure-menu-selected{% endif %}">
+                    <a href="{{ url_for('main.transactions', network='btc') }}" class="pure-menu-link">Transactions</a>
+                </li>
                 <li class="pure-menu-item{% if title=='Blocks' %} pure-menu-selected{% endif %}">
                     <a href="{{ url_for('main.blocks', network='btc') }}" class="pure-menu-link">Blocks</a>
                 </li>
-                <li class="pure-menu-item{% if title=='Transactions' %} pure-menu-selected{% endif %}">
-                    <a href="{{ url_for('main.transactions', network='btc') }}" class="pure-menu-link">Transactions</a>
+                <li class="pure-menu-item{% if title=='Network' %} pure-menu-selected{% endif %}">
+                    <a href="{{ url_for('main.network', network='btc') }}" class="pure-menu-link">Network</a>
                 </li>
                 <li class="pure-menu-item{% if title=='API' %} pure-menu-selected{% endif %}">
                     <a href="{{ url_for('main.api') }}" class="pure-menu-link">API</a>
