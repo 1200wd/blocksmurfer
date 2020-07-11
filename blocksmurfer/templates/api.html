@@ -10,6 +10,28 @@
     <p>Base URL: </p>
     <p>https://blocksmurfer.io/api/v1/btc/</p>
 
+    <h2>Network</h2>
+
+    <h3>Network Information</h3>
+    <p>Get information about the selected network such as the number of transaction in the mempool, the last block,
+        hashrate and various network definitions</p>
+    <p>Example:
+        <a href="{{ url_for('api.network', network='btc') }}">
+            {{ url_for('api.network', network='btc') }}
+        </a>
+    </p>
+    <p></p>
+
+    <h3>Estimated Transaction Fee</h3>
+    <p>Get the estimated fee you need to pay to get a transaction included within a certain amount of blocks.</p>
+    <p>Example:
+        <a href="{{ url_for('api.fees', network='btc', blocks=5) }}">
+            {{ url_for('api.fees', network='btc', blocks=5) }}
+        </a>
+    </p>
+    <p>The estimated fee in Satoshi per kilobyte will be used. </p>
+    <p>If the 'blocks' parameter is omited a default of 3 blocks will be used.</p>
+
     <h2>Blocks</h2>
     <h3>Specific block</h3>
     <p>Get block with specified blockhash or blockheight.</p>
@@ -109,16 +131,5 @@
     </p>
     <p>Returns a dictionary with "success" is True and the transaction hash in "txid" if successful.
     If some errors occur more details are places in the "error" element.</p>
-
-    <h3>Estimated Transaction Fee</h3>
-    <p>Get the estimated fee you need to pay to get a transaction included within a certain amount of blocks.</p>
-    <p>Example:
-        <a href="{{ url_for('api.fees', network='btc', blocks=5) }}">
-            {{ url_for('api.fees', network='btc', blocks=5) }}
-        </a>
-    </p>
-    <p>The estimated fee in Satoshi per kilobyte will be used. </p>
-    <p>If the 'blocks' parameter is omited a default of 3 blocks will be used.</p>
-
 
 {% endblock %}

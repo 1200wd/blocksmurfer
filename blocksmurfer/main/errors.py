@@ -34,7 +34,7 @@ def handle_errors(e):
             'description': description,
             'code': code,
         }
-        _logger.warning("Error %d: %s (%s). Request URL: %s" % (e.code, e.name, e.description, request.path))
+        _logger.warning("Error %d: %s (%s). Request URL: %s" % (code, name, description, request.path))
         resp = jsonify(payload)
         resp.status_code = code
         return resp, 500 if not code else code

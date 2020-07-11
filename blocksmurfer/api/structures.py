@@ -101,3 +101,24 @@ block_fields = {
     'tx_count': fields.Integer,
     'version': fields.Integer,
 }
+
+# network_prefix_field = fields.List({'a': fields.String, 'b': fields.String, 'c': fields.String, 'd': fields.String, 'e': fields.String, 'f': fields.String})
+
+network_field = {
+    'bip44_cointype': fields.Integer,
+    'currency_code': fields.String,
+    'currency_name': fields.String,
+    'currency_name_plural': fields.String,
+    'currency_symbol': fields.String,
+    'denominator': fields.Float,
+    'description': fields.String,
+    'dust_amount': fields.Integer,
+    'fee_default': fields.Integer,
+    'fee_max': fields.Integer,
+    'fee_min': fields.Integer,
+    'name': fields.String,
+    'prefix_address':  fields.String(attribute=lambda obj: obj['prefix_address'].hex()),
+    'prefix_address_p2sh': fields.String(attribute=lambda obj: obj['prefix_address_p2sh'].hex()),
+    'prefix_bech32': fields.String,
+    'prefix_wif': fields.String(attribute=lambda obj: obj['prefix_wif'].hex()),
+}

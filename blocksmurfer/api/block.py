@@ -1,4 +1,4 @@
-from flask import jsonify, abort
+from flask import jsonify
 from flask_restful import marshal, request
 from blocksmurfer.main import MAX_TRANSACTIONS_REQUESTS
 from blocksmurfer.api import bp
@@ -29,7 +29,7 @@ def block(network, blockid):
         bdict['transactions'] = marshal(bk.transactions, transaction_fields_block)
     else:
         bdict['transactions'] = bk.transactions
-    return bdict
+    return jsonify(bdict)
 
 
 @bp.route('/<string:network>/blockcount')
