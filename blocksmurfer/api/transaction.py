@@ -77,4 +77,4 @@ def transaction_broadcast(network):
         'errors': ','.join(errors),
         'raw_response': res
     }
-    return jsonify(data)
+    return jsonify(data), 200 if txid else 400
