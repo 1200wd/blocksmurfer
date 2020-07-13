@@ -533,10 +533,10 @@ class TestAPI(unittest.TestCase, CustomAssertions):
         self.assertIn(b'"This transaction 70c947908888729290cb2eb5bd38ebb1585ab2bd8389221b946e4f61e1ce5f82 is '
                       b'already included in the blockchain", \n  "raw_response": {}, \n  "success": false, \n  '
                       b'"txid": ""\n}\n', response.data)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 400)
 
     def test_api_transaction_broadcast_post_invalid_tx(self):
         rawtx = "01000000010000000000000000000000000000000000000000000000000000000000000000ffffff4d04ffff001d0104455468652054696d65732030332f4a616e2f32303039204368616e63656c6c6f72206f6e206272696e6b206f66207365636f6e64206261696c6f757420666f722062616e6b73ffffffff0100f2052a01000000434104678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5fac00000000"
         response = self.app.post('api/v1/btc/transaction_broadcast', data=rawtx)
         self.assertIn(b'"Invalid raw transaction hex, could not parse: index out of range"', response.data)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 400)
