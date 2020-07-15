@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    {% if transaction.pushed %}
+        <h2>Transaction broadcasted successfully</h2>
+    {% else %}
+        <h2>Transaction not send</h2>
+    {% endif %}
+    <p>
+        {% include 'explorer/_transaction_item.html' %}
+    </p>
+{% endblock %}

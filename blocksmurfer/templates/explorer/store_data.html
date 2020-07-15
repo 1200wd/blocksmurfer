@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    <p>
+        Enter data to embed on the blockchain as text or hexadecimal string.
+        A new transaction will be created with the data as Nulldata / OP_RETURN in a transaction output.
+        When you fund the transaction it will pushed to the network.
+        The costs of the transaction depends on the current network rate.
+    </p>
+    <form action="" method="post" novalidate class="pure-form">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.data(rows="4", cols="100") }}
+        </p>
+        <p>
+            {{ form.transaction_fee.label }} {{ form.transaction_fee(value=tx_fee) }}
+        </p>
+        <p>{{ form.submit(class_="pure-button pure-button-primary") }}</p>
+    </form>
+{% endblock %}

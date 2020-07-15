@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    <p>Data to embed: {{ data }}</p>
+    <p>Please send {{ tx_fee }} satoshi to {{ address }} to fund the transaction.</p>
+    <p>
+        <img src="{{ qrcode(paymentlink, box_size=7, border=2, fill_color='#090947') }}">
+    </p>
+    <p>{{ paymentlink }}</p>
+    <h3>Please reload page after funds have been send</h3>
+{% endblock %}

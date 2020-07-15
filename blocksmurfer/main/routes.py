@@ -5,8 +5,9 @@ from blocksmurfer.main.forms import *
 from blocksmurfer.explorer.search import search_query
 from blocksmurfer.explorer.service import *
 from bitcoinlib.keys import HDKey
-from bitcoinlib.transactions import script_to_string, script_deserialize, Transaction
+from bitcoinlib.transactions import script_to_string, script_deserialize, Transaction, Output
 from bitcoinlib.encoding import Quantity
+from bitcoinlib.wallets import wallet_create_or_open
 
 
 @bp.route('/', methods=['GET', 'POST'])
@@ -358,3 +359,33 @@ def network(network):
                            network=network, network_info=network_info, network_details=network_details,
                            hashrate=hashrate,
                            subtitle='Nerdy details about the %s network' % network_details.name)
+
+
+@bp.route('/<network>/store_data', methods=['GET', 'POST'])
+def store_data(network):
+    srv = SmurferService(network)
+    form = StoreDataForm()
+    tx_fee = srv.estimatefee(10) // 10
+    if form.validate_on_submit():
+        w = wallet_create_or_open('BS_embed_data_wallet', witness_type='p2sh-segwit', network=srv.network.name)
+        w.scan(scan_gap_limit=1)
+        if w.balance():
+            lock_script = b'\x6a' + varstr(form.data.data)
+            t = w.send([Output(0, lock_script=lock_script)], fee=form.transaction_fee.data)
+            return render_template('explorer/store_data_send.html', title=_('Push Transaction'),
+                                   subtitle=_('Embed the data on the %s network' % srv.network.name),
+                                   transaction=t)
+        else:
+            k = w.get_key()
+            message = "Store%20Data%20-%20Blocksmurfer"
+            paymentlink = '%s:%s?amount=%.8f&message=%s' % \
+                          (srv.network.name, k.address, form.transaction_fee.data * srv.network.denominator, message)
+            return render_template('explorer/store_data_fund.html', title=_('Fund Transaction'),
+                                   subtitle=_('Fund the %s transaction and store data on the blockchain' %
+                                              srv.network.name),
+                                   address=k.address, tx_fee=form.transaction_fee.data, data=form.data.data,
+                                   paymentlink=paymentlink)
+
+    return render_template('explorer/store_data.html', title=_('Store data'),
+                           subtitle=_('Embed data on the %s blockchain' % srv.network.name), form=form,
+                           tx_fee=tx_fee)
