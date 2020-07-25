@@ -5,7 +5,7 @@ from blocksmurfer.main.forms import *
 from blocksmurfer.explorer.search import search_query
 from blocksmurfer.explorer.service import *
 from bitcoinlib.keys import HDKey
-from bitcoinlib.transactions import script_to_string, script_deserialize, Transaction, Output
+from bitcoinlib.transactions import script_to_string, script_deserialize, Transaction, Output, TransactionError
 from bitcoinlib.encoding import Quantity
 from bitcoinlib.wallets import wallet_create_or_open
 
@@ -123,13 +123,24 @@ def transaction_broadcast(network):
     if form.validate_on_submit():
         srv = SmurferService(network)
         try:
-            t = Transaction.import_raw(form.rawtx.data)
+            t = Transaction.import_raw(form.rawtx.data, network=srv.network)
         except Exception as e:
             flash(_('Invalid raw transaction hex, could not parse: %s' % e), category='error')
         else:
+            # TODO: Retreiving prev_tx input values should be included in bitcoinlib
+            try:
+                for n, i in enumerate(t.inputs):
+                    ti = srv.gettransaction(i.prev_hash)
+                    t.inputs[n].value = ti.outputs[i.output_n_int].value
+                t.verify()
+            except TransactionError as e:
+                flash(_('Could not verify transaction: %s' % e), category='warning')
+
             known_tx = srv.gettransaction(t.txid)
             if known_tx:
                 flash(_('This transaction %s is already included in the blockchain' % t.txid), category='error')
+            elif not t.verified:
+                flash(_('Invalid transaction, could not verify transaction %s' % t.txid), category='error')
             else:
                 res = srv.sendrawtransaction(form.rawtx.data)
                 if not res or 'txid' not in res:
@@ -147,12 +158,22 @@ def transaction_broadcast(network):
 def transaction_decompose(network):
     rawtx = request.args.get('rawtx', type=str)
     form = TransactionDecomposeForm()
+    srv = SmurferService(network)
     if form.validate_on_submit():
         try:
-            t = Transaction.import_raw(form.rawtx.data)
+            t = Transaction.import_raw(form.rawtx.data, network=srv.network)
         except Exception as e:
-            flash(_('Invalid raw transaction hex, could not parse %s' % e), category='error')
+            flash(_('Invalid raw transaction hex, could not parse: %s' % e), category='error')
         else:
+
+            # TODO: Retreiving prev_tx input values should be included in bitcoinlib
+            try:
+                for n, i in enumerate(t.inputs):
+                    ti = srv.gettransaction(i.prev_hash)
+                    t.inputs[n].value = ti.outputs[i.output_n_int].value
+                t.verify()
+            except TransactionError as e:
+                flash(_('Could not verify transaction: %s' % e), category='warning')
             t_json = t.as_json()
             return render_template('explorer/transaction_elements.html', title=_('Decomposed Transaction'),
                                    subtitle=_('Transaction elements as dictionary'),
@@ -374,7 +395,7 @@ def store_data(network):
             t = w.send([Output(0, lock_script=lock_script)], fee=form.transaction_fee.data)
             return render_template('explorer/store_data_send.html', title=_('Push Transaction'),
                                    subtitle=_('Embed the data on the %s network' % srv.network.name),
-                                   transaction=t)
+                                   transaction=t, t=t)
         else:
             k = w.get_key()
             message = "Store%20Data%20-%20Blocksmurfer"
