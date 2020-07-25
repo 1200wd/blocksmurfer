@@ -70,6 +70,11 @@ class TestSite(unittest.TestCase, TestingConfig):
         self.assertIn(b'/btc/block/123456', response.data)
         self.assertEqual(response.status_code, 302)
 
+    def test_search_unknown(self):
+        response = self.app.get('/search/something_strange', follow_redirects=True)
+        self.assertIn(b'Not a valid address, key or transaction ID', response.data)
+        self.assertEqual(response.status_code, 200)
+
     def test_search_key(self):
         response = self.app.get('/search/xpub661MyMwAqRbcGpWkuXwKRMAnJUnwBBSFo3KpormL4ti5m5i7q8D7Rih8fvCAHWXhCA'
                                 '3aF3KvGWw4PZtqc9ymsSrkCLbC9Xgeqao6t5eWbrD')
@@ -102,6 +107,11 @@ class TestSite(unittest.TestCase, TestingConfig):
                                 'a2717fd23cc3edfe90ec75351fadd6a0f7993b461d')
         self.assertIn(b'4be9e8f3a35a7c597ae9641b2767242aca0d0abe20bf419b9168ea373b88fe48', response.data)
         self.assertIn(b'1ed74cf9ec10bb9eb881dfcbc97318baadff371e25f227587b8d87466f260cad', response.data)
+        self.assertEqual(response.status_code, 200)
+
+    def test_explorer_address_invalid(self):
+        response = self.app.get('/btc/address/17A16QmavnUfCW11DAApiJxp7ARnxN5pGG', follow_redirects=True)
+        self.assertIn(b'Invalid address', response.data)
         self.assertEqual(response.status_code, 200)
 
     def test_explorer_transaction(self):
@@ -161,6 +171,12 @@ class TestSite(unittest.TestCase, TestingConfig):
                                 'output/0')
         self.assertIn(b'1 wallet_create_or_open\nfrom bitcoinlib.encoding import varstr\n\nwallet = wa', response.data)
         self.assertIn(b'Nulldata', response.data)
+        self.assertEqual(response.status_code, 200)
+
+    def test_explorer_transaction_invalid(self):
+        response = self.app.get('/btc/transaction/0d9e1d9ae2b5a055af61845f2462f3d88f127bbc068d3f9e3d3f7926e5c6109',
+                                follow_redirects=True)
+        self.assertIn(b'Invalid transaction ID', response.data)
         self.assertEqual(response.status_code, 200)
 
     def test_explorer_transactions(self):
@@ -299,6 +315,16 @@ class TestSite(unittest.TestCase, TestingConfig):
         self.assertIn(b'02e454cea7d62cef1e959f20aa5bfe7c852a15341de1899892ab37372f01c5ec63', response.data)
         self.assertIn(b'103277170915039968320476074728082180282525753362284913527381919915150173138019', response.data)
         self.assertEqual(response.status_code, 200)
+
+    def test_explorer_404(self):
+        response = self.app.get('btc/strange_url')
+        self.assertIn(b'Error: Not Found', response.data)
+        self.assertEqual(response.status_code, 404)
+
+    def test_explorer_422_unknown_network(self):
+        response = self.app.get('/bitcoin/transaction/43d220300f489ddbceb1ff9e081f399cfd00b30e8791f4ab82cbe2bb257c31df')
+        self.assertIn(b'Error opening network with specified code', response.data)
+        self.assertEqual(response.status_code, 422)
 
 
 class TestAPI(unittest.TestCase, CustomAssertions):
@@ -484,6 +510,11 @@ class TestAPI(unittest.TestCase, CustomAssertions):
             self.assertDictEqualExt(expected[n], u)
             n += 1
 
+    def test_api_isspent(self):
+        response = self.app.get('/api/v1/btc/isspent/d658ab87cc053b8dbcfd4aa2717fd23cc3edfe90ec75351fadd6a0f7993b461d/0')
+        self.assertEqual(response.status_code, 200)
+        self.assertGreaterEqual(response.json['spent'], True)
+
     def test_api_utxos_after_txid(self):
         response = self.app.get('/api/v1/btc/utxos/1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1?'
                                 'after_txid=d658ab87cc053b8dbcfd4aa2717fd23cc3edfe90ec75351fadd6a0f7993b461d')
@@ -540,3 +571,14 @@ class TestAPI(unittest.TestCase, CustomAssertions):
         response = self.app.post('api/v1/btc/transaction_broadcast', data=rawtx)
         self.assertIn(b'"Invalid raw transaction hex, could not parse: index out of range"', response.data)
         self.assertEqual(response.status_code, 400)
+
+    def test_api_network(self):
+        response = self.app.get('/api/v1/btc/')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual("bitcoins", response.json['currency_name_plural'])
+        self.assertEqual("0488B21E", response.json['prefixes_wif'][0]['hex'])
+
+    def test_api_404(self):
+        response = self.app.get('/api/unknown')
+        self.assertIn(b'API request error', response.data)
+        self.assertEqual(response.status_code, 404)

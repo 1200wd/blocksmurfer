@@ -383,7 +383,7 @@ def network(network):
 
 
 @bp.route('/<network>/store_data', methods=['GET', 'POST'])
-def store_data(network):
+def store_data(network): # pragma: no cover
     srv = SmurferService(network)
     form = StoreDataForm()
     tx_fee = srv.estimatefee(10) // 10
