@@ -8,3 +8,5 @@ exclude_lines =
     if __name__ == .__main__.:
     except:
     flash
+    abort
+    error_on_empty
