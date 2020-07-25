@@ -13,7 +13,7 @@ def handle_errors(e):
     def getattr(object, attribute, default=''):
         try:
             return object.__getattribute__(attribute)
-        except:  # pragma: nocover
+        except:  # pragma: no cover
             try:
                 return object.get(attribute, default)
             except:
