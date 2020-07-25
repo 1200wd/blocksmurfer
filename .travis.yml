@@ -12,7 +12,6 @@ install:
   - ln -s 1200wd/bitcoinlib/bitcoinlib bitcoinlib
 
 script:
-  - python setup.py test
   - coverage run --source=blocksmurfer setup.py test
 
 after_script:
