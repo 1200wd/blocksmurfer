@@ -5,7 +5,7 @@ Blocksmurfer
     :target: https://travis-ci.org/1200wd/blocksmurfer
     :alt: Travis
 .. image:: https://coveralls.io/repos/github/1200wd/blocksmurfer/badge.svg?branch=master
-:target: https://coveralls.io/github/1200wd/blocksmurfer?branch=master    
+    :target: https://coveralls.io/github/1200wd/blocksmurfer?branch=master    
 
 Bitcoin blockchain explorer based on Python Bitcoinlib (https://github.com/1200wd/bitcoinlib).
 Search the blockchain for addresses, transactions, blocks, unspent outputs, etc.
