@@ -13,3 +13,7 @@ install:
 
 script:
   - python setup.py test
+  - coverage run --source=blocksmurfer setup.py test
+
+after_script:
+  - coveralls
