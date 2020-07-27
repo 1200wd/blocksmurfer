@@ -135,7 +135,7 @@ class TestSite(unittest.TestCase, TestingConfig):
         self.assertEqual(response.status_code, 200)
 
     def test_explorer_transaction_unconfirmed(self):
-        srv = SmurferService()
+        srv = SmurferService('btc')
         mempool = srv.mempool()
         if not isinstance(mempool, list) or not mempool:
             pass
