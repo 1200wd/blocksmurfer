@@ -35,7 +35,7 @@ except:
 kwargs = {}
 
 install_requires = [
-    'bitcoinlib>=0.4.16',
+    'bitcoinlib>=0.4.17',
     'Flask==1.1.2',
     'flask_babel==1.0.0',
     'flask_qrcode==3.0.0',

@@ -21,7 +21,7 @@ def current_app(config_class=Config):
         return datetime.datetime.fromtimestamp(s)
 
     @app.route('/robots.txt')
-    # @app.route('/sitemap.xml')
+    @app.route('/sitemap.xml')
     def static_from_root():
         return send_from_directory(app.static_folder, request.path[1:])
 
@@ -40,5 +40,6 @@ def current_app(config_class=Config):
     from blocksmurfer.api import bp as api_bp
     app.register_blueprint(api_bp, url_prefix='/api/v1')
     limiter.init_app(app)
+
 
     return app

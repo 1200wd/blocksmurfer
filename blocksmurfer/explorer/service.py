@@ -23,11 +23,12 @@ network_code_translation = {
 
 class SmurferService(Service):
 
-    def __init__(self, network_code='', timeout=5, *args, **kwargs):
+    def __init__(self, network_code='btc', timeout=5, *args, **kwargs):
         nw_enabled = network_code_translation.keys() if not current_app else current_app.config['NETWORKS_ENABLED']
-        if not network_code and current_app:
-            network_code = session.get('network_code', current_app.config['NETWORK_DEFAULT'])
-            session['network_code'] = network_code
+        # TODO: Enable other networks
+        # if not network_code and current_app:
+        #     network_code = session.get('network_code', current_app.config['NETWORK_DEFAULT'])
+        #     session['network_code'] = network_code
         if network_code in network_code_translation and network_code in nw_enabled:
             network = network_code_translation[network_code]
             Service.__init__(self, network=network, timeout=timeout, *args, **kwargs)

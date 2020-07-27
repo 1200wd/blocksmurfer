@@ -1,3 +1,2 @@
 User-agent: *
-Disallow: /api/v1
-Disallow: /api/v2
+Sitemap: https://blocksmurfer.io/sitemap.xml
