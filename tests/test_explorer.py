@@ -14,8 +14,8 @@ class TestSite(unittest.TestCase, TestingConfig):
 
     def setUp(self):
         app = current_app()
-        app.config['TESTING'] = True
-        app.config['WTF_CSRF_ENABLED'] = False
+        app.config['TESTING'] = TestingConfig.TESTING
+        app.config['WTF_CSRF_ENABLED'] = TestingConfig.WTF_CSRF_ENABLED
         self.app = app.test_client()
 
     def test_index_page(self):

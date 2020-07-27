@@ -12,4 +12,4 @@ class Config(object):
     DEBUG = False
     REQUEST_LIMIT_DEFAULT = 10
     REQUEST_LIMIT_MAX = 25
-
+    NETWORKS_ENABLED = ['btc']   # Example: ['btc', 'ltc', 'tbtc', 'xlt'], see service.py

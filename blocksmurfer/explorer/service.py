@@ -7,7 +7,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from flask import abort
+from flask import abort, current_app
 from bitcoinlib.encoding import *
 from bitcoinlib.keys import Address
 from bitcoinlib.services.services import Service, ServiceError
@@ -24,7 +24,8 @@ network_code_translation = {
 class SmurferService(Service):
 
     def __init__(self, network_code='btc', timeout=5, *args, **kwargs):
-        if network_code in network_code_translation:
+        nw_enabled = network_code_translation.keys() if not current_app else current_app.config['NETWORKS_ENABLED']
+        if network_code in network_code_translation and network_code in nw_enabled:
             network = network_code_translation[network_code]
             Service.__init__(self, network=network, timeout=timeout, *args, **kwargs)
         else:
