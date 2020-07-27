@@ -4,6 +4,9 @@ Blocksmurfer
 .. image:: https://travis-ci.org/1200wd/blocksmurfer.svg?branch=master
     :target: https://travis-ci.org/1200wd/blocksmurfer
     :alt: Travis
+.. image:: https://img.shields.io/pypi/v/blocksmurfer.svg
+    :target: https://pypi.org/pypi/blocksmurfer/
+    :alt: PyPi
 .. image:: https://coveralls.io/repos/github/1200wd/blocksmurfer/badge.svg?branch=master
     :target: https://coveralls.io/github/1200wd/blocksmurfer?branch=master    
 
