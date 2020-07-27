@@ -1,6 +1,6 @@
-from flask import render_template, flash, redirect, url_for, request
+from flask import render_template, flash, redirect, url_for, request, current_app
 from flask_babel import _
-from blocksmurfer.main import bp, MAX_TRANSACTIONS_REQUESTS
+from blocksmurfer.main import bp
 from blocksmurfer.main.forms import *
 from blocksmurfer.explorer.search import search_query
 from blocksmurfer.explorer.service import *
@@ -260,8 +260,8 @@ def transaction_output(network, txid, output_n):
 def address(network, address):
     srv = SmurferService(network)
     after_txid = request.args.get('after_txid', '', type=str)
-    limit = request.args.get('limit', 5, type=int)
-    limit = MAX_TRANSACTIONS_REQUESTS if limit > MAX_TRANSACTIONS_REQUESTS else limit
+    limit = request.args.get('limit', current_app.config['REQUEST_LIMIT_DEFAULT'], type=int)
+    limit = current_app.config['REQUEST_LIMIT_MAX'] if limit > current_app.config['REQUEST_LIMIT_MAX'] else limit
 
     try:
         address_obj = Address.import_address(address)
@@ -339,8 +339,9 @@ def blocks(network):
 @bp.route('/<network>/block/<blockid>')
 def block(network, blockid):
     page = request.args.get('page', 1, type=int)
-    limit = request.args.get('limit', 5, type=int)
-    limit = MAX_TRANSACTIONS_REQUESTS if limit > MAX_TRANSACTIONS_REQUESTS else limit
+    limit = request.args.get('limit', current_app.config['REQUEST_LIMIT_DEFAULT'], type=int)
+    limit = current_app.config['REQUEST_LIMIT_MAX'] if limit > current_app.config['REQUEST_LIMIT_MAX'] else limit
+
     srv = SmurferService(network)
     if blockid == 'last':
         blockid = srv.blockcount()

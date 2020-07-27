@@ -562,8 +562,7 @@ class TestAPI(unittest.TestCase, CustomAssertions):
         rawtx = "02000000019d727de37afe481c62b44f270791cb1d5e1451775084f77cd9778a0a3e8f840d020000008a473044022046f4efa2529217b4a7935cfad2111a2295dbe501e3ce847873b7f5ddd53ed8b10220135ba849f157620f19e510bebb9888fafacb006e372927f24fd46976544e7bad0141047146f0e0fcb3139947cf0beb870fe251930ca10d4545793d31033e801b5219abf56c11a3cf3406ca590e4c14b0dab749d20862b3adc4709153c280c2a78be10cffffffff03cd3033000000000017a9144fd0311db33cf5dbb125a35180db0bd55c59045987bc2a6000000000001976a914ae429abaa37eba8cad0cbe85bfee0bca613bca0c88ac86c6e9eb2a0000001976a91443849383122ebb8a28268a89700c9f723663b5b888ac00000000"
         response = self.app.post('api/v1/btc/transaction_broadcast', data=rawtx)
         self.assertIn(b'"This transaction 70c947908888729290cb2eb5bd38ebb1585ab2bd8389221b946e4f61e1ce5f82 is '
-                      b'already included in the blockchain", \n  "raw_response": {}, \n  "success": false, \n  '
-                      b'"txid": ""\n}\n', response.data)
+                      b'already included in the blockchain"', response.data)
         self.assertEqual(response.status_code, 400)
 
     def test_api_transaction_broadcast_post_invalid_tx(self):

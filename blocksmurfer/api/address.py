@@ -1,7 +1,6 @@
-from flask import jsonify
+from flask import jsonify, current_app
 from flask_restful import marshal, request
 from blocksmurfer.api import bp
-from blocksmurfer.main import MAX_TRANSACTIONS_REQUESTS
 from blocksmurfer.api.structures import transaction_fields, utxo_fields
 from blocksmurfer.explorer.service import *
 # import logging
@@ -14,8 +13,8 @@ def transactions(network, address):
     after_txid = request.args.get('after_txid', '', type=str)
     if after_txid and not check_txid(after_txid):
         abort(422, "Invalid after_txid provided")
-    limit = request.args.get('limit', 10, type=int)
-    limit = MAX_TRANSACTIONS_REQUESTS if limit > MAX_TRANSACTIONS_REQUESTS else limit
+    limit = request.args.get('limit', current_app.config['REQUEST_LIMIT_DEFAULT'], type=int)
+    limit = current_app.config['REQUEST_LIMIT_MAX'] if limit > current_app.config['REQUEST_LIMIT_MAX'] else limit
 
     srv = SmurferService(network)
     if not check_address(address):
@@ -31,8 +30,8 @@ def utxos(network, address):
     after_txid = request.args.get('after_txid', '', type=str)
     if after_txid and not check_txid(after_txid):
         abort(422, "Invalid after_txid provided")
-    limit = request.args.get('limit', 10, type=int)
-    limit = MAX_TRANSACTIONS_REQUESTS if limit > MAX_TRANSACTIONS_REQUESTS else limit
+    limit = request.args.get('limit', current_app.config['REQUEST_LIMIT_DEFAULT'], type=int)
+    limit = current_app.config['REQUEST_LIMIT_MAX'] if limit > current_app.config['REQUEST_LIMIT_MAX'] else limit
 
     srv = SmurferService(network)
     if not check_address(address):
