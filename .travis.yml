@@ -8,7 +8,7 @@ install:
   - pip install coveralls
   - pip install scrypt
   - python setup.py install
-  - git clone --branch=bugfixes-0.4-release https://github.com/1200wd/bitcoinlib.git 1200wd/bitcoinlib
+  - git clone https://github.com/1200wd/bitcoinlib.git 1200wd/bitcoinlib
   - ln -s 1200wd/bitcoinlib/bitcoinlib bitcoinlib
 
 script:
