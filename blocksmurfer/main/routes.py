@@ -95,8 +95,12 @@ def transactions(network='btc'):
     if page > 1:
         prev_url = url_for('main.transactions', network=network, blockid=blockid, page=page-1)
 
+    subtitle = _('Latest unconfirmed transactions')
+    if blockid:
+        subtitle = _('Block %s transactions' % blockid)
+
     return render_template('explorer/transactions.html', title=_('Transactions'), total_txs=total_txs,
-                           subtitle=_('Latest confirmed transactions'), block=block, network=network,
+                           subtitle=subtitle, block=block, network=network,
                            form=form, transactions=transactions, page=page, limit=limit,
                            prev_url=prev_url, next_url=next_url)
 
