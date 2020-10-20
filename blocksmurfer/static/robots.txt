@@ -1,2 +1,5 @@
 User-agent: *
+Disallow: /api/
+Disallow: /btc/address/
 Sitemap: https://blocksmurfer.io/sitemap.xml
+Crawl-delay: 60

@@ -16,11 +16,11 @@ transaction_input_fields = {
     'script_code': fields.String(attribute=lambda obj: obj.script_code.hex()),
     'script_type': fields.String,
     'sequence': fields.Integer,
-    'signatures': fields.String(attribute=lambda obj: ''.join([s.hex() for s in obj.signatures])),
+    'signatures': fields.String(attribute=lambda obj: ','.join([s.hex() for s in obj.signatures])),
     'sigs_required': fields.Integer,
     'valid': fields.Boolean,
     'value': fields.Integer,
-    'witness': fields.String(attribute=lambda obj: b''.join(obj.witnesses).hex()),
+    'witness': fields.String(attribute=lambda obj: b''.join(obj.witnesses).hex()),  # todo add varstr!?
     'witness_type': fields.String,
 }
 
