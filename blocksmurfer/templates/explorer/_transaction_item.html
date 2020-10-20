@@ -65,7 +65,7 @@
         <td>
             {% if out.spent %}
                 {% if out.spending_txid %}
-                    <a href="{{ url_for('main.transaction', network=network, txid=out.spending_txid) }}">
+                    <a href="{{ url_for('main.transaction', network=network, txid=out.spending_txid.hex()) }}">
                         <i class="fa fa-arrow-right"></i>
                     </a>
                 {% else %}
