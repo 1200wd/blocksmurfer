@@ -1,7 +1,7 @@
 from flask_restful import fields
 
 transaction_input_fields = {
-    'prev_hash': fields.String(attribute=lambda obj: obj.prev_hash.hex()),
+    'prev_txid': fields.String(attribute=lambda obj: obj.prev_txid.hex()),
     'output_n': fields.Integer(attribute='output_n_int'),
     'address': fields.String,
     'compressed': fields.Boolean,
@@ -77,7 +77,7 @@ transaction_fields_block = {
 
 utxo_fields = {
     'address': fields.String,
-    'tx_hash': fields.String,
+    'txid': fields.String,
     'confirmations': fields.Integer,
     'output_n': fields.Integer,
     'input_n': fields.Integer,

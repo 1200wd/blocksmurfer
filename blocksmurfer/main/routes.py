@@ -133,7 +133,7 @@ def transaction_broadcast(network):
             # TODO: Retreiving prev_tx input values should be included in bitcoinlib
             try:
                 for n, i in enumerate(t.inputs):
-                    ti = srv.gettransaction(i.prev_hash)
+                    ti = srv.gettransaction(i.prev_txid.hex())
                     t.inputs[n].value = ti.outputs[i.output_n_int].value
                 t.verify()
             except TransactionError as e:
@@ -172,7 +172,7 @@ def transaction_decompose(network):
             # TODO: Retreiving prev_tx input values should be included in bitcoinlib
             try:
                 for n, i in enumerate(t.inputs):
-                    ti = srv.gettransaction(i.prev_hash)
+                    ti = srv.gettransaction(i.prev_txid.hex())
                     t.inputs[n].value = ti.outputs[i.output_n_int].value
                 t.verify()
             except TransactionError as e:
