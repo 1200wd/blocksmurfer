@@ -130,11 +130,9 @@ def transaction_broadcast(network):
         except Exception as e:
             flash(_('Invalid raw transaction hex, could not parse: %s' % e), category='error')
         else:
-            # TODO: Retreiving prev_tx input values should be included in bitcoinlib
+            # Retrieve prev_tx input values
+            t = srv.getinputvalues(t)
             try:
-                for n, i in enumerate(t.inputs):
-                    ti = srv.gettransaction(i.prev_txid.hex())
-                    t.inputs[n].value = ti.outputs[i.output_n_int].value
                 t.verify()
             except TransactionError as e:
                 flash(_('Could not verify transaction: %s' % e), category='warning')

@@ -1,4 +1,15 @@
 from flask_restful import fields
+from flask_restful.fields import MarshallingException
+
+
+class Hexstring(fields.String):
+
+    def format(self, value):
+        try:
+            return value.hex()
+        except ValueError as ve:
+            raise MarshallingException(ve)
+
 
 transaction_input_fields = {
     'prev_txid': fields.String(attribute=lambda obj: obj.prev_txid.hex()),
@@ -16,11 +27,11 @@ transaction_input_fields = {
     'script_code': fields.String(attribute=lambda obj: obj.script_code.hex()),
     'script_type': fields.String,
     'sequence': fields.Integer,
-    'signatures': fields.String(attribute=lambda obj: ','.join([s.hex() for s in obj.signatures])),
+    'signatures': fields.List(Hexstring),
     'sigs_required': fields.Integer,
     'valid': fields.Boolean,
     'value': fields.Integer,
-    'witness': fields.String(attribute=lambda obj: b''.join(obj.witnesses).hex()),  # todo add varstr!?
+    'witnesses': fields.List(Hexstring),
     'witness_type': fields.String,
 }
 

@@ -451,7 +451,6 @@ class TestAPI(unittest.TestCase, CustomAssertions):
                          "value": 2509821000}],  # FIXME: Check for spent=True
             "size": 104, "status": "confirmed",
             "txid": "fc27565334c7faa7ceeb457dfb5c8ba459e42c1cd8551a99af41f336fc4fd64d", "witness_type": "legacy"}
-        print(response.json)
         self.assertDictEqualExt(expected, response.json[0])
 
     def test_api_transactions_after_txid(self):

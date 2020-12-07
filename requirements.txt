@@ -6,5 +6,5 @@ flask_restful==0.3.8
 flask_wtf==0.14.3
 Werkzeug==1.0.1
 WTForms==2.3.3
-gunicorn
-Flask-Limiter
+gunicorn==20.0.4
+Flask-Limiter==1.4

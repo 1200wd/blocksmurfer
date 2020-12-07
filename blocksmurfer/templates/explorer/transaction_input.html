@@ -136,7 +136,7 @@
         {% endif %}
         {% endfor %}
         {% endif %}
-        {% for sig in unlocking_script_dict['signatures'] %}
+        {% for sig in input.signatures %}
         <tr>
             <td>Signature</td>
             <td style="word-break: break-all;">{{ sig.hex() }}</td>
