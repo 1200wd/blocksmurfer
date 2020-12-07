@@ -1,8 +1,8 @@
 Blocksmurfer
 ============
 
-.. image:: https://travis-ci.org/1200wd/blocksmurfer.svg?branch=master
-    :target: https://travis-ci.org/1200wd/blocksmurfer
+.. image:: https://travis-ci.com/1200wd/blocksmurfer.svg?branch=master
+    :target: https://travis-ci.com/1200wd/blocksmurfer
     :alt: Travis
 .. image:: https://img.shields.io/pypi/v/blocksmurfer.svg
     :target: https://pypi.org/pypi/blocksmurfer/

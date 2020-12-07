@@ -1,10 +1,10 @@
-bitcoinlib==0.4.14
+bitcoinlib==0.5.1.post1
 Flask==1.1.2
 flask_babel==1.0.0
 flask_qrcode==3.0.0
 flask_restful==0.3.8
 flask_wtf==0.14.3
 Werkzeug==1.0.1
-WTForms==2.3.1
+WTForms==2.3.3
 gunicorn
 Flask-Limiter
