@@ -7,8 +7,12 @@
 
     <p>PLEASE NOTE: This API is still in development. API commands may change without notice.</p>
 
-    <p>Base URL: </p>
-    <p>https://blocksmurfer.io/api/v1/btc/</p>
+    <p>Base URLs: </p>
+    <ul>
+    {% for code, nw in available_networks %}
+        <li>{{ nw|capitalize }}: https://blocksmurfer.io/api/v1/{{ code }}/</li>
+    {% endfor %}
+    </ul>
 
     <h2>Network</h2>
 

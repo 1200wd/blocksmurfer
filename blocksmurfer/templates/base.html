@@ -44,25 +44,34 @@
             <a class="pure-menu-heading" href="{{ url_for('main.index') }}">Blocksmurfer</a>
             <ul class="pure-menu-list">
                 <li class="pure-menu-item menu-item-divided{% if title=='Explorer' %} pure-menu-selected{% endif %}">
-                    <a href="{{ url_for('main.index') }}" class="pure-menu-link">Explorer</a>
+                    <a href="{{ url_for('main.index', network=network) }}" class="pure-menu-link">Explorer</a>
                 </li>
                 <li class="pure-menu-item{% if title=='Transactions' %} pure-menu-selected{% endif %}">
-                    <a href="{{ url_for('main.transactions', network='btc') }}" class="pure-menu-link">Transactions</a>
+                    <a href="{{ url_for('main.transactions', network=network) }}" class="pure-menu-link">Transactions</a>
                 </li>
                 <li class="pure-menu-item{% if title=='Blocks' %} pure-menu-selected{% endif %}">
-                    <a href="{{ url_for('main.blocks', network='btc') }}" class="pure-menu-link">Blocks</a>
+                    <a href="{{ url_for('main.blocks', network=network) }}" class="pure-menu-link">Blocks</a>
                 </li>
                 <li class="pure-menu-item{% if title=='Network' %} pure-menu-selected{% endif %}">
-                    <a href="{{ url_for('main.network', network='btc') }}" class="pure-menu-link">Network</a>
+                    <a href="{{ url_for('main.network', network=network) }}" class="pure-menu-link">Network</a>
                 </li>
                 <li class="pure-menu-item{% if title=='API' %} pure-menu-selected{% endif %}">
-                    <a href="{{ url_for('main.api') }}" class="pure-menu-link">API</a>
+                    <a href="{{ url_for('main.api', network=network) }}" class="pure-menu-link">API</a>
                 </li>
                 <li class="pure-menu-item{% if title=='About' %} pure-menu-selected{% endif %}">
-                    <a href="{{ url_for('main.about') }}" class="pure-menu-link">About</a>
+                    <a href="{{ url_for('main.about', network=network) }}" class="pure-menu-link">About</a>
                 </li>
                 <li class="pure-menu-item{% if title=='Status' %} pure-menu-selected{% endif %}">
                     <a href="https://status.coineva.com/" class="pure-menu-link">Status</a>
+                </li>
+            </ul>
+            <p>&nbsp;</p>
+            <ul class="pure-menu-list">
+                <li class="pure-menu-item{% if network=='btc' %} pure-menu-selected{% endif %}">
+                    <a href="{{ url_for('main.index') }}" class="pure-menu-link">bitcoin</a>
+                </li>
+                <li class="pure-menu-item{% if network=='tbtc' %} pure-menu-selected{% endif %}">
+                    <a href="{{ url_for('main.index', network='tbtc') }}" class="pure-menu-link">testnet</a>
                 </li>
             </ul>
         </div>

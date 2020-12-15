@@ -2,7 +2,7 @@
 
 {% block app_content %}
     <div style="text-align: center;">
-    <h2>{{ _('Search the Bitcoin Blockchain') }}</h2>
+    <h2>{{ _('Search the %s Blockchain' % network_name.capitalize()) }}</h2>
     <form action="" method="post" novalidate class="pure-form">
         {{ form.hidden_tag() }}
         <p>
@@ -10,23 +10,41 @@
         </p>
         <p>{{ form.submit(class_="pure-button pure-button-primary") }}</p>
     </form>
-    <p style="font-size:80%">Some suggestions:
-    <a href="{{ url_for('main.search', search_string='bc1qxfrgfhs49d7dtcfzlhp7f7cwsp8zpp60hywp0f') }}">
-        bc1qxfrgfhs49d7dtcfzlhp7f7cwsp8zpp60hywp0f</a>,
-    <a href="{{ url_for('main.search', search_string='3EkQ11eacyfodKBRha9aJ8KTPsnSVTvSz8') }}">
-        3EkQ11eacyfodKBRha9aJ8KTPsnSVTvSz8</a>,
-    <a href="{{ url_for('main.search', search_string='1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1') }}">
-        1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1</a>,
-    <a href="{{ url_for('main.search',
-        search_string='258478e8b7a3b78301661e78b4f93a792af878b545442498065ab272eaacf035') }}">
-        258478e8b7a3b78301661e78b4f93a792af878b545442498065ab272eaacf035</a>,
-    <a href="{{ url_for('main.search',
-        search_string='xpub661MyMwAqRbcGpWkuXwKRMAnJUnwBBSFo3KpormL4ti5m5i7q8D7Rih8fvCAHWXhCA3aF3KvGWw4PZtqc9ymsSrkCLbC9Xgeqao6t5eWbrD') }}">
-        xpub661MyMwAqRbcGpWkuXwKRMAnJUnwBBSFo3KpormL4ti5m5i7q8D7Rih8fvCAHWXhCA3aF3KvGWw4PZtqc9ymsSrkCLbC9Xgeqao6t5eWbrD
-    </a>
-    <a href="{{ url_for('main.search', search_string='420024') }}">
-        420024
-    </a></p>
+    {% if network == 'btc' %}
+        <p style="font-size:80%">Some suggestions:
+            <a href="{{ url_for('main.search', search_string='bc1qxfrgfhs49d7dtcfzlhp7f7cwsp8zpp60hywp0f') }}">
+                bc1qxfrgfhs49d7dtcfzlhp7f7cwsp8zpp60hywp0f</a>,
+            <a href="{{ url_for('main.search', search_string='3EkQ11eacyfodKBRha9aJ8KTPsnSVTvSz8') }}">
+                3EkQ11eacyfodKBRha9aJ8KTPsnSVTvSz8</a>,
+            <a href="{{ url_for('main.search', search_string='1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1') }}">
+                1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1</a>,
+            <a href="{{ url_for('main.search',
+                search_string='258478e8b7a3b78301661e78b4f93a792af878b545442498065ab272eaacf035') }}">
+                258478e8b7a3b78301661e78b4f93a792af878b545442498065ab272eaacf035</a>,
+            <a href="{{ url_for('main.search',
+                search_string='xpub661MyMwAqRbcGpWkuXwKRMAnJUnwBBSFo3KpormL4ti5m5i7q8D7Rih8fvCAHWXhCA3aF3KvGWw4PZtqc9ymsSrkCLbC9Xgeqao6t5eWbrD') }}">
+                xpub661MyMwAqRbcGpWkuXwKRMAnJUnwBBSFo3KpormL4ti5m5i7q8D7Rih8fvCAHWXhCA3aF3KvGWw4PZtqc9ymsSrkCLbC9Xgeqao6t5eWbrD
+            </a>
+            <a href="{{ url_for('main.search', search_string='420024') }}">
+                420024</a>
+        </p>
+    {% elif network == 'tbtc' %}
+        <p style="font-size:80%">Some suggestions:
+            <a href="{{ url_for('main.search', search_string='n3GNqMveyvaPvUbH469vDRadqpJMPc84JA') }}">
+                n3GNqMveyvaPvUbH469vDRadqpJMPc84JA</a>,
+            <a href="{{ url_for('main.search', search_string='tb1qzf2wpucjq6hc5qam2aw7rd5ujfq3emjdn73jm2') }}">
+                tb1qzf2wpucjq6hc5qam2aw7rd5ujfq3emjdn73jm2</a>,
+            <a href="{{ url_for('main.search', search_string='005f9f4258f03d3393477edb2cfece51666015b19be30737e719deaee41bea0f') }}">
+                005f9f4258f03d3393477edb2cfece51666015b19be30737e719deaee41bea0f</a>,
+            <a href="{{ url_for('main.search', search_string='tpubD6NzVbkrYhZ4YkkELZNAMB8XXJycuig3SEdWRMLFD51Jeou26v48hknci1CE39bj6jngSgDpktrKXGtgr7D2rXJinvHyKWiap7sMbegxge9') }}">
+                tpubD6NzVbkrYhZ4YkkELZNAMB8XXJycuig3SEdWRMLFD51Jeou26v48hknci1CE39bj6jngSgDpktrKXGtgr7D2rXJinvHyKWiap7sMbegxge9</a>,
+            <a href="{{ url_for('main.search', search_string='1222222', network='tbtc') }}">
+                1222222</a>
+        </p>
+    {% endif %}
+     <p style="font-size:80%">Last block:
+         <a href="{{ url_for('main.search', search_string='%s' % blockcount, network=network) }}">
+            {{ blockcount }}</a></p>
     </div>
 
 {% endblock %}

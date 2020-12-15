@@ -3,15 +3,20 @@
 {% block app_content %}
     <h2>Blocksmurfer</h2>
     <p>The Blocksmurfer explorer is created by Coineva using Flask and Python Bitcoinlib. It can be used to search
-    the blockchain for blocks, transactions, addresses and utxo's. You can easily run it from a local server
-    using the source code from <a href="https://github.com/1200wd/blocksmurfer">Github</a>.</p>
+    the {{ network_name }} blockchain for blocks, transactions, addresses and utxo's. You can easily run it from a
+    local server using the source code from <a href="https://github.com/1200wd/blocksmurfer">Github</a>.</p>
+
+    <p>Currently the
+        {% for _, nw in available_networks %}
+            {{ nw|capitalize }}{% if loop.index == loop.length - 1 %} and{% elif not loop.last %}, {% endif %}
+        {% endfor %} networks are supported.</p>
 
     <h2>Providers</h2>
     <p>Just like Bitcoinlib it retrieves blockchain data from various online service providers or a local bitcoin
     or <a href="https://github.com/bcoin-org/bcoin/blob/master/docs/README.md">Bcoin</a> node.</p>
 
     For this website the following <a href="{{ url_for('main.providers', network=network) }}">providers</a>
-    are used for the bitcoin network:
+    are used for the {{ network_name }} network:
     {% for provider in providers %}
         {{ provider[0] -}}
         {% if loop.index == loop.length - 1 %} and

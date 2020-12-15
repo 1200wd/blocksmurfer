@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-    <h2>Providers</h2>
+    <h2>{{ network.name|capitalize }} Providers</h2>
     <p>The following service providers are used by the Blocksmurfer explorer. The providers in top of the list
     with the highest priority are queried first. If a method is not available or the API query was unsuccessful
     the next provider in the list is used.</p>

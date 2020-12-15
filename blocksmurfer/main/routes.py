@@ -1,5 +1,6 @@
 from flask import render_template, flash, redirect, url_for, request, current_app, session
 from flask_babel import _
+from config import Config
 from blocksmurfer.main import bp
 from blocksmurfer.main.forms import *
 from blocksmurfer.explorer.search import search_query
@@ -11,38 +12,48 @@ from bitcoinlib.wallets import wallet_create_or_open
 
 
 @bp.route('/', methods=['GET', 'POST'])
+@bp.route('/<network>/index', methods=['GET', 'POST'])
 @bp.route('/index', methods=['GET', 'POST'])
-def index():
+@bp.route('/<network>/index', methods=['GET', 'POST'])
+def index(network='btc'):
     form = SearchForm()
     if form.validate_on_submit():
-        return search_query(form.search.data)
-    srv = SmurferService()
+        return search_query(form.search.data, network=network)
+    srv = SmurferService(network)
     blockcount = srv.blockcount()
     return render_template('index.html', title=_('Explorer'), subtitle=_('Smurfing the blockchain since 2020'),
-                           form=form, blockcount=blockcount, network=network)
+                           form=form, blockcount=blockcount, network=network, network_name=srv.network.name)
 
 
 @bp.route('/search/<search_string>')
-def search(search_string):
-    return search_query(search_string)
+@bp.route('/<network>/search/<search_string>')
+def search(search_string, network='btc'):
+    return search_query(search_string, network)
 
 
 @bp.route('/api')
-def api():
-    return render_template('api.html', title=_('API'), subtitle=_('Bitcoin blockchain API'))
+@bp.route('/<network>/api')
+def api(network='btc'):
+    available_networks = [(nw, network_code_translation[nw]) for nw in Config.NETWORKS_ENABLED]
+    return render_template('api.html', title=_('API'), subtitle=_('Bitcoin blockchain API'), network=network,
+                           available_networks=available_networks)
 
 
 @bp.route('/about')
+@bp.route('/<network>/about')
 def about(network='btc'):
     srv = SmurferService(network)
     providers = sorted(srv.providers.items(), key=lambda x: x[1]['priority'], reverse=True)
     for provider in providers:
         if '@' in provider[1]['url']:
             provider[1]['url'] = ''
-    return render_template('about.html', title=_('About'), subtitle=_('Keep on smurfing!'), providers=providers)
+    available_networks = [(nw, network_code_translation[nw]) for nw in Config.NETWORKS_ENABLED]
+    return render_template('about.html', title=_('About'), subtitle=_('Keep on smurfing!'), providers=providers,
+                           network_name=srv.network.name, network=network, available_networks=available_networks)
 
 
 @bp.route('/providers')
+@bp.route('/<network>/providers')
 def providers(network='btc'):
     srv = SmurferService(network)
     providers = sorted(srv.providers.items(), key=lambda x: x[1]['priority'], reverse=True)
@@ -50,7 +61,7 @@ def providers(network='btc'):
         if '@' in provider[1]['url']:
             provider[1]['url'] = ''
     return render_template('providers.html', title=_('Providers'), subtitle=_('Service providers overview'),
-                           providers=providers)
+                           providers=providers, network_name=srv.network.name, network=network)
 
 
 @bp.route('/<network>/transactions', methods=['GET', 'POST'])
@@ -68,7 +79,7 @@ def transactions(network='btc'):
     form = SearchForm()
     form.search.render_kw = {'placeholder': 'enter transaction id'}
     if form.validate_on_submit():
-        return search_query(form.search.data)
+        return search_query(form.search.data, network)
 
     srv = SmurferService(network)
     if show_mempool:
@@ -317,7 +328,7 @@ def blocks(network):
     form = SearchForm()
     form.search.render_kw = {'placeholder': 'enter block hash or block height'}
     if form.validate_on_submit():
-        return search_query(form.search.data)
+        return search_query(form.search.data, network=network)
 
     blocks = []
     for blockid in range(from_block, from_block-10, -1):
