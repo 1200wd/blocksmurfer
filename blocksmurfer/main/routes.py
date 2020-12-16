@@ -177,7 +177,6 @@ def transaction_decompose(network):
         except Exception as e:
             flash(_('Invalid raw transaction hex, could not parse: %s' % e), category='error')
         else:
-
             # TODO: Retreiving prev_tx input values should be included in bitcoinlib
             try:
                 for n, i in enumerate(t.inputs):
