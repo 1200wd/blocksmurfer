@@ -60,8 +60,10 @@
             <td>Fee</td>
             <td>
                 {{ transaction.fee }} satoshi
-                {% if transaction.size and transaction.fee %},
-                    {{ (transaction.fee / transaction.size)|int }} sat/B
+                {% if transaction.vsize and transaction.fee %},
+                    {{ (transaction.fee / transaction.vsize)|round|int }} sat/vB
+                {% elif transaction.size and transaction.fee %},
+                    {{ (transaction.fee / transaction.size)|round|int }} sat/B
                 {% endif %}
             </td>
         </tr>

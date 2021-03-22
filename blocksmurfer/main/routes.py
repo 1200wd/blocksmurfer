@@ -85,7 +85,11 @@ def transactions(network='btc'):
     if show_mempool:
         transactions = []
         mempool = srv.mempool()
-        for txid in mempool[:limit]:
+        if page < 1:
+            page = 1
+        if page > len(mempool) / limit:
+            page = (len(mempool) // limit) + 1
+        for txid in mempool[(page-1)*limit:page*limit]:
             transactions.append(srv.gettransaction(txid))
         total_txs = len(mempool)
     else:
