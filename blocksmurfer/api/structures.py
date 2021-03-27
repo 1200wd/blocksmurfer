@@ -11,6 +11,15 @@ class Hexstring(fields.String):
             raise MarshallingException(ve)
 
 
+class HexstringKey(fields.String):
+
+    def format(self, key):
+        try:
+            return key.public_hex
+        except ValueError as ve:
+            raise MarshallingException(ve)
+
+
 transaction_input_fields = {
     'prev_txid': fields.String(attribute=lambda obj: obj.prev_txid.hex()),
     'output_n': fields.Integer(attribute='output_n_int'),
@@ -33,6 +42,7 @@ transaction_input_fields = {
     'value': fields.Integer,
     'witnesses': fields.List(Hexstring),
     'witness_type': fields.String,
+    'keys': fields.List(Hexstring),
 }
 
 transaction_output_fields = {
