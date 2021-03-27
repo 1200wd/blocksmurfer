@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 #
-#    Blocksmurfer Crypto block explorer based on Bitcoinlib
-#    © 2020 January - 1200 Web Development <http://1200wd.com/>
+#    Blocksmurfer - Blockchain Explorer
 #
-#    You should have received a copy of the GNU Affero General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#    © 2020-2021 March - 1200 Web Development
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU Affero General Public License as
+#    published by the Free Software Foundation, either version 3 of the
+#    License, or (at your option) any later version.
 #
 
 from flask import abort, current_app, session
