@@ -180,26 +180,26 @@ class TestSite(unittest.TestCase, TestingConfig):
         self.assertEqual(response.status_code, 200)
 
     def test_explorer_transactions(self):
-        response = self.app.get('btc/transactions')
+        response = self.app.get('/btc/transactions')
         self.assertIn(b'Latest unconfirmed transaction from the mempool. Total mempool size is', response.data)
         self.assertIn(b'Next transactions', response.data)
         self.assertEqual(response.status_code, 200)
 
     def test_explorer_transactions_last_block(self):
-        response = self.app.get('btc/transactions?blockid=last')
+        response = self.app.get('/btc/transactions?blockid=last')
         self.assertIn(b'List of transactions from last block on the Blockchain with height', response.data)
         self.assertIn(b'Next transactions', response.data)
         self.assertEqual(response.status_code, 200)
 
     def test_explorer_transactions_post(self):
         data = {'search': '100000'}
-        response = self.app.post('btc/transactions', data=data, follow_redirects=True)
+        response = self.app.post('/btc/transactions', data=data, follow_redirects=True)
         self.assertIn(b'<h1>Block</h1>', response.data)
         self.assertIn(b'000000000003ba27aa200b1cecaad478d2b00432346c3f1f3986da1afd33e506', response.data)
         self.assertEqual(response.status_code, 200)
 
     def test_explorer_transaction_decompose(self):
-        response = self.app.get('btc/transaction_decompose')
+        response = self.app.get('/btc/transaction_decompose')
         self.assertIn(b'Decompose your raw transaction hex', response.data)
         self.assertIn(b'value="Decompose Transaction"', response.data)
         self.assertIn(b'/form', response.data)
@@ -215,7 +215,7 @@ class TestSite(unittest.TestCase, TestingConfig):
                 b"ef34afb75e8654f6ea368e0acdfd92976b7c2103a1b26313f430c4b15bb1fdce663207659d8cac749a0e53d70eff0187" \
                 b"4496feff2103c96d495bfdd5ba4145e3e046fee45e84a8a48ad05bd8dbb395c011a32cf9f88053ae00000000"
         data = {'rawtx': rawtx}
-        response = self.app.post('btc/transaction_decompose', data=data)
+        response = self.app.post('/btc/transaction_decompose', data=data)
         self.assertIn(b'bc1qwqdg6squsna38e46795at95yu9atm8azzmyvckulcc7kytlcckxswvvzej', response.data)
         self.assertIn(rawtx, response.data)
         self.assertIn(b'&#34;size&#34;: 380,', response.data)
@@ -224,14 +224,14 @@ class TestSite(unittest.TestCase, TestingConfig):
     def test_explorer_transaction_decompose_elements_invalid(self):
         rawtx = b"01000000000101ec586b1cf01aba564477a61b2e7a11dd59554c5ea0d64ad4a7f103565995cc280200000000ffffff"
         data = {'rawtx': rawtx}
-        response = self.app.post('btc/transaction_decompose', data=data)
+        response = self.app.post('/btc/transaction_decompose', data=data)
         self.assertIn(b'Invalid raw transaction hex, could not parse', response.data)
         # FIXME: More specific error message: self.assertIn(b'unpack requires a buffer of 4 bytes', response.data)
         self.assertIn(b'textarea', response.data)
         self.assertEqual(response.status_code, 200)
 
     def test_explorer_transaction_broadcast(self):
-        response = self.app.get('btc/transaction_broadcast')
+        response = self.app.get('/btc/transaction_broadcast')
         self.assertIn(b'Broadcast your transaction on the network', response.data)
         self.assertIn(b'class="pure-form"', response.data)
         self.assertIn(b'value="Broadcast Transaction"', response.data)
@@ -240,7 +240,7 @@ class TestSite(unittest.TestCase, TestingConfig):
     def test_explorer_transaction_broadcast_invalid(self):
         rawtx = "02000000019d727de37afe481c62b44f270791cb1d5e1451775084f77cd9778a0a3e8f840d020000008a473044022046f4efa2529217b4a7935cfad2111a2295dbe501e3ce847873b7f5ddd53ed8b10220135ba849f157620f19e510bebb9888fafacb006e372927f24fd46976544e7bad0141047146f0e0fcb3139947cf0beb870fe251930ca10d4545793d31033e801b5219abf56c11a3cf3406ca590e4c14b0dab749d20862b3adc4709153c280c2a78be10cffffffff03cd3033000000000017a9144fd0311db33cf5dbb125a35180db0bd55c59045987bc2a6000000000001976a914ae429abaa37eba8cad0cbe85bfee0bca613bca0c88ac86c6e9eb2a0000001976a91443849383122ebb8a28268a89700c9f723663b5b888ac00000000"
         data = {'rawtx': rawtx}
-        response = self.app.post('btc/transaction_broadcast', data=data)
+        response = self.app.post('/btc/transaction_broadcast', data=data)
         # TODO: Add more test
         self.assertIn(b'70c947908888729290cb2eb5bd38ebb1585ab2bd8389221b946e4f61e1ce5f82', response.data)
         self.assertEqual(response.status_code, 200)
@@ -248,7 +248,7 @@ class TestSite(unittest.TestCase, TestingConfig):
     def test_explorer_transaction_broadcast_post(self):
         rawtx = "01000000000000000000"
         data = {'rawtx': rawtx}
-        response = self.app.post('btc/transaction_broadcast', data=data)
+        response = self.app.post('/btc/transaction_broadcast', data=data)
         self.assertIn(b'Broadcast your transaction on the network', response.data)
         self.assertIn(b'Invalid raw transaction hex, could not parse: Error no outputs found in this transaction',
                       response.data)
@@ -257,7 +257,7 @@ class TestSite(unittest.TestCase, TestingConfig):
         self.assertEqual(response.status_code, 200)
 
     def test_explorer_blocks(self):
-        response = self.app.get('btc/blocks')
+        response = self.app.get('/btc/blocks')
         self.assertIn(b'Latest blocks in the Bitcoin blockchain', response.data)
         self.assertIn(b'Older Blocks', response.data)
         self.assertIn(b'<form', response.data)
@@ -265,7 +265,7 @@ class TestSite(unittest.TestCase, TestingConfig):
 
     def test_explorer_blocks_post(self):
         data = {'search': '100000'}
-        response = self.app.post('btc/blocks', data=data, follow_redirects=True)
+        response = self.app.post('/btc/blocks', data=data, follow_redirects=True)
         self.assertIn(b'<h1>Block</h1>', response.data)
         self.assertIn(b'000000000003ba27aa200b1cecaad478d2b00432346c3f1f3986da1afd33e506', response.data)
         self.assertEqual(response.status_code, 200)
@@ -317,7 +317,7 @@ class TestSite(unittest.TestCase, TestingConfig):
         self.assertEqual(response.status_code, 200)
 
     def test_explorer_404(self):
-        response = self.app.get('btc/strange_url')
+        response = self.app.get('/btc/strange_url')
         self.assertIn(b'Error: Not Found', response.data)
         self.assertEqual(response.status_code, 404)
 
@@ -560,14 +560,14 @@ class TestAPI(unittest.TestCase, CustomAssertions):
 
     def test_api_transaction_broadcast_already_include(self):
         rawtx = "02000000019d727de37afe481c62b44f270791cb1d5e1451775084f77cd9778a0a3e8f840d020000008a473044022046f4efa2529217b4a7935cfad2111a2295dbe501e3ce847873b7f5ddd53ed8b10220135ba849f157620f19e510bebb9888fafacb006e372927f24fd46976544e7bad0141047146f0e0fcb3139947cf0beb870fe251930ca10d4545793d31033e801b5219abf56c11a3cf3406ca590e4c14b0dab749d20862b3adc4709153c280c2a78be10cffffffff03cd3033000000000017a9144fd0311db33cf5dbb125a35180db0bd55c59045987bc2a6000000000001976a914ae429abaa37eba8cad0cbe85bfee0bca613bca0c88ac86c6e9eb2a0000001976a91443849383122ebb8a28268a89700c9f723663b5b888ac00000000"
-        response = self.app.post('api/v1/btc/transaction_broadcast', data=rawtx)
+        response = self.app.post('/api/v1/btc/transaction_broadcast', data=rawtx)
         self.assertIn(b'"This transaction 70c947908888729290cb2eb5bd38ebb1585ab2bd8389221b946e4f61e1ce5f82 is '
                       b'already included in the blockchain"', response.data)
         self.assertEqual(response.status_code, 400)
 
     def test_api_transaction_broadcast_post_invalid_tx(self):
         rawtx = "01000000010000000000000000000000000000000000000000000000000000000000000000ffffff4d04ffff001d0104455468652054696d65732030332f4a616e2f32303039204368616e63656c6c6f72206f6e206272696e6b206f66207365636f6e64206261696c6f757420666f722062616e6b73ffffffff0100f2052a01000000434104678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5fac00000000"
-        response = self.app.post('api/v1/btc/transaction_broadcast', data=rawtx)
+        response = self.app.post('/api/v1/btc/transaction_broadcast', data=rawtx)
         self.assertIn(b'"Invalid raw transaction hex, could not parse: index out of range"', response.data)
         self.assertEqual(response.status_code, 400)
 
