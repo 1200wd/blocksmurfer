@@ -347,7 +347,7 @@ def blocks(network):
 
     blocks = []
     for blockid in range(from_block, from_block-10, -1):
-        blocks.append(srv.getblock(blockid, parse_transactions=False))
+        blocks.append(srv.getblock(blockid, parse_transactions=False, limit=0))
 
     prev_url = None
     if blockcount > from_block:
