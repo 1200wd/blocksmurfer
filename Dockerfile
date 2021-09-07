@@ -1,4 +1,4 @@
-FROM python:3-slim
+FROM python:3.8.0a3-slim
 
 RUN useradd -ms /bin/bash blocksmurfer
 WORKDIR /home/blocksmurfer
