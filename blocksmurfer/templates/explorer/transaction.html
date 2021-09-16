@@ -26,7 +26,9 @@
         {% if transaction.date %}
         <tr>
             <td>Date</td>
-            <td>{{ transaction.date.replace(microsecond=0) }}</td>
+            <td>
+                {{ transaction.date.replace(tzinfo=tzutc).timestamp() | ctime}}
+            </td>
         </tr>
         {% endif %}
         <tr>

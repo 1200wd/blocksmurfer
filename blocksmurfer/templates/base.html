@@ -66,14 +66,25 @@
                 </li>
             </ul>
             <p>&nbsp;</p>
-            <ul class="pure-menu-list">
-                <li class="pure-menu-item{% if network=='btc' %} pure-menu-selected{% endif %}">
-                    <a href="{{ url_for('main.index') }}" class="pure-menu-link">bitcoin</a>
-                </li>
-                <li class="pure-menu-item{% if network=='tbtc' %} pure-menu-selected{% endif %}">
-                    <a href="{{ url_for('main.index', network='tbtc') }}" class="pure-menu-link">testnet</a>
-                </li>
-            </ul>
+
+            {% if config.NETWORKS_ENABLED|count > 1 %}
+                <div style="margin: 0 auto;">
+                    <p>Select Network</p>
+                    <table>
+                        <tr>
+                            {% for nw, nw_name in config.NETWORKS_ENABLED.items() %}
+                            <td>
+                                <a href="{{ url_for('main.index', network=nw) }}" class="pure-menu-link">
+                                    <img src="/static/images/{{ nw }}.png" alt="{{ nw }}" style="width:32px;height:32px;">
+                                </a>
+                            </td>
+                            {% if loop.index % 4 == 0 %}</tr><tr>{% endif %}
+                            {% endfor %}
+                        </tr>
+                    </table>
+                </div>
+            {% endif %}
+
         </div>
     </div>
 {% endblock nav %}

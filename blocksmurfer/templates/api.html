@@ -9,7 +9,7 @@
 
     <p>Base URLs: </p>
     <ul>
-    {% for code, nw in available_networks %}
+    {% for code, nw in config.NETWORKS_ENABLED.items() %}
         <li>{{ nw|capitalize }}: https://blocksmurfer.io/api/v1/{{ code }}/</li>
     {% endfor %}
     </ul>

@@ -12,5 +12,15 @@ class Config(object):
     DEBUG = False
     REQUEST_LIMIT_DEFAULT = 10
     REQUEST_LIMIT_MAX = 25
-    NETWORKS_ENABLED = ['btc', 'tbtc']   # Example: ['btc', 'ltc', 'tbtc', 'xlt'], see service.py
+    NETWORKS_ENABLED = {
+        'btc': 'bitcoin',
+        'ltc': 'litecoin',
+        # 'dash': 'dash',
+        # 'doge': 'doge',
+        'tbtc': 'testnet',
+        'xlt': 'litecoin_testnet',
+        # 'tdash': 'dash_testnet',
+        # 'tdoge': 'doge_testnet',
+        'reg': 'regtest',
+    }
     NETWORK_DEFAULT = 'btc'  # Has no effect yet, only works for 'btc' at the moment

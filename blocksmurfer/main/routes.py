@@ -12,6 +12,7 @@
 
 from flask import render_template, flash, redirect, url_for, request, current_app, session
 from flask_babel import _
+from datetime import timezone
 from config import Config
 from blocksmurfer.main import bp
 from blocksmurfer.main.forms import *
@@ -46,9 +47,7 @@ def search(search_string, network='btc'):
 @bp.route('/api')
 @bp.route('/<network>/api')
 def api(network='btc'):
-    available_networks = [(nw, network_code_translation[nw]) for nw in Config.NETWORKS_ENABLED]
-    return render_template('api.html', title=_('API'), subtitle=_('Bitcoin blockchain API'), network=network,
-                           available_networks=available_networks)
+    return render_template('api.html', title=_('API'), subtitle=_('Bitcoin blockchain API'), network=network)
 
 
 @bp.route('/about')
@@ -59,9 +58,8 @@ def about(network='btc'):
     for provider in providers:
         if '@' in provider[1]['url']:
             provider[1]['url'] = ''
-    available_networks = [(nw, network_code_translation[nw]) for nw in Config.NETWORKS_ENABLED]
     return render_template('about.html', title=_('About'), subtitle=_('Keep on smurfing!'), providers=providers,
-                           network_name=srv.network.name, network=network, available_networks=available_networks)
+                           network_name=srv.network.name, network=network)
 
 
 @bp.route('/providers')
@@ -142,8 +140,9 @@ def transaction(network, txid):
     if not t:
         flash(_('Transaction %s not found' % txid), category='error')
         return redirect(url_for('main.index'))
+    tzutc = timezone.utc
     return render_template('explorer/transaction.html', title=_('Transaction'),
-                           subtitle=txid, transaction=t, network=network)
+                           subtitle=txid, transaction=t, network=network, tzutc=tzutc)
 
 
 @bp.route('/<network>/transaction_broadcast', methods=['GET', 'POST'])
@@ -321,7 +320,7 @@ def address(network, address):
 
 @bp.route('/<network>/key/<key>')
 def key(network, key):
-    network_name = network_code_translation[network]
+    network_name = Config.NETWORKS_ENABLED[network]
     try:
         k = HDKey(key, network=network_name)
     except Exception as e:
