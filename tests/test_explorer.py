@@ -2,7 +2,8 @@ import unittest
 from flask import Config
 from blocksmurfer import current_app
 from tests.test_custom import CustomAssertions
-from blocksmurfer.explorer.service import SmurferService
+# from blocksmurfer.explorer.service import SmurferService
+from bitcoinlib.services.services import Service
 
 
 class TestingConfig(Config):
@@ -47,8 +48,8 @@ class TestSite(unittest.TestCase, TestingConfig):
     def test_provider_page(self):
         response = self.app.get('/providers', follow_redirects=True)
         self.assertIn(b'providers', response.data)
-        self.assertIn(b'blockcypher', response.data)
-        self.assertIn(b'https://api.smartbit.com.au/v1/', response.data)
+        self.assertIn(b'blockchair', response.data)
+        self.assertIn(b'https://blockstream.info/api/', response.data)
         self.assertEqual(response.status_code, 200)
 
     def test_search_address(self):
@@ -122,20 +123,18 @@ class TestSite(unittest.TestCase, TestingConfig):
 
     def test_explorer_transaction_segwit(self):
         response = self.app.get('/btc/transaction/466490c0401d4d7ea781ca1a4ef22ac889c3404385c95c18edd1447c3a500d45')
-        self.assertIn(b'2020-01-08 03:52:41', response.data)
         self.assertIn(b'bc1qwqdg6squsna38e46795at95yu9atm8azzmyvckulcc7kytlcckxswvvzej', response.data)
         self.assertIn(b'0.15175083', response.data)
         self.assertEqual(response.status_code, 200)
 
     def test_explorer_transaction_coinbase(self):
         response = self.app.get('/btc/transaction/ce242be116c5caf016185f4f4e75628843ecb18faeb2935c9a9c848464f693a4')
-        self.assertIn(b'2020-01-08', response.data)
         self.assertIn(b'611838', response.data)
         self.assertIn(b'3QLeXx1J9Tp3TBnQyHrhVxne9KqkAS9JSR', response.data)
         self.assertEqual(response.status_code, 200)
 
     def test_explorer_transaction_unconfirmed(self):
-        srv = SmurferService('btc')
+        srv = Service()
         mempool = srv.mempool()
         if not isinstance(mempool, list) or not mempool:
             pass
@@ -318,7 +317,7 @@ class TestSite(unittest.TestCase, TestingConfig):
 
     def test_explorer_404(self):
         response = self.app.get('/btc/strange_url')
-        self.assertIn(b'Error: Not Found', response.data)
+        self.assertIn(b'Not Found (404)', response.data)
         self.assertEqual(response.status_code, 404)
 
     def test_explorer_422_unknown_network(self):
@@ -568,7 +567,8 @@ class TestAPI(unittest.TestCase, CustomAssertions):
     def test_api_transaction_broadcast_post_invalid_tx(self):
         rawtx = "01000000010000000000000000000000000000000000000000000000000000000000000000ffffff4d04ffff001d0104455468652054696d65732030332f4a616e2f32303039204368616e63656c6c6f72206f6e206272696e6b206f66207365636f6e64206261696c6f757420666f722062616e6b73ffffffff0100f2052a01000000434104678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5fac00000000"
         response = self.app.post('/api/v1/btc/transaction_broadcast', data=rawtx)
-        self.assertIn(b'"Invalid raw transaction hex, could not parse: index out of range"', response.data)
+        self.assertIn(b'"Invalid raw transaction hex, could not parse: Malformed script, not enough data found"',
+                      response.data)
         self.assertEqual(response.status_code, 400)
 
     def test_api_network(self):

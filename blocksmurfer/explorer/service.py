@@ -10,10 +10,10 @@
 #    License, or (at your option) any later version.
 #
 
-from flask import abort, current_app, session
+from flask import abort, current_app
 from bitcoinlib.encoding import *
 from bitcoinlib.keys import Address
-from bitcoinlib.services.services import Service, ServiceError
+from bitcoinlib.services.services import Service
 
 
 # TODO: Use from Config
@@ -28,11 +28,6 @@ from bitcoinlib.services.services import Service, ServiceError
 class SmurferService(Service):
 
     def __init__(self, network_code='btc', timeout=5, *args, **kwargs):
-        # nw_enabled = network_code_translation.keys() if not current_app else current_app.config['NETWORKS_ENABLED']
-        # TODO: Enable other networks
-        # if not network_code and current_app:
-        #     network_code = session.get('network_code', current_app.config['NETWORK_DEFAULT'])
-        #     session['network_code'] = network_code
         if network_code in current_app.config['NETWORKS_ENABLED'].keys():
             network = current_app.config['NETWORKS_ENABLED'][network_code]
             Service.__init__(self, network=network, timeout=timeout, *args, **kwargs)

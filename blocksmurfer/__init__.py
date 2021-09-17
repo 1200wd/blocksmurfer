@@ -53,5 +53,4 @@ def current_app(config_class=Config):
     app.register_blueprint(api_bp, url_prefix='/api/v1')
     limiter.init_app(app)
 
-
     return app
