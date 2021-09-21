@@ -148,14 +148,14 @@ class TestSite(unittest.TestCase, TestingConfig):
                                 'input/6')
         self.assertIn(b'02ea08ccfdda6183c3e7d57c813567299efd0f0b233a3a32267ba9c2af3080aa1b', response.data)
         self.assertIn(b'86e49fa2a32c1f8e9828512a97ea87fbd1ef1e4af701', response.data)
-        self.assertIn(b'signature-1 SIGHASH_ALL public_key', response.data)
+        self.assertIn(b'signature key', response.data)
         self.assertEqual(response.status_code, 200)
 
     def test_explorer_transaction_input_coinbase(self):
         response = self.app.get('btc/transaction/a2fcf9af82c1ced2c2ab14fe07dcf9c725473cc6ac35865d65a1adc3b767eb96/'
                                 'input/0')
         self.assertIn(b'a2fcf9af82c1ced2c2ab14fe07dcf9c725473cc6ac35865d65a1adc3b767eb96', response.data)
-        self.assertIn(b'coinbase', response.data)
+        self.assertIn(b'Coinbase', response.data)
         self.assertIn(b'0.00000000', response.data)
         self.assertEqual(response.status_code, 200)
 

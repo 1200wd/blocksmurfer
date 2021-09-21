@@ -65,29 +65,29 @@
         </thead>
         <tr>
             <td>Script Type</td>
-            <td>{{ locking_script_dict['script_type'] }}</td>
+            <td>{{ output.script.script_types|join(', ') }}</td>
         </tr>
-        {% if locking_script_dict['number_of_sigs_n'] > 1 %}
+        {% if output.script.signatures|length > 1 %}
         <tr>
             <td>Signatures</td>
             <td>
-                {{ locking_script_dict['number_of_sigs_m'] }} of {{ locking_script_dict['number_of_sigs_n'] }}
+                {{ output.script.sigs_required }} of {{ output.script.signatures|length }}
                 signatures required
             </td>
         </tr>
         {% endif %}
         <tr>
             <td>Locking Script Hex</td>
-            <td style="word-break: break-all;">{{ output.lock_script.hex() }}</td>
+            <td style="word-break: break-all;">{{ output.script.raw.hex() }}</td>
         </tr>
         <tr>
             <td>Locking Script OP</td>
-            <td style="word-break: break-all;">{{ locking_script_op }}</td>
+            <td style="word-break: break-all;">{{ output.script }}</td>
         </tr>
-        {% if locking_script_dict['script_type'] == 'nulldata' %}
+        {% if output.script.script_types == ['nulldata'] %}
         <tr>
             <td>Nulldata</td>
-            <td>{{ output.lock_script[2:].decode(errors='replace') }}</td>
+            <td>{{ output.script.commands[1].decode(errors='ignore') }}</td>
         </tr>
         {% endif %}
     </table>

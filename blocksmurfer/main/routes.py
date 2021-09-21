@@ -19,7 +19,7 @@ from blocksmurfer.main.forms import *
 from blocksmurfer.explorer.search import search_query
 from blocksmurfer.explorer.service import *
 from bitcoinlib.keys import HDKey
-from bitcoinlib.transactions import script_to_string, script_deserialize, Transaction, Output, TransactionError
+from bitcoinlib.transactions import Transaction, Output, TransactionError
 from bitcoinlib.encoding import Quantity
 from bitcoinlib.wallets import wallet_create_or_open
 
@@ -152,7 +152,7 @@ def transaction_broadcast(network):
     if form.validate_on_submit():
         srv = SmurferService(network)
         try:
-            t = Transaction.import_raw(form.rawtx.data, network=srv.network)
+            t = Transaction.parse(form.rawtx.data, network=srv.network)
         except Exception as e:
             flash(_('Invalid raw transaction hex, could not parse: %s' % e), category='error')
         else:
@@ -188,7 +188,7 @@ def transaction_decompose(network):
     srv = SmurferService(network)
     if form.validate_on_submit():
         try:
-            t = Transaction.import_raw(form.rawtx.data, network=srv.network)
+            t = Transaction.parse_hex(form.rawtx.data, network=srv.network)
         except Exception as e:
             flash(_('Invalid raw transaction hex, could not parse: %s' % e), category='error')
         else:
@@ -223,31 +223,9 @@ def transaction_input(network, txid, index_n):
         flash(_('Transaction input with index number %s not found' % index_n), category='error')
         return redirect(url_for('main.transaction', network=network, txid=txid))
     input = t.inputs[int(index_n)]
-    locking_script_op = ''
-    locking_script_dict = ''
-    unlocking_script_op = ''
-    unlocking_script_dict = ''
-    try:
-        locking_script_op = script_to_string(input.unlocking_script_unsigned, name_data=True)
-    except:
-        pass
-    try:
-        locking_script_dict = script_deserialize(input.unlocking_script_unsigned)
-    except:
-        pass
-    try:
-        unlocking_script_op = script_to_string(input.unlocking_script, name_data=True)
-    except:
-        pass
-    try:
-        unlocking_script_dict = script_deserialize(input.unlocking_script)
-    except:
-        pass
 
     return render_template('explorer/transaction_input.html', title=_('Transaction Input %s' % index_n), subtitle=txid,
-                           transaction=t, network=network, input=input, index_n=index_n,
-                           locking_script_op=locking_script_op, locking_script_dict=locking_script_dict,
-                           unlocking_script_op=unlocking_script_op, unlocking_script_dict=unlocking_script_dict)
+                           transaction=t, network=network, input=input, index_n=index_n)
 
 
 @bp.route('/<network>/transaction/<txid>/output/<output_n>')
@@ -267,19 +245,8 @@ def transaction_output(network, txid, output_n):
         flash(_('Transaction output with index number %s not found' % output_n), category='error')
         return redirect(url_for('main.transaction', network=network, txid=txid))
     output = t.outputs[int(output_n)]
-    locking_script_op = ''
-    locking_script_dict = ''
-    try:
-        locking_script_op = script_to_string(output.lock_script, name_data=True)
-    except:
-        pass
-    try:
-        locking_script_dict = script_deserialize(output.lock_script)
-    except:
-        pass
     return render_template('explorer/transaction_output.html', title=_('Transaction Output %s' % output_n),
-                           subtitle=txid, transaction=t, network=network, output=output, output_n=output_n,
-                           locking_script_dict=locking_script_dict, locking_script_op=locking_script_op)
+                           subtitle=txid, transaction=t, network=network, output=output, output_n=output_n)
 
 
 @bp.route('/<network>/address/<address>')

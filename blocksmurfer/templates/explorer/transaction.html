@@ -63,9 +63,9 @@
             <td>
                 {{ transaction.fee }} satoshi
                 {% if transaction.vsize and transaction.fee %},
-                    {{ (transaction.fee / transaction.vsize)|round|int }} sat/vB
+                    {{ (transaction.fee / transaction.vsize)|round(1) }} sat/vB
                 {% elif transaction.size and transaction.fee %},
-                    {{ (transaction.fee / transaction.size)|round|int }} sat/B
+                    {{ (transaction.fee / transaction.size)|round(1) }} sat/B
                 {% endif %}
             </td>
         </tr>
@@ -156,7 +156,7 @@
                 {% if out.address %}
                 <a href="{{ url_for('main.address', network=network, address=out.address) }}">{{ out.address }}</a>
                 {% else %}
-                    Nulldata: {{ out.lock_script[2:].decode(errors='replace') }}
+                    Nulldata: {{ out.lock_script[2:].decode(errors='ignore') }}
                 {% endif %}
             </td>
             <td style="text-align:right">{{ "{:,.8f}".format(out.value / 100000000) }}</td>
