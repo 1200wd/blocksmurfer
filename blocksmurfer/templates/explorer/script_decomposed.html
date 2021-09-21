@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    <table class="pure-table" style="width: 800px; font-size: 80%;">
+        {% if script.keys %}
+        <tr>
+            <td>Public {% if script.keys|length > 1 %}Keys{% else %} Key{% endif %}</td>
+            <td style="word-break: break-all;">
+                {% for key in script.keys %}
+                    <p><a href="{{ url_for('main.key', network=network, key=key) }}">{{ key }}</a></p>
+                {% endfor %}
+            </td>
+        </tr>
+        {% endif %}
+            <tr>
+            <td>Script Type</td>
+            <td>{{ script.script_types|join(', ') }}</td>
+        </tr>
+        <tr>
+            <td>Commands OP</td>
+            <td style="word-break: break-all;">{{ script }}</td>
+        </tr>
+        <tr>
+            <td>Commands Hex</td>
+            <td style="word-break: break-all;">
+                {% for cmd in script.commands %}
+                    {% if cmd is number %}{{ '%0x' % cmd }}{% else %}{{ cmd.hex() }}{% endif %}
+                {% endfor %}
+            </td>
+        </tr>
+        {% if script.hash_type %}
+        <tr>
+            <td>Hash Type</td>
+            <td>{{ '%0x' % script.hash_type }}</td>
+        </tr>
+        {% endif %}
+
+        {% for witness in script.witnesses %}
+        {% if witness.hex() != '00' %}
+        <tr>
+            <td>Witness</td>
+            <td style="word-break: break-all;">{{ witness.hex() }}</td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+
+        {% for sig in script.signatures %}
+        <tr>
+            <td>Signature</td>
+            <td style="word-break: break-all;">{{ sig.hex() }}</td>
+        </tr>
+        {% endfor %}
+        {% if script.script_types == ['nulldata'] %}
+        <tr>
+            <td>Nulldata</td>
+            <td style="word-break: break-all;">{{ script.commands[1].decode(errors='ignore') }}</td>
+        </tr>
+        {% endif %}
+    </table>
+
+    <div style="text-align: center;">
+    <h2>Decompose another script</h2>
+    <form action="" method="post" novalidate class="pure-form">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.script_hex(rows="8", cols="100") }}
+        </p>
+        <p>{{ form.submit(class_="pure-button pure-button-primary") }}</p>
+    </form>
+    <p>
+        Enter the {{ network }} script to decompose. This will parse the script and show data, opcoode commands and
+        extracts keys and signatures if available.
+    </p>
+    </div>
+
+{% endblock %}

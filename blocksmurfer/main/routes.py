@@ -20,6 +20,7 @@ from blocksmurfer.explorer.search import search_query
 from blocksmurfer.explorer.service import *
 from bitcoinlib.keys import HDKey
 from bitcoinlib.transactions import Transaction, Output, TransactionError
+from bitcoinlib.scripts import Script, ScriptError
 from bitcoinlib.encoding import Quantity
 from bitcoinlib.wallets import wallet_create_or_open
 
@@ -363,6 +364,23 @@ def block(network, blockid):
                            coinbase_data=coinbase_data, prev_url=prev_url, next_url=next_url)
 
 
+@bp.route('/<network>/script', methods=['GET', 'POST'])
+def script(network):
+    form = ScriptForm()
+    if form.validate_on_submit():
+        try:
+            script = Script.parse_hex(form.script_hex.data)
+        except (ScriptError, ValueError) as e:
+            flash(_('Could not parse script. Error: %s' % e), category='error')
+            return redirect(url_for('main.script', network=network))
+        return render_template('explorer/script_decomposed.html', title=_('Decomposed Script'),
+                               subtitle=_('Parse script and extract type, data and opcodes'), form=form,
+                               script=script, network=network)
+
+    return render_template('explorer/script.html', title=_('Script'), subtitle=_('Decompose Scripts'),
+                           form=form, network=network)
+
+
 @bp.route('/<network>/network')
 def network(network):
     srv = SmurferService(network)
@@ -377,7 +395,7 @@ def network(network):
 
 
 @bp.route('/<network>/store_data', methods=['GET', 'POST'])
-def store_data(network): # pragma: no cover
+def store_data(network):  # pragma: no cover
     srv = SmurferService(network)
     form = StoreDataForm()
     tx_fee = srv.estimatefee(10) // 10

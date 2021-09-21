@@ -52,6 +52,9 @@
                 <li class="pure-menu-item{% if title=='Blocks' %} pure-menu-selected{% endif %}">
                     <a href="{{ url_for('main.blocks', network=network) }}" class="pure-menu-link">Blocks</a>
                 </li>
+                <li class="pure-menu-item{% if title=='Script' %} pure-menu-selected{% endif %}">
+                    <a href="{{ url_for('main.script', network=network) }}" class="pure-menu-link">Scripts</a>
+                </li>
                 <li class="pure-menu-item{% if title=='Network' %} pure-menu-selected{% endif %}">
                     <a href="{{ url_for('main.network', network=network) }}" class="pure-menu-link">Network</a>
                 </li>
