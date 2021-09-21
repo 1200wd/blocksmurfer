@@ -95,7 +95,7 @@ def transactions(network='btc'):
     srv = SmurferService(network)
     if show_mempool:
         transactions = []
-        mempool = srv.mempool()
+        mempool = srv.mempool() or []
         if page < 1:
             page = 1
         if page > len(mempool) / limit:
@@ -116,7 +116,7 @@ def transactions(network='btc'):
     prev_url = None
     next_url = None
     if (mempool and len(mempool) > limit) or \
-            (not mempool and not srv.complete and block.transactions and block.tx_count >= limit):
+            (block and not mempool and not srv.complete and block.transactions and block.tx_count >= limit):
         next_url = url_for('main.transactions', network=network, blockid=blockid, page=page+1)
     if page > 1:
         prev_url = url_for('main.transactions', network=network, blockid=blockid, page=page-1)
@@ -158,10 +158,10 @@ def transaction_broadcast(network):
             flash(_('Invalid raw transaction hex, could not parse: %s' % e), category='error')
         else:
             # Retrieve prev_tx input values
-            t = srv.getinputvalues(t)
             try:
+                t = srv.getinputvalues(t)
                 t.verify()
-            except TransactionError as e:
+            except Exception as e:
                 flash(_('Could not verify transaction: %s' % e), category='warning')
 
             known_tx = srv.gettransaction(t.txid)
@@ -197,6 +197,9 @@ def transaction_decompose(network):
             try:
                 for n, i in enumerate(t.inputs):
                     ti = srv.gettransaction(i.prev_txid.hex())
+                    if not ti:
+                        flash(_('Could not verify transaction: previous transaction not found'), category='warning')
+                        break
                     t.inputs[n].value = ti.outputs[i.output_n_int].value
                 t.verify()
             except TransactionError as e:
@@ -236,12 +239,12 @@ def transaction_output(network, txid, output_n):
         return redirect(url_for('main.index'))
     srv = SmurferService(network)
     t = srv.gettransaction(txid)
-    for n, o in enumerate(t.outputs[:5]):
-        if o.spent is None:
-            o.spent = srv.isspent(t.txid, n)
     if not t:
         flash(_('Transaction %s not found' % txid), category='error')
         return redirect(url_for('main.index'))
+    for n, o in enumerate(t.outputs[:5]):
+        if o.spent is None:
+            o.spent = srv.isspent(t.txid, n)
     if int(output_n) > len(t.outputs):
         flash(_('Transaction output with index number %s not found' % output_n), category='error')
         return redirect(url_for('main.transaction', network=network, txid=txid))
@@ -386,6 +389,9 @@ def network(network):
     srv = SmurferService(network)
     network_details = srv.network
     network_info = srv.getinfo()
+    if not network_info:
+        flash(_('Could not connect to %s network' % network_details.name), category='error')
+        return redirect(url_for('main.index', network=network))
     hashrate = Quantity(network_info['hashrate'], 'H/s')
 
     return render_template('explorer/network.html', title=_('Network'),

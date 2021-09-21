@@ -51,5 +51,8 @@ def handle_errors(e):
         resp.status_code = code
         return resp, 500 if not code else code
     # return render_template("error.html", title=('Error: %s' % name), description=description, code=code), code
+    network = 'btc'
+    if request.view_args:
+        network = request.view_args.get('network', 'btc')
     return render_template("error.html", title="Something went wrong", name=name, description=description,
-                           code=code), code
+                           code=code, network=network), code
