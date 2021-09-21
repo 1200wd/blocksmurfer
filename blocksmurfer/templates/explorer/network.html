@@ -1,6 +1,20 @@
 {% extends "base.html" %}
 
 {% block app_content %}
+{#    <table style="border: 0; width: 100%">#}
+    <table class="pure-table" style="width: 800px;">
+    <thead>
+        <tr>
+            <td style="width: 200px; border-left: 0;">
+                <img src="/static/images/{{ network }}.png" alt="{{ network_details.name }}" style="width:128px;height:128px;">
+            </td>
+            <td style="border-left: 0; vertical-align: middle;">
+                <h2>{{ network_details.description }}</h2>
+            </td>
+        </tr>
+    </thead>
+    </table>
+
     <h3>{{ _('Network Status') }}</h3>
     <table class="pure-table" style="width: 800px;">
         <tr>
@@ -28,7 +42,6 @@
             <td>Hashrate</td>
             <td>
                 {{ hashrate }}
-
             </td>
         </tr>
         <tr>
