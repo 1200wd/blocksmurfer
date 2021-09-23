@@ -45,3 +45,6 @@ venv
 
 # Bitcoinlib
 bitcoinlib
+
+# Blocksmurfer
+config.py
