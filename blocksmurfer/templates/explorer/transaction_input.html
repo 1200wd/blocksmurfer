@@ -68,37 +68,6 @@
             </td>
         </tr>
     </table>
-    {% if input.unlocking_script_unsigned %}
-    <p></p>
-    <table class="pure-table" style="width: 800px; font-size: 80%;">
-        <thead>
-            <tr>
-                <td colspan="5">{{ _('Locking Script') }}</td>
-            </tr>
-        </thead>
-        <tr>
-            <td>Script Type</td>
-            <td>{{ locking_script_dict['script_type'] }}</td>
-        </tr>
-        {% if locking_script_dict['number_of_sigs_n'] > 1 %}
-        <tr>
-            <td>Signatures</td>
-            <td>
-                {{ locking_script_dict['number_of_sigs_m'] }} of {{ locking_script_dict['number_of_sigs_n'] }}
-                signatures required
-            </td>
-        </tr>
-        {% endif %}
-        <tr>
-            <td>Locking Script Hex</td>
-            <td style="word-break: break-all;">{{ input.unlocking_script_unsigned.hex() }}</td>
-        </tr>
-        <tr>
-            <td>Locking Script OP</td>
-            <td style="word-break: break-all;">{{ locking_script_op }}</td>
-        </tr>
-    </table>
-    {% endif %}
     <p></p>
     <table class="pure-table" style="width: 800px; font-size: 80%;">
         <thead>
@@ -112,20 +81,27 @@
                 </td>
             </tr>
         </thead>
+        {% if input.script %}
         <tr>
             <td>Script Type</td>
-            <td>{{ input.script_type }}</td>
+            <td>{{ input.script.script_types|join(', ') }}</td>
         </tr>
-        {% if input.unlocking_script %}
         <tr>
             <td>Unlocking Script Hex</td>
-            <td style="word-break: break-all;">{{ input.unlocking_script.hex() }}</td>
+            <td style="word-break: break-all;">{{ input.script.raw.hex() }}</td>
         </tr>
         <tr>
             <td>Unlocking Script OP</td>
-            <td style="word-break: break-all;">{{ unlocking_script_op }}</td>
+            <td style="word-break: break-all;">{{ input.script }}</td>
         </tr>
+            {% if input.script.hash_type %}
+            <tr>
+                <td>Hash Type</td>
+                <td>{{ '%0x' % input.script.hash_type }}</td>
+            </tr>
+            {% endif %}
         {% endif %}
+
         {% if input.witness_type == 'segwit' %}
         {% for witness in input.witnesses %}
         {% if witness.hex() != '00' %}

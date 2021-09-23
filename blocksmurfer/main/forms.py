@@ -11,7 +11,7 @@
 #
 
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, TextAreaField, IntegerField
+from wtforms import StringField, SubmitField, TextAreaField, IntegerField, SelectField
 from wtforms.validators import InputRequired
 
 
@@ -36,3 +36,8 @@ class StoreDataForm(FlaskForm):
     transaction_fee = IntegerField('Transaction Fee in Satoshi', validators=[InputRequired()], default=0)
     # blocksmurfer_gift = IntegerField('Blocksmurfer Gift', validators=[InputRequired()], default=0)
     submit = SubmitField('Create Transaction')
+
+
+class ScriptForm(FlaskForm):
+    script_hex = TextAreaField('Script Hex', validators=[InputRequired()], )
+    submit = SubmitField('Decompose Script')

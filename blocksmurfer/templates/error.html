@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-    <h2>{{ code }}</h2>
-    <p>{{ description }}</p>
+    <h2>{{ name }} ({{ code }})</h2>
+    <p><b>{{ description }}</b></p>
 
     <p>
     <a href="{{ url_for('main.index') }}">Go home and smurf again...</a>

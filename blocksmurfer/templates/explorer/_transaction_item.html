@@ -61,11 +61,11 @@
     {% for out in t.outputs[:5] %}
     <tr>
         <td>out</td>
-        <td>
+        <td style="word-break: break-all;">
             {% if out.address %}
             <a href="{{ url_for('main.address', network=network, address=out.address) }}">{{ out.address }}</a></td>
             {% else %}
-                Nulldata: {{ out.lock_script[2:].decode(errors='replace') }}
+                Nulldata: {{ out.lock_script[2:].decode(errors='ignore') }}
             {% endif %}
         <td style="text-align:right">{{ "{:,.8f}".format(out.value / 100000000) }}</td>
         <td>

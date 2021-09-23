@@ -2,7 +2,8 @@ import unittest
 from flask import Config
 from blocksmurfer import current_app
 from tests.test_custom import CustomAssertions
-from blocksmurfer.explorer.service import SmurferService
+# from blocksmurfer.explorer.service import SmurferService
+from bitcoinlib.services.services import Service
 
 
 class TestingConfig(Config):
@@ -47,8 +48,8 @@ class TestSite(unittest.TestCase, TestingConfig):
     def test_provider_page(self):
         response = self.app.get('/providers', follow_redirects=True)
         self.assertIn(b'providers', response.data)
-        self.assertIn(b'blockcypher', response.data)
-        self.assertIn(b'https://api.smartbit.com.au/v1/', response.data)
+        self.assertIn(b'blockchair', response.data)
+        self.assertIn(b'https://blockstream.info/api/', response.data)
         self.assertEqual(response.status_code, 200)
 
     def test_search_address(self):
@@ -122,20 +123,18 @@ class TestSite(unittest.TestCase, TestingConfig):
 
     def test_explorer_transaction_segwit(self):
         response = self.app.get('/btc/transaction/466490c0401d4d7ea781ca1a4ef22ac889c3404385c95c18edd1447c3a500d45')
-        self.assertIn(b'2020-01-08 03:52:41', response.data)
         self.assertIn(b'bc1qwqdg6squsna38e46795at95yu9atm8azzmyvckulcc7kytlcckxswvvzej', response.data)
         self.assertIn(b'0.15175083', response.data)
         self.assertEqual(response.status_code, 200)
 
     def test_explorer_transaction_coinbase(self):
         response = self.app.get('/btc/transaction/ce242be116c5caf016185f4f4e75628843ecb18faeb2935c9a9c848464f693a4')
-        self.assertIn(b'2020-01-08', response.data)
         self.assertIn(b'611838', response.data)
         self.assertIn(b'3QLeXx1J9Tp3TBnQyHrhVxne9KqkAS9JSR', response.data)
         self.assertEqual(response.status_code, 200)
 
     def test_explorer_transaction_unconfirmed(self):
-        srv = SmurferService('btc')
+        srv = Service()
         mempool = srv.mempool()
         if not isinstance(mempool, list) or not mempool:
             pass
@@ -149,14 +148,14 @@ class TestSite(unittest.TestCase, TestingConfig):
                                 'input/6')
         self.assertIn(b'02ea08ccfdda6183c3e7d57c813567299efd0f0b233a3a32267ba9c2af3080aa1b', response.data)
         self.assertIn(b'86e49fa2a32c1f8e9828512a97ea87fbd1ef1e4af701', response.data)
-        self.assertIn(b'signature-1 SIGHASH_ALL public_key', response.data)
+        self.assertIn(b'signature key', response.data)
         self.assertEqual(response.status_code, 200)
 
     def test_explorer_transaction_input_coinbase(self):
         response = self.app.get('btc/transaction/a2fcf9af82c1ced2c2ab14fe07dcf9c725473cc6ac35865d65a1adc3b767eb96/'
                                 'input/0')
         self.assertIn(b'a2fcf9af82c1ced2c2ab14fe07dcf9c725473cc6ac35865d65a1adc3b767eb96', response.data)
-        self.assertIn(b'coinbase', response.data)
+        self.assertIn(b'Coinbase', response.data)
         self.assertIn(b'0.00000000', response.data)
         self.assertEqual(response.status_code, 200)
 
@@ -318,13 +317,70 @@ class TestSite(unittest.TestCase, TestingConfig):
 
     def test_explorer_404(self):
         response = self.app.get('/btc/strange_url')
-        self.assertIn(b'Error: Not Found', response.data)
+        self.assertIn(b'Not Found (404)', response.data)
         self.assertEqual(response.status_code, 404)
 
     def test_explorer_422_unknown_network(self):
         response = self.app.get('/bitcoin/transaction/43d220300f489ddbceb1ff9e081f399cfd00b30e8791f4ab82cbe2bb257c31df')
         self.assertIn(b'Error opening network with specified code', response.data)
         self.assertEqual(response.status_code, 422)
+
+    def test_explorer_scripts_p2pk(self):
+        data = {'script_hex': '4104678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5fac'}
+        response = self.app.post('/btc/script', data=data, follow_redirects=True)
+        self.assertIn(b'<h1>Decomposed Script</h1>', response.data)
+        self.assertIn(b'p2pk', response.data)
+        self.assertEqual(response.status_code, 200)
+
+    def test_explorer_scripts_p2wsh(self):
+        data = {'script_hex': '0020e5736bf12976cc710b9833aac2e3333a5a5e9f24ac87ce49e868b496b5086023'}
+        response = self.app.post('/btc/script', data=data, follow_redirects=True)
+        self.assertIn(b'OP_0 data-32', response.data)
+        self.assertIn(b'p2wsh', response.data)
+        self.assertEqual(response.status_code, 200)
+
+    def test_explorer_scripts_multisig(self):
+        data = {'script_hex': '5221026c80e3efcdd4247ee29ee73829023aa3bcd464b709879128085d661c5a24fe0921032840e4d6aa1bea14d964e559f7b0ac01eac27274a03333d19faae8bee33c28a12103893120d3e2bac81f5bb6dbd320feed1f57ca39dd57a8c1266b9372acae45de8a53ae'}
+        response = self.app.post('/btc/script', data=data, follow_redirects=True)
+        self.assertIn(b'OP_2 key key key OP_3 OP_CHECKMULTISIG', response.data)
+        self.assertIn(b'multisig', response.data)
+        self.assertEqual(response.status_code, 200)
+
+    def test_explorer_scripts_non_standard_1(self):
+        data = {'script_hex': '00473044022076521fc60292a564fcac9ecb05e78846ff0d0e1d9f9de87d23d71cc130504e5c02202b1e0b5aea07d530eab146d1db54542cb2ca2bf6dcf69e77b7ee21671e97f51c0148304502210099eef1bca6087f8f20e0f183a19d057230851ef2fa4f356f192a9745fe1711510220336610d9dc4617a9bb02bdffec0e231df6ad998c6909a7b136dcb30f4bc60953014c7252210352d50656796dd79e3e3385c29636d849b8705c9c6d9b86a1717adc38e4a567c72102f39d0b69c3b8e06030ef9dc295cf8c848f51e398fe85414e33509afdc7f01fb321027072ba2319ead2b0b387d69d36508f57b397da8d4ac76ea64676ee8a1356dae053af048e254ac175740087'}
+        response = self.app.post('/btc/script', data=data, follow_redirects=True)
+        self.assertIn(b'OP_0 signature signature OP_2 key key key OP_3 OP_CHECKMULTISIGVERIFY data-4 OP_DROP OP_DEPTH OP_0 OP_EQUAL', response.data)
+        self.assertIn(b'unknown', response.data)
+        self.assertIn(b'76521fc60292a564fcac9ecb05e78846ff0d0e1d9f9de87d23d71cc130504e5c2b1e0b5aea07d530eab146d1db54542cb2ca2bf6dcf69e77b7ee21671e97f51c', response.data)
+        self.assertEqual(response.status_code, 200)
+
+    def test_explorer_scripts_non_standard_2(self):
+        data = {'script_hex': '10d072d4494f3ff8f852f24e6c8b298f4647304402202c86a6dbde9edf8d484d7e58004afefa99aa4120f916b2719286ccf28064bb1902204c600fe5a5ab89c7c453adc3852c1aaf4cee23266b999bcda9e6f39f178a914e01514c69632102f824adc1d35bb896be9d7a67f7471b2015e54e465dbbf81702546a064069ee47ad826088a914b36cbc38155fa95bbcf25c66167de8490ee3c3b887672103195fcc71d09ddc686e91cf83f5d0de9440e4e5b88dfd03d7902abf1faa6a0fa5ad0482abbb5db168'}
+        response = self.app.post('/btc/script', data=data, follow_redirects=True)
+        self.assertIn(b'data-16 signature OP_1 OP_IF key OP_CHECKSIGVERIFY OP_SIZE OP_16 OP_EQUALVERIFY OP_HASH160 data-20 OP_EQUAL OP_ELSE key OP_CHECKSIGVERIFY data-4 OP_CHECKLOCKTIMEVERIFY OP_ENDIF', response.data)
+        self.assertIn(b'unknown', response.data)
+        self.assertIn(b'2c86a6dbde9edf8d484d7e58004afefa99aa4120f916b2719286ccf28064bb194c600fe5a5ab89c7c453adc3852c1aaf4cee23266b999bcda9e6f39f178a914e', response.data)
+        self.assertEqual(response.status_code, 200)
+
+    def test_explorer_scripts_p2sh_multisig(self):
+        data = {'script_hex': '0047304402200b0ee6c93789b7b8bbff647752d7110d2fc0e0bf913f3dec8192d5a6a1da2dc20220502920194c49986b44eebd192b561bda1d428b5821117b0fd60f0d4504026dba01483045022100d412fe60888e8069ca85f87722d6dc0384f9574cc79f4e7f0129564cb51c0a38022027ba0c114bcf867ea569a55d9eb0929c148b7fdf20f176fd10944b4e0fe7a8d9014c69522103614101c3dfc98f6a7b562cd9264cc6e0d8d9597f59feea666d4c7605493b928b2102386823b976815e4f6d7279b7b4a2113c7d9e0796fa7b1ac43caa7d464a1a06db2102e7ae0137cab0a11b49caeae853d06c9499e79029670a2d649cc2e9e58b99dc5753aea9147dae466253944bb084f8ac01343504941ae15c3287'}
+        response = self.app.post('/btc/script', data=data, follow_redirects=True)
+        self.assertIn(b'p2sh_multisig, p2sh', response.data)
+        self.assertIn(b'OP_0 signature signature OP_2 key key key OP_3 OP_CHECKMULTISIG OP_HASH160 data-20 OP_EQUAL', response.data)
+        self.assertIn(b'0b0ee6c93789b7b8bbff647752d7110d2fc0e0bf913f3dec8192d5a6a1da2dc2502920194c49986b44eebd192b561bda1d428b5821117b0fd60f0d4504026dba', response.data)
+        self.assertEqual(response.status_code, 200)
+
+    def test_explorer_scripts_error(self):
+        data = {'script_hex': '112233'}
+        response = self.app.post('/btc/script', data=data, follow_redirects=True)
+        self.assertIn(b'Could not parse script. Error: Malformed script, not enough data found', response.data)
+        self.assertEqual(response.status_code, 200)
+
+    def test_explorer_scripts_error_nonhex(self):
+        data = {'script_hex': 'hoi'}
+        response = self.app.post('/btc/script', data=data, follow_redirects=True)
+        self.assertIn(b'Could not parse script. Error: non-hexadecimal number found', response.data)
+        self.assertEqual(response.status_code, 200)
 
 
 class TestAPI(unittest.TestCase, CustomAssertions):
@@ -568,7 +624,8 @@ class TestAPI(unittest.TestCase, CustomAssertions):
     def test_api_transaction_broadcast_post_invalid_tx(self):
         rawtx = "01000000010000000000000000000000000000000000000000000000000000000000000000ffffff4d04ffff001d0104455468652054696d65732030332f4a616e2f32303039204368616e63656c6c6f72206f6e206272696e6b206f66207365636f6e64206261696c6f757420666f722062616e6b73ffffffff0100f2052a01000000434104678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5fac00000000"
         response = self.app.post('/api/v1/btc/transaction_broadcast', data=rawtx)
-        self.assertIn(b'"Invalid raw transaction hex, could not parse: index out of range"', response.data)
+        self.assertIn(b'"Invalid raw transaction hex, could not parse: Malformed script, not enough data found"',
+                      response.data)
         self.assertEqual(response.status_code, 400)
 
     def test_api_network(self):

@@ -65,13 +65,13 @@ def fees(network, blocks=3):
 
 @bp.route('/<string:network>/transaction_broadcast', methods=['POST'])
 def transaction_broadcast(network):
-    rawtx = request.data
+    rawtx = request.data.decode()
     srv = SmurferService(network)
     errors = []
     txid = ''
     res = {}
     try:
-        t = Transaction.import_raw(rawtx)
+        t = Transaction.parse_hex(rawtx)
     except Exception as e:
         errors.append(_('Invalid raw transaction hex, could not parse: %s' % e))
     else:

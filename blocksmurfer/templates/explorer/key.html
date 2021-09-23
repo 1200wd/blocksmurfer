@@ -3,6 +3,12 @@
 {% block app_content %}
     <h2>{{ _('Details') }}</h2>
     <table class="pure-table" style="width: 800px;">
+        <tr>
+            <td>QR</td>
+            <td>
+                <img src="{{ qrcode(key.wif(), box_size=7, border=2, fill_color='#090947') }}">
+            </td>
+        </tr>
         {% if key.wif() and key.compressed %}
             <tr>
                 <td>Extended WIF</td>

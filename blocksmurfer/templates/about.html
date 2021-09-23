@@ -7,7 +7,7 @@
     local server using the source code from <a href="https://github.com/1200wd/blocksmurfer">Github</a>.</p>
 
     <p>Currently the
-        {% for _, nw in available_networks %}
+        {% for nw in config.NETWORKS_ENABLED.values() %}
             {{ nw|capitalize }}{% if loop.index == loop.length - 1 %} and{% elif not loop.last %}, {% endif %}
         {% endfor %} networks are supported.</p>
 

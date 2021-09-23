@@ -12,13 +12,15 @@
 
 from flask import render_template, flash, redirect, url_for, request, current_app, session
 from flask_babel import _
+from datetime import timezone
 from config import Config
 from blocksmurfer.main import bp
 from blocksmurfer.main.forms import *
 from blocksmurfer.explorer.search import search_query
 from blocksmurfer.explorer.service import *
 from bitcoinlib.keys import HDKey
-from bitcoinlib.transactions import script_to_string, script_deserialize, Transaction, Output, TransactionError
+from bitcoinlib.transactions import Transaction, Output, TransactionError
+from bitcoinlib.scripts import Script, ScriptError
 from bitcoinlib.encoding import Quantity
 from bitcoinlib.wallets import wallet_create_or_open
 
@@ -46,9 +48,7 @@ def search(search_string, network='btc'):
 @bp.route('/api')
 @bp.route('/<network>/api')
 def api(network='btc'):
-    available_networks = [(nw, network_code_translation[nw]) for nw in Config.NETWORKS_ENABLED]
-    return render_template('api.html', title=_('API'), subtitle=_('Bitcoin blockchain API'), network=network,
-                           available_networks=available_networks)
+    return render_template('api.html', title=_('API'), subtitle=_('Bitcoin blockchain API'), network=network)
 
 
 @bp.route('/about')
@@ -59,9 +59,8 @@ def about(network='btc'):
     for provider in providers:
         if '@' in provider[1]['url']:
             provider[1]['url'] = ''
-    available_networks = [(nw, network_code_translation[nw]) for nw in Config.NETWORKS_ENABLED]
     return render_template('about.html', title=_('About'), subtitle=_('Keep on smurfing!'), providers=providers,
-                           network_name=srv.network.name, network=network, available_networks=available_networks)
+                           network_name=srv.network.name, network=network)
 
 
 @bp.route('/providers')
@@ -96,7 +95,7 @@ def transactions(network='btc'):
     srv = SmurferService(network)
     if show_mempool:
         transactions = []
-        mempool = srv.mempool()
+        mempool = srv.mempool() or []
         if page < 1:
             page = 1
         if page > len(mempool) / limit:
@@ -117,7 +116,7 @@ def transactions(network='btc'):
     prev_url = None
     next_url = None
     if (mempool and len(mempool) > limit) or \
-            (not mempool and not srv.complete and block.transactions and block.tx_count >= limit):
+            (block and not mempool and not srv.complete and block.transactions and block.tx_count >= limit):
         next_url = url_for('main.transactions', network=network, blockid=blockid, page=page+1)
     if page > 1:
         prev_url = url_for('main.transactions', network=network, blockid=blockid, page=page-1)
@@ -142,8 +141,9 @@ def transaction(network, txid):
     if not t:
         flash(_('Transaction %s not found' % txid), category='error')
         return redirect(url_for('main.index'))
+    tzutc = timezone.utc
     return render_template('explorer/transaction.html', title=_('Transaction'),
-                           subtitle=txid, transaction=t, network=network)
+                           subtitle=txid, transaction=t, network=network, tzutc=tzutc)
 
 
 @bp.route('/<network>/transaction_broadcast', methods=['GET', 'POST'])
@@ -153,15 +153,15 @@ def transaction_broadcast(network):
     if form.validate_on_submit():
         srv = SmurferService(network)
         try:
-            t = Transaction.import_raw(form.rawtx.data, network=srv.network)
+            t = Transaction.parse(form.rawtx.data, network=srv.network)
         except Exception as e:
             flash(_('Invalid raw transaction hex, could not parse: %s' % e), category='error')
         else:
             # Retrieve prev_tx input values
-            t = srv.getinputvalues(t)
             try:
+                t = srv.getinputvalues(t)
                 t.verify()
-            except TransactionError as e:
+            except Exception as e:
                 flash(_('Could not verify transaction: %s' % e), category='warning')
 
             known_tx = srv.gettransaction(t.txid)
@@ -189,7 +189,7 @@ def transaction_decompose(network):
     srv = SmurferService(network)
     if form.validate_on_submit():
         try:
-            t = Transaction.import_raw(form.rawtx.data, network=srv.network)
+            t = Transaction.parse_hex(form.rawtx.data, network=srv.network)
         except Exception as e:
             flash(_('Invalid raw transaction hex, could not parse: %s' % e), category='error')
         else:
@@ -197,6 +197,9 @@ def transaction_decompose(network):
             try:
                 for n, i in enumerate(t.inputs):
                     ti = srv.gettransaction(i.prev_txid.hex())
+                    if not ti:
+                        flash(_('Could not verify transaction: previous transaction not found'), category='warning')
+                        break
                     t.inputs[n].value = ti.outputs[i.output_n_int].value
                 t.verify()
             except TransactionError as e:
@@ -224,31 +227,9 @@ def transaction_input(network, txid, index_n):
         flash(_('Transaction input with index number %s not found' % index_n), category='error')
         return redirect(url_for('main.transaction', network=network, txid=txid))
     input = t.inputs[int(index_n)]
-    locking_script_op = ''
-    locking_script_dict = ''
-    unlocking_script_op = ''
-    unlocking_script_dict = ''
-    try:
-        locking_script_op = script_to_string(input.unlocking_script_unsigned, name_data=True)
-    except:
-        pass
-    try:
-        locking_script_dict = script_deserialize(input.unlocking_script_unsigned)
-    except:
-        pass
-    try:
-        unlocking_script_op = script_to_string(input.unlocking_script, name_data=True)
-    except:
-        pass
-    try:
-        unlocking_script_dict = script_deserialize(input.unlocking_script)
-    except:
-        pass
 
     return render_template('explorer/transaction_input.html', title=_('Transaction Input %s' % index_n), subtitle=txid,
-                           transaction=t, network=network, input=input, index_n=index_n,
-                           locking_script_op=locking_script_op, locking_script_dict=locking_script_dict,
-                           unlocking_script_op=unlocking_script_op, unlocking_script_dict=unlocking_script_dict)
+                           transaction=t, network=network, input=input, index_n=index_n)
 
 
 @bp.route('/<network>/transaction/<txid>/output/<output_n>')
@@ -258,29 +239,18 @@ def transaction_output(network, txid, output_n):
         return redirect(url_for('main.index'))
     srv = SmurferService(network)
     t = srv.gettransaction(txid)
-    for n, o in enumerate(t.outputs[:5]):
-        if o.spent is None:
-            o.spent = srv.isspent(t.txid, n)
     if not t:
         flash(_('Transaction %s not found' % txid), category='error')
         return redirect(url_for('main.index'))
+    for n, o in enumerate(t.outputs[:5]):
+        if o.spent is None:
+            o.spent = srv.isspent(t.txid, n)
     if int(output_n) > len(t.outputs):
         flash(_('Transaction output with index number %s not found' % output_n), category='error')
         return redirect(url_for('main.transaction', network=network, txid=txid))
     output = t.outputs[int(output_n)]
-    locking_script_op = ''
-    locking_script_dict = ''
-    try:
-        locking_script_op = script_to_string(output.lock_script, name_data=True)
-    except:
-        pass
-    try:
-        locking_script_dict = script_deserialize(output.lock_script)
-    except:
-        pass
     return render_template('explorer/transaction_output.html', title=_('Transaction Output %s' % output_n),
-                           subtitle=txid, transaction=t, network=network, output=output, output_n=output_n,
-                           locking_script_dict=locking_script_dict, locking_script_op=locking_script_op)
+                           subtitle=txid, transaction=t, network=network, output=output, output_n=output_n)
 
 
 @bp.route('/<network>/address/<address>')
@@ -321,7 +291,7 @@ def address(network, address):
 
 @bp.route('/<network>/key/<key>')
 def key(network, key):
-    network_name = network_code_translation[network]
+    network_name = Config.NETWORKS_ENABLED[network]
     try:
         k = HDKey(key, network=network_name)
     except Exception as e:
@@ -397,11 +367,31 @@ def block(network, blockid):
                            coinbase_data=coinbase_data, prev_url=prev_url, next_url=next_url)
 
 
+@bp.route('/<network>/script', methods=['GET', 'POST'])
+def script(network):
+    form = ScriptForm()
+    if form.validate_on_submit():
+        try:
+            script = Script.parse_hex(form.script_hex.data)
+        except (ScriptError, ValueError) as e:
+            flash(_('Could not parse script. Error: %s' % e), category='error')
+            return redirect(url_for('main.script', network=network))
+        return render_template('explorer/script_decomposed.html', title=_('Decomposed Script'),
+                               subtitle=_('Parse script and extract type, data and opcodes'), form=form,
+                               script=script, network=network)
+
+    return render_template('explorer/script.html', title=_('Script'), subtitle=_('Decompose Scripts'),
+                           form=form, network=network)
+
+
 @bp.route('/<network>/network')
 def network(network):
     srv = SmurferService(network)
     network_details = srv.network
     network_info = srv.getinfo()
+    if not network_info:
+        flash(_('Could not connect to %s network' % network_details.name), category='error')
+        return redirect(url_for('main.index', network=network))
     hashrate = Quantity(network_info['hashrate'], 'H/s')
 
     return render_template('explorer/network.html', title=_('Network'),
@@ -411,7 +401,7 @@ def network(network):
 
 
 @bp.route('/<network>/store_data', methods=['GET', 'POST'])
-def store_data(network): # pragma: no cover
+def store_data(network):  # pragma: no cover
     srv = SmurferService(network)
     form = StoreDataForm()
     tx_fee = srv.estimatefee(10) // 10
