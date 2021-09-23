@@ -256,7 +256,7 @@ class TestSite(unittest.TestCase, TestingConfig):
         self.assertEqual(response.status_code, 200)
 
     def test_explorer_blocks(self):
-        response = self.app.get('/btc/blocks')
+        response = self.app.get('/btc/blocks', follow_redirects=True)
         self.assertIn(b'Latest blocks in the Bitcoin blockchain', response.data)
         self.assertIn(b'Older Blocks', response.data)
         self.assertIn(b'<form', response.data)
