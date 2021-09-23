@@ -20,5 +20,11 @@ This software currently runs on https://blocksmurfer.io
 Data will be retrieved from various service providers such as Blockchair, Blockchain.info or Blockstream.
 Blocksmurfer can also receive data from a local bcoin or bitcoind server.
 
-.. image:: https://blocksmurfer.io/static/images/blocksmurfer-localhost-transaction.png
+.. image:: https://blocksmurfer.io/static/images/blocksmurfer_transaction.png
+    :alt: Run a bitcoin block explorer locally
+
+.. image:: https://blocksmurfer.io/static/images/blocksmurfer_block.png
+    :alt: Run a bitcoin block explorer locally
+
+.. image:: https://blocksmurfer.io/static/images/blocksmurfer_script.png
     :alt: Run a bitcoin block explorer locally
