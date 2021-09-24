@@ -28,3 +28,9 @@ Blocksmurfer can also receive data from a local bcoin or bitcoind server.
 
 .. image:: https://blocksmurfer.io/static/images/blocksmurfer_script.png
     :alt: Run a bitcoin block explorer locally
+
+
+Installation
+------------
+
+See INSTALL.rst
