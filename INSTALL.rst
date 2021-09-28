@@ -52,6 +52,7 @@ Configuration
 * Select the networks you would like to support and update other settings if you like in the configuration
 
 Please note:
+
 * Remove Blocksmurfer from Bitcoinlib's provider definitions in ./bitcoinlib/providers.json to avoid recursive loops.
 * In the Bitcoinlib config file (./bitcoinlib/config.ini) you can change the loglevel, log location, timeout for requests and other settings
 
