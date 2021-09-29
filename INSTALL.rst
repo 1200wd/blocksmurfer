@@ -24,6 +24,13 @@ Download Blocksmurfer and install requirements.
     $ cd blocksmurfer
     $ pip install -r requirements.txt
 
+Copy configuration file and update secret key
+
+.. code-block:: bash
+
+    $ cp config.example.py config.py
+    $ nano config.py
+
 Now you can test your install and run flask directly
 
 .. code-block:: bash
@@ -42,11 +49,11 @@ Blocksmurfer should run now on http://localhost:5000
 Configuration
 -------------
 
-* Copy config.example.py to config.py 
-* Update secret key!
+* Please do not forget to enter a new secret key!
 * Select the networks you would like to support and update other settings if you like in the configuration
 
 Please note:
+
 * Remove Blocksmurfer from Bitcoinlib's provider definitions in ./bitcoinlib/providers.json to avoid recursive loops.
 * In the Bitcoinlib config file (./bitcoinlib/config.ini) you can change the loglevel, log location, timeout for requests and other settings
 
