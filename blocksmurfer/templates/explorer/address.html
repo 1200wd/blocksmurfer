@@ -58,15 +58,17 @@
                 <td>{{ address_info.n_utxos }}</td>
             </tr>
             {% endif %}
+            {% if config.ENABLE_API %}
             <tr>
             <td>API</td>
-            <td>
-                <a href="{{ url_for('api.transactions', network=network, address=address.address,
-                                    after_txid=after_txid, limit=limit) }}">txs</a>,
-                <a href="{{ url_for('api.utxos', network=network, address=address.address) }}">utxos</a>
-                <a href="{{ url_for('api.address_balance', network=network, address=address.address) }}">balance</a>
-            </td>
-        </tr>
+                <td>
+                    <a href="{{ url_for('api.transactions', network=network, address=address.address,
+                                        after_txid=after_txid, limit=limit) }}">txs</a>,
+                    <a href="{{ url_for('api.utxos', network=network, address=address.address) }}">utxos</a>
+                    <a href="{{ url_for('api.address_balance', network=network, address=address.address) }}">balance</a>
+                </td>
+            </tr>
+            {% endif %}
         </table>
         </td>
         <td>

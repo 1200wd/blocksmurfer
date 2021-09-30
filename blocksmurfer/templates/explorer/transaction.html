@@ -87,6 +87,7 @@
                 </abbr>
             </td>
         </tr>
+        {% if config.ENABLE_API %}
         <tr>
             <td>API</td>
             <td>
@@ -94,6 +95,7 @@
                 <a href="{{ url_for('api.transaction', network=network, txid=transaction.txid, raw=True) }}">raw</a>
             </td>
         </tr>
+        {% endif %}
     </table>
     <p></p>
     <table class="pure-table" style="width: 800px; font-size: 80%;">

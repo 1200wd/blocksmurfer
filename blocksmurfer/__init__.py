@@ -49,8 +49,9 @@ def current_app(config_class=Config):
     babel.init_app(app)
     qrcode.init_app(app)
 
-    from blocksmurfer.api import bp as api_bp
-    app.register_blueprint(api_bp, url_prefix='/api/v1')
-    limiter.init_app(app)
+    if Config.ENABLE_API:
+        from blocksmurfer.api import bp as api_bp
+        app.register_blueprint(api_bp, url_prefix='/api/v1')
+        limiter.init_app(app)
 
     return app

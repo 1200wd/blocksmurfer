@@ -48,6 +48,9 @@ def search(search_string, network='btc'):
 @bp.route('/api')
 @bp.route('/<network>/api')
 def api(network='btc'):
+    if not Config.ENABLE_API:
+        flash(_('API not available'), category='error')
+        return redirect(url_for('main.index'))
     return render_template('api.html', title=_('API'), subtitle=_('Bitcoin blockchain API'), network=network)
 
 

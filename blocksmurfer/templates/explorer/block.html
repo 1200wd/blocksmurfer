@@ -81,6 +81,7 @@
         <td>Transaction count</td>
         <td>{{ block.tx_count }}</td>
     </tr>
+    {% if config.ENABLE_API %}
     <tr>
         <td>API</td>
         <td>
@@ -89,6 +90,7 @@
             </a>
         </td>
     </tr>
+    {% endif %}
     </table>
     <h2>{{ _('Transactions') }}</h2>
     {% if not block.transactions %}

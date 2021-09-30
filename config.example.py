@@ -25,3 +25,5 @@ class Config(object):
         # 'reg': 'regtest',
     }
     NETWORK_DEFAULT = 'btc'  # Has no effect yet, only works for 'btc' at the moment
+    ENABLE_API = True
+    ENABLE_WEBSITE = True

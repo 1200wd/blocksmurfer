@@ -43,6 +43,7 @@
         <div class="pure-menu">
             <a class="pure-menu-heading" href="{{ url_for('main.index') }}">Blocksmurfer</a>
             <ul class="pure-menu-list">
+                {% if config.ENABLE_WEBSITE %}
                 <li class="pure-menu-item menu-item-divided{% if title=='Explorer' %} pure-menu-selected{% endif %}">
                     <a href="{{ url_for('main.index', network=network) }}" class="pure-menu-link">Explorer</a>
                 </li>
@@ -58,12 +59,15 @@
                 <li class="pure-menu-item{% if title=='Network' %} pure-menu-selected{% endif %}">
                     <a href="{{ url_for('main.network', network=network) }}" class="pure-menu-link">Network</a>
                 </li>
-                <li class="pure-menu-item{% if title=='API' %} pure-menu-selected{% endif %}">
-                    <a href="{{ url_for('main.api', network=network) }}" class="pure-menu-link">API</a>
-                </li>
                 <li class="pure-menu-item{% if title=='About' %} pure-menu-selected{% endif %}">
                     <a href="{{ url_for('main.about', network=network) }}" class="pure-menu-link">About</a>
                 </li>
+                {% endif %}
+                {% if config.ENABLE_API %}
+                <li class="pure-menu-item{% if title=='API' %} pure-menu-selected{% endif %}">
+                    <a href="{{ url_for('main.api', network=network) }}" class="pure-menu-link">API</a>
+                </li>
+                {% endif %}
                 <li class="pure-menu-item{% if title=='Status' %} pure-menu-selected{% endif %}">
                     <a href="https://status.coineva.com/" class="pure-menu-link">Status</a>
                 </li>
