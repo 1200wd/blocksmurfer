@@ -264,7 +264,7 @@ def address(network, address):
     limit = current_app.config['REQUEST_LIMIT_MAX'] if limit > current_app.config['REQUEST_LIMIT_MAX'] else limit
 
     try:
-        address_obj = Address.import_address(address)
+        address_obj = Address.parse(address)
     except:
         flash(_('Invalid address'), category='error')
         return redirect(url_for('main.index'))

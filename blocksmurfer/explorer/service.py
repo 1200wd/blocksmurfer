@@ -54,7 +54,7 @@ def check_address(address=None, error_on_empty=False):
             return False
         return True
     try:
-        assert (Address.import_address(address).address == address)
+        assert (Address.parse(address).address == address)
     except (AssertionError, EncodingError):
         return False
     return True

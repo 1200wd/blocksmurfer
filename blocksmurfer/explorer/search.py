@@ -35,7 +35,7 @@ def search_query(s, network):
             network_name = 'bitcoin' if 'bitcoin' in network_name else network_name[0]
         network = [x for x, y in Config.NETWORKS_ENABLED.items() if y == network_name][0]
         if key_dict['format'] == 'address':
-            if Address.import_address(s):
+            if Address.parse(s):
                 return redirect(url_for('main.address', address=s, network=network))
         elif key_dict['format']:
             return redirect(url_for('main.key', key=s, network=network))
