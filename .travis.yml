@@ -8,6 +8,7 @@ install:
   - pip install coveralls
   - pip install scrypt
   - python setup.py install
+  - cp config.example.py config.py
   - git clone https://github.com/1200wd/bitcoinlib.git --branch scripts 1200wd/bitcoinlib
   - ln -s 1200wd/bitcoinlib/bitcoinlib bitcoinlib
 
