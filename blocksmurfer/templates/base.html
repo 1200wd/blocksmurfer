@@ -64,9 +64,13 @@
                 </li>
                 {% endif %}
                 {% if config.ENABLE_API %}
-                <li class="pure-menu-item{% if title=='API' %} pure-menu-selected{% endif %}">
-                    <a href="{{ url_for('main.api', network=network) }}" class="pure-menu-link">API</a>
-                </li>
+                    <li class="pure-menu-item{% if title=='API' %} pure-menu-selected{% endif %}">
+                    {% if config.ENABLE_API is sameas true %}
+                        <a href="{{ url_for('main.api', network=network) }}" class="pure-menu-link">API</a>
+                    {% else %}
+                        <a href="{{ config.ENABLE_API }}" class="pure-menu-link">API</a>
+                    {% endif %}
+                    </li>
                 {% endif %}
                 <li class="pure-menu-item{% if title=='Status' %} pure-menu-selected{% endif %}">
                     <a href="https://status.coineva.com/" class="pure-menu-link">Status</a>
@@ -91,7 +95,12 @@
                     </table>
                 </div>
             {% endif %}
-
+            <div style="position:absolute; bottom:0; width:100%; text-align: center; height: 45px">
+                <a href="mailto:explorer@blocksmurfer.io">
+                    <img src="/static/images/mailto.png" alt="M" style="height:32px;"></a>
+                <a href="https://github.com/1200wd/blocksmurfer">
+                    <img src="/static/images/github.png" alt="G" style="height:32px;"></a>
+            </div>
         </div>
     </div>
 {% endblock nav %}
