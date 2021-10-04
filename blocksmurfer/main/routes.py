@@ -51,7 +51,11 @@ def api(network='btc'):
     if not Config.ENABLE_API:
         flash(_('API not available'), category='error')
         return redirect(url_for('main.index'))
-    return render_template('api.html', title=_('API'), subtitle=_('Bitcoin blockchain API'), network=network)
+    api_url = request.host_url + 'api/v1/'
+    if Config.API_BASE_URL:
+        api_url = Config.API_BASE_URL
+    return render_template('api.html', title=_('API'), subtitle=_('Bitcoin blockchain API'), network=network,
+                           api_url=api_url)
 
 
 @bp.route('/about')
