@@ -65,12 +65,10 @@
                 {% endif %}
                 {% if config.ENABLE_API %}
                     <li class="pure-menu-item{% if title=='API' %} pure-menu-selected{% endif %}">
-                    {% if config.ENABLE_API is sameas true %}
-                        <a href="{{ url_for('main.api', network=network) }}" class="pure-menu-link">API</a>
-                    {% else %}
-                        <a href="{{ config.ENABLE_API }}" class="pure-menu-link">API</a>
-                    {% endif %}
+                    <a href="{{ url_for('main.api', network=network) }}" class="pure-menu-link">API</a>
                     </li>
+                {% elif config.API_BASE_URL %}
+                    <a href="{{ config.API_BASE_URL }}" class="pure-menu-link">API</a>
                 {% endif %}
                 <li class="pure-menu-item{% if title=='Status' %} pure-menu-selected{% endif %}">
                     <a href="https://status.coineva.com/" class="pure-menu-link">Status</a>

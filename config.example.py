@@ -26,5 +26,5 @@ class Config(object):
     }
     NETWORK_DEFAULT = 'btc'  # Has no effect yet, only works for 'btc' at the moment
     ENABLE_API = True
-    API_BASE_URL = ''  # Enter full url ending with '/' to redirect API to another server
+    API_BASE_URL = ''  # Enter full url to redirect API to another server
     ENABLE_WEBSITE = True
