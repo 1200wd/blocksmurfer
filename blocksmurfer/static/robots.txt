@@ -1,5 +1,6 @@
 User-agent: SemrushBot
 User-agent: PetalBot
+User-agent: mj12bot
 Disallow: /
 
 User-agent: *
