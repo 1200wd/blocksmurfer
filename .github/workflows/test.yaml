@@ -26,4 +26,6 @@ jobs:
       - name: Test with covarage
         run: coverage run --source=blocksmurfer setup.py test
       - name: Run Coveralls
+        env:
+          GITHUB_TOKEN: $ secrets.GITHUB_TOKEN
         run: coveralls
