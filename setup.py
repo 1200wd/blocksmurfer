@@ -35,16 +35,18 @@ except:
 kwargs = {}
 
 install_requires = [
-    'bitcoinlib>=0.4.17',
-    'Flask==1.1.2',
-    'flask_babel==1.0.0',
+    'bitcoinlib>=0.6.2',
+    'Flask==2.0.2',
+    'flask_babel==2.0.0',
     'flask_qrcode==3.0.0',
-    'flask_restful==0.3.8',
-    'flask_wtf==0.14.3',
-    'Flask-Limiter',
-    'Werkzeug==1.0.1',
-    'WTForms==2.3.1',
+    'flask_restful==0.3.9',
+    'flask_wtf==1.0.0',
+    'Flask-Limiter==2.0.2',
+    'Werkzeug==2.0.2',
+    'WTForms==3.0.0',
+    'gunicorn==20.1.0',
 ]
+
 
 kwargs['install_requires'] = install_requires
 
