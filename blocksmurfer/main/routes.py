@@ -90,6 +90,7 @@ def transactions(network='btc'):
     limit = 10
     mempool = []
     show_mempool = True
+    transactions = []
 
     if blockid:
         show_mempool = False
@@ -101,7 +102,6 @@ def transactions(network='btc'):
 
     srv = SmurferService(network)
     if show_mempool:
-        transactions = []
         mempool = srv.mempool() or []
         if page < 1:
             page = 1
@@ -110,7 +110,7 @@ def transactions(network='btc'):
         for txid in mempool[(page-1)*limit:page*limit]:
             transactions.append(srv.gettransaction(txid))
         total_txs = len(mempool)
-    else:
+    if not transactions:
         if not blockid or blockid == 'last':
             blockid = srv.blockcount()
         block = srv.getblock(blockid, parse_transactions=True, limit=10, page=page)
