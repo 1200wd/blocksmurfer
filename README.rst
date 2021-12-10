@@ -1,9 +1,9 @@
 Blocksmurfer
 ============
 
-.. image:: https://travis-ci.com/1200wd/blocksmurfer.svg?branch=master
-    :target: https://travis-ci.com/1200wd/blocksmurfer
-    :alt: Travis
+.. image:: https://github.com/1200wd/blocksmurfer/actions/workflows/test.yaml/badge.svg
+    :target: https://github.com/1200wd/blocksmurfer/actions/workflows/test.yaml
+    :alt: Blocksmurfer Unittests
 .. image:: https://img.shields.io/pypi/v/blocksmurfer.svg
     :target: https://pypi.org/pypi/blocksmurfer/
     :alt: PyPi
