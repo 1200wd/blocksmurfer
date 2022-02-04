@@ -8,3 +8,4 @@ Werkzeug==2.0.2
 WTForms==3.0.0
 gunicorn==20.1.0
 Flask-Limiter==2.0.2
+numpy>=1.22.2 # not directly required, pinned by Snyk to avoid a vulnerability
