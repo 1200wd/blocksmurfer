@@ -84,10 +84,10 @@ class TestSite(unittest.TestCase, TestingConfig):
         self.assertEqual(response.status_code, 302)
 
     def test_explorer_address(self):
-        response = self.app.get('/btc/address/1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1')
-        self.assertIn(b'b3407d4b4d1fca87fb930abe3fa6c2baed6e6fd8', response.data)
-        self.assertIn(b'2013-09-11 22:05:17', response.data)
-        self.assertIn(b'/btc/transaction/5fd3d8275afb5b5cc202ae8480daefa4fe16d0cf480ce78545d6dc06c6fb101a',
+        response = self.app.get('/btc/address/14xb2HATmkBzrHf4CR2hZczEtjYpTh92d2')
+        self.assertIn(b'2b6ba7c9d796b75eef7942fc9288edd37c32f5c3', response.data)
+        self.assertIn(b'2010-12-29 12:20:58', response.data)
+        self.assertIn(b'/btc/transaction/21d2eb195736af2a40d42107e6abd59c97eb6cffd4a5a7a7709e86590ae61987',
                       response.data)
         self.assertEqual(response.status_code, 200)
 
@@ -104,10 +104,10 @@ class TestSite(unittest.TestCase, TestingConfig):
         self.assertEqual(response.status_code, 200)
 
     def test_explorer_address_paging(self):
-        response = self.app.get('/btc/address/1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1?after_txid=d658ab87cc053b8dbcfd4a'
-                                'a2717fd23cc3edfe90ec75351fadd6a0f7993b461d')
-        self.assertIn(b'4be9e8f3a35a7c597ae9641b2767242aca0d0abe20bf419b9168ea373b88fe48', response.data)
-        self.assertIn(b'1ed74cf9ec10bb9eb881dfcbc97318baadff371e25f227587b8d87466f260cad', response.data)
+        response = self.app.get('/btc/address/14xb2HATmkBzrHf4CR2hZczEtjYpTh92d2?after_txid=563ea83f9641d37a36f9'
+                                '294d172fdb4fb86c19b0e9cac45e0b27610331138775')
+        self.assertIn(b'971af80218684017722429be08548d1f30a2f1f220abc064380cbca5cabf7623', response.data)
+        self.assertIn(b'b1ec9c44009147f3cee26caba45abec2610c74df9751fad14074119b5314da21', response.data)
         self.assertEqual(response.status_code, 200)
 
     def test_explorer_address_invalid(self):
@@ -513,7 +513,7 @@ class TestAPI(unittest.TestCase, CustomAssertions):
         response = self.app.get('/api/v1/btc/transactions/1KoAvaL3wfpcNvGCQYkqFJG9Ccqm52sZHa?limit=1&'
                                 'after_txid=e10e6acd0465db47a8308befbe53cc267e3d2c078691e9776bd4dd6e6c8ba14b')
         expected = {"coinbase": True,
-                    "fee": 0, "input_total": 0,
+                    "fee": 0,
                     "inputs": [
                         {"address": "", "compressed": True, "encoding": "base58", "index_n": 0,
                          "prev_hash": "0000000000000000000000000000000000000000000000000000000000000000",
