@@ -30,9 +30,16 @@ def transaction(network, txid):
     if not check_txid(txid):
         abort(422, "Invalid txid provided")
     t = srv.gettransaction(txid)
-    # _logger.debug("Read transaction %s from provider %s" % (t.txid, srv.results.items()))
     if not t:
         abort(404, "Could not find transaction")
+    # Try to fetch address from previous transaction
+    for i in t.inputs:
+        if not i.address:
+            try:
+                ti = srv.gettransaction(i.prev_txid.hex())
+                i.address = ti.outputs[i.output_n_int].address
+            except:
+                pass
     if raw:
         tx_dict = {'raw_hex': t.raw_hex()}
     else:

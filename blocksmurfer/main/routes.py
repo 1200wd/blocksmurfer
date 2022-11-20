@@ -148,6 +148,14 @@ def transaction(network, txid):
     if not t:
         flash(_('Transaction %s not found' % txid), category='error')
         return redirect(url_for('main.index'))
+    # Try to fetch address from previous transaction
+    for i in t.inputs:
+        if not i.address:
+            try:
+                ti = srv.gettransaction(i.prev_txid.hex())
+                i.address = ti.outputs[i.output_n_int].address
+            except:
+                pass
     tzutc = timezone.utc
     return render_template('explorer/transaction.html', title=_('Transaction'),
                            subtitle=txid, transaction=t, network=network, tzutc=tzutc)
