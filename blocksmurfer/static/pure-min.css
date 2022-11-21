@@ -954,3 +954,8 @@ td, th {
 .aside-notice {
     background-color: #e2e7ff;
 }
+
+.footer {
+    text-align: center;
+    border-top: 1px dotted;
+}

@@ -110,11 +110,6 @@
             {% if subtitle %}<h2 style="word-break: break-all;">{{ subtitle }}</h2>{% endif %}
         </div>
         <div class="content">
-            <aside class="aside-notice">
-                <p>This is a test release, please use with caution and report problems on
-                    <a href="https://github.com/1200wd/blocksmurfer">Blocksmurfer Github</a> or
-                    explorer@blocksmurfer.io. Thanks for using / testing!</p>
-            </aside>
             {% with messages = get_flashed_messages() %}
             {% if messages %}
             <aside class="aside-error">
@@ -126,6 +121,19 @@
             {% endwith %}
             {# application content needs to be provided in the app_content block #}
             {% block app_content %}{% endblock %}
+        </div>
+        <div class="footer">
+            <p>
+                Thank you for using Blocksmurfer Bitcoin block explorer!
+            </p>
+            <p>
+                If you encounter any problems please report at
+                <a href="https://github.com/1200wd/blocksmurfer">Blocksmurfer Github</a> or
+                explorer@blocksmurfer.io
+            </p>
+            <p>
+                &copy; 2020-2022 Blocksmurfer by Coineva / 1200wd.com
+            </p>
         </div>
     </div>
 {% endblock content %}
