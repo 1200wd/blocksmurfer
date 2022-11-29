@@ -54,3 +54,16 @@ def blockcount(network):
         'blockcount': blockcount
     }
     return jsonify(data)
+
+
+@bp.route('/<string:network>/rawblock/<blockid>')
+def blockraw(network, blockid):
+    if blockid != 'last' and not blockid.isdigit() and not (isinstance(blockid, str) and len(blockid) == 64):
+        abort(422, "Invalid Block ID provided")
+    srv = SmurferService(network)
+    if blockid == 'last':
+        blockid = srv.blockcount()
+    rawbk = srv.getrawblock(blockid)
+    if not rawbk:
+        abort(422, "Block with this ID not found on the network")
+    return rawbk
