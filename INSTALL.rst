@@ -5,7 +5,7 @@ Install packages needed for Bitcoinlib:
 
 .. code-block:: bash
 
-    $ sudo apt install build-essential python-dev python3-dev libgmp3-dev libssl-dev python3-virtualenv
+    $ sudo apt install build-essential python3-dev libgmp3-dev libssl-dev python3-virtualenv
 
 
 Create a virtual environment
@@ -64,20 +64,31 @@ Database
 In production environments you should use another database such as PostgreSQL instead of SQLite for fast and reliable caching.
 
 To install PostgreSQL:
- apt install postgresql postgresql-contrib libpq-dev
- pip install psycopg2
+
+.. code-block:: bash
+
+    $ apt install postgresql postgresql-contrib libpq-dev
+    $ pip install psycopg2
 
 Apache
 ------
 
 Check the Apache config file example in blocksmurfer/examples/apache-example.conf to configure Blocksmurfer with Apache.
 
-* Create log directories
- sudo mkdir /var/log/apache2/blocksmurfer
+* Install Apache and create log directories
+
+.. code-block:: bash
+
+    $ sudo apt install apache2
+    $ sudo mkdir /var/log/apache2/blocksmurfer
 
 * Add the proxy modules
- sudo a2enmod proxy
- sudo a2enmod proxy_http
+
+.. code-block:: bash
+
+    $ sudo a2enmod ssl
+    $ sudo a2enmod proxy
+    $ sudo a2enmod proxy_http
 
 * Copy the apache config file to /etc/apache2/sites-available, update the settings and create the link in /etc/apache2/sites-available
 
