@@ -39,8 +39,8 @@ def current_app(config_class=Config):
 
     # Limit request, set to slow now because we're still in development phase
     limiter = Limiter(
-        app,
-        key_func=get_remote_address,
+        get_remote_address,
+        app=app,
         default_limits=["2000 per day", "500 per hour"]
     )
 
