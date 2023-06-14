@@ -22,7 +22,7 @@ from setuptools import setup
 import os
 
 here = os.path.abspath(os.path.dirname(__file__))
-version = '0.0.1'
+version = '0.0.2'
 
 # Get the long description from the relevant file
 readmetxt = ''
@@ -35,15 +35,15 @@ except:
 kwargs = {}
 
 install_requires = [
-    'bitcoinlib>=0.6.2',
-    'Flask==2.0.2',
-    'flask_babel==2.0.0',
-    'flask_qrcode==3.0.0',
-    'flask_restful==0.3.9',
-    'flask_wtf==1.0.0',
-    'Flask-Limiter==2.0.2',
-    'Werkzeug==2.0.2',
-    'WTForms==3.0.0',
+    'bitcoinlib>=0.6.10',
+    'Flask==2.3.2',
+    'flask_babel==3.1.0',
+    'flask_qrcode==3.1.0',
+    'flask_restful==0.3.10',
+    'flask_wtf==1.1.0',
+    'Flask-Limiter==3.3.1',
+    'Werkzeug==2.3.6',
+    'WTForms==3.0.1',
     'gunicorn==20.1.0',
 ]
 
