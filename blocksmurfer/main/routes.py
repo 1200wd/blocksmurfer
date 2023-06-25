@@ -208,7 +208,7 @@ def transaction_decompose(network):
         except Exception as e:
             flash(_('Invalid raw transaction hex, could not parse: %s' % e), category='error')
         else:
-            # TODO: Retreiving prev_tx input values should be included in bitcoinlib
+            # TODO: Retrieving prev_tx input values should be included in bitcoinlib
             try:
                 for n, i in enumerate(t.inputs):
                     ti = srv.gettransaction(i.prev_txid.hex())
@@ -242,6 +242,11 @@ def transaction_input(network, txid, index_n):
         flash(_('Transaction input with index number %s not found' % index_n), category='error')
         return redirect(url_for('main.transaction', network=network, txid=txid))
     input = t.inputs[int(index_n)]
+    ti = srv.gettransaction(input.prev_txid.hex())
+    if not ti:
+        flash(_('Could not verify transaction: previous transaction not found'), category='error')
+    input.value = ti.outputs[input.output_n_int].value
+    input.address = ti.outputs[input.output_n_int].address
 
     return render_template('explorer/transaction_input.html', title=_('Transaction Input %s' % index_n), subtitle=txid,
                            transaction=t, network=network, input=input, index_n=index_n)
