@@ -242,11 +242,12 @@ def transaction_input(network, txid, index_n):
         flash(_('Transaction input with index number %s not found' % index_n), category='error')
         return redirect(url_for('main.transaction', network=network, txid=txid))
     input = t.inputs[int(index_n)]
-    ti = srv.gettransaction(input.prev_txid.hex())
-    if not ti:
-        flash(_('Could not verify transaction: previous transaction not found'), category='error')
-    input.value = ti.outputs[input.output_n_int].value
-    input.address = ti.outputs[input.output_n_int].address
+    if not t.coinbase:
+        ti = srv.gettransaction(input.prev_txid.hex())
+        if not ti:
+            flash(_('Could not verify transaction: previous transaction not found'), category='error')
+        input.value = ti.outputs[input.output_n_int].value
+        input.address = ti.outputs[input.output_n_int].address
 
     return render_template('explorer/transaction_input.html', title=_('Transaction Input %s' % index_n), subtitle=txid,
                            transaction=t, network=network, input=input, index_n=index_n)
