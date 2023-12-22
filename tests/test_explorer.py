@@ -180,7 +180,7 @@ class TestSite(unittest.TestCase, TestingConfig):
 
     def test_explorer_transactions(self):
         response = self.app.get('/btc/transactions')
-        self.assertIn(b'Latest unconfirmed transaction from the mempool. Total mempool size is', response.data)
+        self.assertIn(b'List of transactions from last block on the Blockchain with height', response.data)
         self.assertIn(b'Next transactions', response.data)
         self.assertEqual(response.status_code, 200)
 
