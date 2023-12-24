@@ -36,6 +36,9 @@ Now you can test your install and run flask directly
 .. code-block:: bash
 
     $ flask run
+    $ #  or if you want to accept connection from other hosts
+    $ flask run --host 0.0.0.0
+
 
 or with gunicorn
 
@@ -46,6 +49,17 @@ or with gunicorn
 Blocksmurfer should run now on http://localhost:5000
 
 
+Docker
+------
+
+You can also create a basic local node with a docker image
+
+.. code-block:: bash
+
+    $ docker container run --rm --name blocksmurfer -d -p 5000:5000 blocksmurfer/blocksmurfer
+
+For more information about this image: https://hub.docker.com/r/blocksmurfer/blocksmurfer
+
 Configuration
 -------------
 
@@ -55,7 +69,10 @@ Configuration
 Please note:
 
 * Remove Blocksmurfer from Bitcoinlib's provider definitions in ./bitcoinlib/providers.json to avoid recursive loops.
+* Preferably use your own Bcoin node, or request for an API key at one of the providers to avoid provider errors.
 * In the Bitcoinlib config file (./bitcoinlib/config.ini) you can change the loglevel, log location, timeout for requests and other settings
+* If you use your own Bcoin node or have an API key, you might want to increase the max_transaction setting in config.ini to 100 or more.
+* If you get errors when trying to retrieve blocks or see negative numbers in confirmations, this probably means the blockchain is not fully synced yet. This can take several days for a Bcoin or Bitcoind node.
 
 
 Database
