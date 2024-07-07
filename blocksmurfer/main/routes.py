@@ -67,7 +67,7 @@ def about(network='btc'):
         if '@' in provider[1]['url']:
             provider[1]['url'] = ''
     return render_template('about.html', title=_('About'), subtitle=_('Keep on smurfing!'), providers=providers,
-                           network_name=srv.network.name, network=network)
+                           network_name=srv.network.name, network=network, bitcoinlib_version=BITCOINLIB_VERSION)
 
 
 @bp.route('/providers')

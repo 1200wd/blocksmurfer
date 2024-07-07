@@ -12,7 +12,7 @@
             </td>
         </tr>
         {% endif %}
-            <tr>
+        <tr>
             <td>Script Type</td>
             <td>{{ script.script_types|join(', ') }}</td>
         </tr>
@@ -23,19 +23,29 @@
         <tr>
             <td>Commands Hex</td>
             <td style="word-break: break-all;">
-                {% for cmd in script.commands %}
-                    {% if cmd is number %}{{ '%0x' % cmd }}{% else %}{{ cmd.hex() }}{% endif %}
+                {% for cmd in script.view(blueprint=False, as_list=True, op_code_numbers=True) %}
+                    {% if cmd is number %}{{ '%02x' | format(cmd) }}
+                    {% else %}{{ cmd }}
+                    {% endif %}
                 {% endfor %}
             </td>
+        </tr>
+        <tr>
+            <td>Redeemscript OP</td>
+            <td style="word-break: break-all;">{{ script.redeemscript_obj }}</td>
+        </tr>
+        <tr>
+            <td>Redeemscript Hex</td>
+            <td style="word-break: break-all;">{{ script.redeemscript.hex() }}</td>
         </tr>
         {% if script.hash_type %}
         <tr>
             <td>Hash Type</td>
-            <td>{{ '%0x' % script.hash_type }}</td>
+            <td>{{ '%02x' % script.hash_type }}</td>
         </tr>
         {% endif %}
 
-        {% for witness in script.witnesses %}
+{#        {% for witness in script.witnesses %}
         {% if witness.hex() != '00' %}
         <tr>
             <td>Witness</td>
@@ -49,7 +59,7 @@
             <td>Signature</td>
             <td style="word-break: break-all;">{{ sig.hex() }}</td>
         </tr>
-        {% endfor %}
+        {% endfor %}#}
         {% if script.script_types == ['nulldata'] %}
         <tr>
             <td>Nulldata</td>

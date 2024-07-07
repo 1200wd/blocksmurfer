@@ -45,7 +45,7 @@ transaction_input_fields = {
     'public_hash': fields.String(attribute=lambda obj: obj.public_hash.hex()),
     'redeemscript': fields.String(attribute=lambda obj: obj.redeemscript.hex()),
     'script': fields.String(attribute=lambda obj: obj.unlocking_script.hex()),
-    'script_code': fields.String(attribute=lambda obj: obj.script_code.hex()),
+    'locking_script': fields.String(attribute=lambda obj: obj.locking_script.hex()),
     'script_type': fields.String,
     'sequence': fields.Integer,
     'signatures': fields.List(Hexstring),
