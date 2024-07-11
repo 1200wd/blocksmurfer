@@ -2,7 +2,7 @@ import unittest
 from flask import Config
 from blocksmurfer import current_app
 from tests.test_custom import CustomAssertions
-# from blocksmurfer.explorer.service import SmurferService
+# from blocksmurfer.explorer.service import SmurferService as Service
 from bitcoinlib.services.services import Service
 
 
