@@ -591,7 +591,7 @@ class TestAPI(unittest.TestCase, CustomAssertions):
         response = self.app.get('/api/v1/btc/transaction/6ab6432a6b7b04ecc335c6e8adccc45c25f46e33752478f0bcacaf3f1b'
                                 '61ad92')
         expected = {
-            "height": 630000, "coinbase": False, "date": "2020-05-11T19:23:43",
+            "height": 630000, "coinbase": False, "date": "2020-05-11T19:23:43+00:00",
             "fee": 35109, "input_total": 2170991196, "inputs": [
                 {"address": "3KPUySzYeEpUyTg4JHBHV4nNPkELzprRnP",
                  "encoding": "base58", "index_n": 0, "output_n": 8,
