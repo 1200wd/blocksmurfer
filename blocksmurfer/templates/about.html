@@ -4,8 +4,9 @@
     <h2>Blocksmurfer</h2>
     <p>The Blocksmurfer explorer is created by Coineva using Flask and Python Bitcoinlib. It can be used to search
         and analyse blocks, transactions, addresses scripts and utxo's on the {{ network_name }} blockchain.
-        You can easily run it from a local server using the source code from
-        <a href="https://github.com/1200wd/blocksmurfer">Github</a>.</p>
+        You can easily run it from a local server using the
+        <a href="https://github.com/1200wd/blocksmurfer">Blocksmurfer source code</a> from
+        github.</p>
 
     <p>Currently the
         {% for nw in config.NETWORKS_ENABLED.values() %}
@@ -14,21 +15,21 @@
 
     <h2>Providers</h2>
 
-    <p>Just like Bitcoinlib it retrieves blockchain data from a <a href="https://github.com/bcoin-org/bcoin/blob/master/docs/README.md">Bcoin</a> node</p>
-        a Bitcoin Core node or various online Blockchain service providers.
+    <p>Just like Bitcoinlib it retrieves blockchain data from a <a href="https://github.com/bcoin-org/bcoin/blob/master/docs/README.md">Bcoin</a> node
+        a Bitcoin Core node or various online Blockchain service providers.</p>
 
-    For this website the following <a href="{{ url_for('main.providers', network=network) }}">providers</a>
+    <p>For this website the following <a href="{{ url_for('main.providers', network=network) }}">providers</a>
     are used for the {{ network_name }} network:
 
     {% for provider in providers %}
         {{ provider[0] -}}
         {% if loop.index == loop.length - 1 %} and
         {% elif not loop.last %}, {% endif %}
-    {% endfor -%}.
+    {% endfor -%}.</p>
 
-    To avoid too many request to external service providers the local providers Bcoin and Bitcoind are
+    <p>To avoid too many request to external service providers the local providers Bcoin and Bitcoind are
     used whenever possible. Also transaction, block and address data are cached in a local SQLite or PostgreSQL
-    database.
+        database.</p>
 
     <h2>Bitcoinlib</h2>
     <p>Python <a href="https://github.com/1200wd/bitcoinlib">Bitcoinlib</a> is an open source bitcoin and other
@@ -41,4 +42,5 @@
     <a href="mailto:explorer@blocksmurfer.io">explorer@blocksmurfer.io</a><br />
 
     <a href="https://blocksmurfer.io">Blocksmurfer</a> (Coineva)</p>
+
 {% endblock %}
