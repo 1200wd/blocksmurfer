@@ -92,6 +92,7 @@ transaction_fields = {
 
 transaction_fields_block = {
     'txid': fields.String,
+    'date': fields.DateTime(dt_format='iso8601'),
     'coinbase': fields.Boolean,
     'fee': fields.Integer,
     'inputs': fields.List(fields.Nested(transaction_input_fields)),
