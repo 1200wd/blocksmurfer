@@ -36,7 +36,7 @@
                 {% endfor %}
             </td>
         </tr>
-        {% if script.redeemscript_obj %}
+        {% if script.redeemscript_obj and script.raw != script.redeemscript %}
         <tr>
             <td>Redeemscript OP</td>
             <td style="word-break: break-all;">{{ script.redeemscript_obj }}</td>
@@ -44,12 +44,6 @@
         <tr>
             <td>Redeemscript Hex</td>
             <td style="word-break: break-all;">{{ script.redeemscript.hex() }}</td>
-        </tr>
-        {% endif %}
-        {% if script.hash_type %}
-        <tr>
-            <td>Hash Type</td>
-            <td>{{ '%02x' % script.hash_type }}</td>
         </tr>
         {% endif %}
 
@@ -64,10 +58,17 @@
 
         {% for sig in script.signatures %}
         <tr>
-            <td>Signature</td>
+            <td>Signature #{{ script.signatures.index(sig) }}</td>
             <td style="word-break: break-all;">{{ sig.hex() }}</td>
         </tr>
-        {% endfor %}
+        {% if sig.hash_type %}
+        <tr>
+            <td>Hash Type #{{ script.signatures.index(sig) }}</td>
+            <td><a href="{{ url_for('main.sighash_flag', network=network, flag=sig.hash_type) }}">
+                SIGHASH_{{ definitions.SIGHASH_FLAGS[sig.hash_type][0] }}</a> ({{ '%02x' % sig.hash_type }})
+            </td>
+        </tr>
+        {% endif %}        {% endfor %}
         {% if script.script_types == ['nulldata'] %}
         <tr>
             <td>Nulldata</td>

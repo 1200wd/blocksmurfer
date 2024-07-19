@@ -14,6 +14,7 @@ from flask import render_template, flash, redirect, url_for, request, current_ap
 from flask_babel import _
 from datetime import timezone
 from config import Config
+from blocksmurfer import definitions
 from blocksmurfer.main import bp
 from blocksmurfer.main.forms import *
 from blocksmurfer.explorer.search import search_query
@@ -399,10 +400,22 @@ def script(network):
             return redirect(url_for('main.script', network=network))
         return render_template('explorer/script_decomposed.html', title=_('Decomposed Script'),
                                subtitle=_('Parse script and extract type, data and opcodes'), form=form,
-                               script=script, network=network)
+                               script=script, network=network, definitions=definitions)
 
     return render_template('explorer/script.html', title=_('Script'), subtitle=_('Decompose Scripts'),
                            form=form, network=network)
+
+@bp.route('/<network>/sighash_flag/<flag>', methods=['GET'])
+def sighash_flag(network, flag):
+    try:
+        flag_int = int(flag)
+        flag_name = definitions.SIGHASH_FLAGS[flag_int][0]
+        flag_desc = definitions.SIGHASH_FLAGS[flag_int][1]
+    except Exception as e:
+        flash(_("SIGHASH flag not recognised"), category='error')
+        return redirect(url_for('main.index'))
+    return render_template('explorer/sighash_flag.html', title=_('SIGHASH Flag'), network=network,
+                           flag=flag, flag_name=flag_name, flag_desc=flag_desc)
 
 
 @bp.route('/<network>/network')
