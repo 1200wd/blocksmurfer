@@ -16,6 +16,12 @@
             <td>Script Type</td>
             <td>{{ script.script_types|join(', ') }}</td>
         </tr>
+        {%  if 'p2sh_multisig' in script.script_types or 'multisig' in script.script_types %}
+        <tr>
+            <td>Signatures required</td>
+            <td>{{ script.sigs_required }} of {{ script.keys|length }}</td>
+        </tr>
+        {% endif %}
         <tr>
             <td>Commands OP</td>
             <td style="word-break: break-all;">{{ script }}</td>
@@ -30,6 +36,7 @@
                 {% endfor %}
             </td>
         </tr>
+        {% if script.redeemscript_obj %}
         <tr>
             <td>Redeemscript OP</td>
             <td style="word-break: break-all;">{{ script.redeemscript_obj }}</td>
@@ -38,6 +45,7 @@
             <td>Redeemscript Hex</td>
             <td style="word-break: break-all;">{{ script.redeemscript.hex() }}</td>
         </tr>
+        {% endif %}
         {% if script.hash_type %}
         <tr>
             <td>Hash Type</td>
@@ -45,7 +53,7 @@
         </tr>
         {% endif %}
 
-{#        {% for witness in script.witnesses %}
+        {% for witness in script.witnesses %}
         {% if witness.hex() != '00' %}
         <tr>
             <td>Witness</td>
@@ -59,7 +67,7 @@
             <td>Signature</td>
             <td style="word-break: break-all;">{{ sig.hex() }}</td>
         </tr>
-        {% endfor %}#}
+        {% endfor %}
         {% if script.script_types == ['nulldata'] %}
         <tr>
             <td>Nulldata</td>

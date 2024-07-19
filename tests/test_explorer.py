@@ -41,15 +41,17 @@ class TestSite(unittest.TestCase, TestingConfig):
     def test_about_page(self):
         response = self.app.get('/about', follow_redirects=True)
         self.assertIn(b'Coineva', response.data)
-        self.assertIn(b'blockstream', response.data)
+        expected_provider = bytes(list(Service().providers.keys())[0], encoding='utf-8')
+        self.assertIn(expected_provider, response.data)
         self.assertIn(b'explorer@blocksmurfer.io', response.data)
         self.assertEqual(response.status_code, 200)
 
     def test_provider_page(self):
         response = self.app.get('/providers', follow_redirects=True)
         self.assertIn(b'providers', response.data)
-        self.assertIn(b'blockchair', response.data)
-        self.assertIn(b'https://blockstream.info/api/', response.data)
+        expected_provider = bytes(list(Service().providers.keys())[0], encoding='utf-8')
+        self.assertIn(expected_provider, response.data)
+        self.assertIn(b'priority', response.data)
         self.assertEqual(response.status_code, 200)
 
     def test_search_address(self):
