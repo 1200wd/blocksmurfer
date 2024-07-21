@@ -109,14 +109,15 @@ def providers_status(network='btc'):
 def transactions(network='btc'):
     page = request.args.get('page', 1, type=int)
     blockid = request.args.get('blockid', type=str)
+    show_mempool = request.args.get('show_mempool', type=bool, default=False)
     block = None
     limit = 10
     mempool = []
-    show_mempool = True
+    # show_mempool = True
     transactions = []
 
-    if blockid:
-        show_mempool = False
+    # if blockid:
+    #     show_mempool = False
 
     form = SearchForm()
     form.search.render_kw = {'placeholder': 'enter transaction id'}

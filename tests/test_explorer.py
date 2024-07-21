@@ -50,7 +50,7 @@ class TestSite(unittest.TestCase, TestingConfig):
         response = self.app.get('/providers', follow_redirects=True)
         self.assertIn(b'providers', response.data)
         expected_provider = bytes(list(Service().providers.keys())[0], encoding='utf-8')
-        self.assertIn(expected_provider, response.data)
+        self.assertIn(expected_provider.capitalize(), response.data)
         self.assertIn(b'priority', response.data)
         self.assertEqual(response.status_code, 200)
 
@@ -182,7 +182,7 @@ class TestSite(unittest.TestCase, TestingConfig):
 
     def test_explorer_transactions(self):
         response = self.app.get('/btc/transactions')
-        self.assertIn(b'Latest unconfirmed transaction from the mempool. Total mempool size is', response.data)
+        self.assertIn(b'List of transactions from last block on the Blockchain with height', response.data)
         self.assertIn(b'Next transactions', response.data)
         self.assertEqual(response.status_code, 200)
 

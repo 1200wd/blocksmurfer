@@ -9,8 +9,8 @@
                 {{ block.height }}</a>. Block contains {{ total_txs }} transactions.
         </p>
         <p>
-            You can also view the latest unconfirmed from the
-            <a href="{{ url_for('main.transactions', network=network) }}">mempool</a>.
+            You can also view the latest unconfirmed transactions from the
+            <a href="{{ url_for('main.transactions', network=network, show_mempool=True) }}">mempool</a>.
         </p>
     {% else %}
         <p>
