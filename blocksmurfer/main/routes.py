@@ -13,6 +13,7 @@
 from flask import render_template, flash, redirect, url_for, request, current_app, session
 from flask_babel import _
 from datetime import timezone
+import time
 from config import Config
 from blocksmurfer import definitions
 from blocksmurfer.main import bp
@@ -82,6 +83,27 @@ def providers(network='btc'):
     return render_template('providers.html', title=_('Providers'), subtitle=_('Service providers overview'),
                            providers=providers, network_name=srv.network.name, network=network)
 
+@bp.route('/<network>/providers/status')
+def providers_status(network='btc'):
+    srv = SmurferService(network)
+    provider_stats = {}
+    providers = [x['provider'] for x in SmurferService(network).providers.values()]
+    for provider in providers:
+        blockcount = None
+        request_start_time = time.time()
+        err = ""
+        try:
+            request_start_time = time.time()
+            srv_p = SmurferService(network, providers=[provider], cache_uri='')
+            blockcount = srv_p.blockcount()
+        except Exception as e:
+            err = str(e)
+        request_time = time.time() - request_start_time
+        results = (blockcount, request_time, err)
+        provider_stats.update({provider: results})
+    return render_template('providers_status.html', title=_('Providers Status'),
+                           subtitle=_('Service providers current status'),
+                           provider_stats=provider_stats, network_name=srv.network.name, network=network)
 
 @bp.route('/<network>/transactions', methods=['GET', 'POST'])
 def transactions(network='btc'):

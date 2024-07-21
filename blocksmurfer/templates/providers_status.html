@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    <h2>{{ network.name|capitalize }} Providers Status</h2>
+    <p>The following service <a href="{{ url_for('main.providers', network=network) }}">providers</a>
+        are used by the Blocksmurfer explorer.</p>
+    <p>This page checks the current status per service provider, it show the request response time,
+        latest scanned block and current status.</p>
+    <table class="pure-table" style="width: 800px; font-size: 80%">
+    <thead>
+        <tr>
+            <th>Provider</th>
+            <th>Latest Block</th>
+            <th>Response time (sec)</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    {% for provider in provider_stats %}
+    <tr>
+        <td>{{ provider|capitalize }}</td>
+        <td>{{ provider_stats[provider][0] if provider_stats[provider][0] else "-" }}</td>
+        <td>{{ "{:,.3f}".format(provider_stats[provider][1]) }}</td>
+        <td>{{ "OK" if not provider_stats[provider][2] else "Error" }}</td>
+    </tr>
+
+    {% endfor %}
+    </table>
+
+{% endblock %}
