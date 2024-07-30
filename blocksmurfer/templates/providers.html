@@ -18,12 +18,17 @@
     </thead>
     {% for provider in providers %}
     <tr>
-        <td>{{ provider[0] }}</td>
+        <td>{{ provider[1]['provider']|capitalize }}</td>
         <td>{{ provider[1]['url'] }}</td>
         <td>{{ provider[1]['priority'] }}</td>
     </tr>
 
     {% endfor %}
     </table>
+
+    <p>Check current
+        <a href="{{ url_for('main.providers_status', network=network) }}">provider status</a>.
+        Warning: this page could take some time to load!
+    </p>
 
 {% endblock %}
