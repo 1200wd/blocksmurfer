@@ -282,11 +282,14 @@ def address(network, address):
     limit = request.args.get('limit', current_app.config['REQUEST_LIMIT_DEFAULT'], type=int)
     limit = current_app.config['REQUEST_LIMIT_MAX'] if limit > current_app.config['REQUEST_LIMIT_MAX'] else limit
 
+    script = None
     try:
         address_obj = Address.parse(address)
     except:
         flash(_('Invalid address'), category='error')
         return redirect(url_for('main.index'))
+    else:
+        script = Script(public_hash=address_obj.hash_bytes, script_types=[address_obj.script_type])
 
     txs = srv.gettransactions(address, after_txid=after_txid, limit=limit)
     address_info = srv.getcacheaddressinfo(address)
@@ -302,13 +305,17 @@ def address(network, address):
     if after_txid:
         prev_url = url_for('main.address', network=network, address=address)
 
+    inputs = []
     for t in txs:
         t.balance_change = sum([o.value for o in t.outputs if o.address == address]) - \
                            sum([i.value for i in t.inputs if i.address == address])
+        inputs += [i for i in t.inputs if i.address == address]
+    input = None if not inputs else inputs[0]
                            
-    return render_template('explorer/address.html', title=_('Address'), subtitle=address, transactions=txs,
-                           address=address_obj, balance=balance_tot, network=network, next_url=next_url,
-                           prev_url=prev_url, address_info=address_info, after_txid=after_txid, limit=limit)
+    return render_template('explorer/address.html', title=_('Address'), subtitle=address,
+                           transactions=txs, address=address_obj, balance=balance_tot, network=network,
+                           next_url=next_url, prev_url=prev_url, address_info=address_info, after_txid=after_txid,
+                           limit=limit, script=script, input=input)
 
 
 @bp.route('/<network>/key/<key>')
