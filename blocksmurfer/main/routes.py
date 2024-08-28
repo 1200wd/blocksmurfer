@@ -20,7 +20,7 @@ from blocksmurfer.main import bp
 from blocksmurfer.main.forms import *
 from blocksmurfer.explorer.search import search_query
 from blocksmurfer.explorer.service import *
-from bitcoinlib.keys import HDKey
+from bitcoinlib.keys import HDKey, Signature
 from bitcoinlib.transactions import Transaction, Output, TransactionError
 from bitcoinlib.scripts import Script, ScriptError
 from bitcoinlib.encoding import Quantity
@@ -354,6 +354,19 @@ def key(network, key):
         flash(_('Never post your private key online. Only use this for test keys or in an offline environment!'),
               category='error')
     return render_template('explorer/key.html', title=_('Key'), subtitle=k.wif(), key=k, network=network)
+
+
+@bp.route('/<network>/signature/<signature>')
+def signature(network, signature):
+    try:
+        sig = Signature.parse(signature)
+        subtitle = sig.hex()[:12] + "..." + sig.hex()[-12:]
+    except Exception as e:
+        flash(_('Invalid signature: %s' % e), category='error')
+        return redirect(url_for('main.index'))
+
+    return render_template('explorer/signature.html', title=_('Signature'), subtitle=subtitle,
+                           sig=sig, network=network, definitions=definitions)
 
 
 @bp.route('/<network>/blocks', methods=['GET', 'POST'])
