@@ -57,14 +57,31 @@
             <td>Size{% if transaction.vsize %} / VSize{% endif %}</td>
             <td>{{ transaction.size }}{% if transaction.vsize %} / {{ transaction.vsize }}{% endif %}</td>
         </tr>
+        {% if transaction.input_total != None %}
+        <tr>
+            <td>Total Input</td>
+            <td>
+                {{ "{:,.8f}".format(transaction.input_total / 100000000) }} {{ transaction.network.currency_code }}
+            </td>
+        </tr>
+        {% endif %}
+        {% if transaction.output_total != None %}
+        <tr>
+            <td>Total Output</td>
+            <td>
+                {{ "{:,.8f}".format(transaction.output_total / 100000000) }} {{ transaction.network.currency_code }}
+            </td>
+        </tr>
+        {% endif %}
         {% if transaction.fee != None %}
         <tr>
             <td>Fee</td>
             <td>
-                {{ transaction.fee }} satoshi
-                {% if transaction.vsize and transaction.fee %},
+                {{  "{:,.8f}".format(transaction.fee / 100000000) }} {{ transaction.network.currency_code }}
+                | {{ transaction.fee }} satoshi
+                {% if transaction.vsize and transaction.fee %} |
                     {{ (transaction.fee / transaction.vsize)|round(1) }} sat/vB
-                {% elif transaction.size and transaction.fee %},
+                {% elif transaction.size and transaction.fee %} |
                     {{ (transaction.fee / transaction.size)|round(1) }} sat/B
                 {% endif %}
             </td>

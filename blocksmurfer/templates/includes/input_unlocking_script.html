@@ -65,6 +65,13 @@
             <td style="word-break: break-all;">{{ sig.hex() }}</td>
         </tr>
         {% endfor %}
+
+        {% if input.prev_txid.hex() == '0' * 64 %}
+        <tr>
+            <td>Witness Type</td>
+            <td>Coinbase, newly generated coins</td>
+        </tr>
+        {% endif %}
     </table>
 
 {% endif %}

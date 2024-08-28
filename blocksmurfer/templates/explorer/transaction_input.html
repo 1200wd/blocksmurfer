@@ -34,13 +34,13 @@
         <tr>
             <td>Previous TXID</td>
             <td>
-                {% if input.prev_txid.hex() == '0' * 64 %}
-                    Coinbase
-                {% else %}
-                    <a href="{{ url_for('main.transaction', network=network, txid=input.prev_txid.hex()) }}">
-                        {{ input.prev_txid.hex() }}
-                    </a>
-                {% endif %}
+            {% if input.prev_txid.hex() == '0' * 64 %}
+                {{ input.prev_txid.hex() }}
+            {% else %}
+                <a href="{{ url_for('main.transaction', network=network, txid=input.prev_txid.hex()) }}">
+                    {{ input.prev_txid.hex() }}
+                </a>
+            {% endif %}
             </td>
         </tr>
         <tr>
