@@ -53,7 +53,10 @@
         {% for key in input.keys %}
         <tr>
             <td>Key</td>
-            <td style="word-break: break-all;">{{ key.hex() }}</td>
+            <td style="word-break: break-all;">
+                <a href="{{ url_for('main.key', network=network, key=key.hex(), witness_type=key.witness_type) }}">
+                {{ key.hex() }}</a>
+        </td>
         </tr>
         {% endfor %}
         {% for sig in input.signatures %}

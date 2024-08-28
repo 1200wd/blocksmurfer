@@ -305,7 +305,6 @@ def address(network, address):
     limit = request.args.get('limit', current_app.config['REQUEST_LIMIT_DEFAULT'], type=int)
     limit = current_app.config['REQUEST_LIMIT_MAX'] if limit > current_app.config['REQUEST_LIMIT_MAX'] else limit
 
-    script = None
     try:
         address_obj = Address.parse(address)
     except:
@@ -344,8 +343,9 @@ def address(network, address):
 @bp.route('/<network>/key/<key>')
 def key(network, key):
     network_name = Config.NETWORKS_ENABLED[network]
+    witness_type = request.args.get('witness_type', DEFAULT_WITNESS_TYPE, type=str)
     try:
-        k = HDKey(key, network=network_name)
+        k = HDKey(key, network=network_name, witness_type=witness_type)
     except Exception as e:
         flash(_('Invalid key: %s' % e), category='error')
         return redirect(url_for('main.index'))
