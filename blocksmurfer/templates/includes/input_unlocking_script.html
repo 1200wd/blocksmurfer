@@ -14,8 +14,16 @@
         {% if input.script %}
         <tr>
             <td>Script Type</td>
-            <td>{{ input.script.script_types|join(', ') }}</td>
+            <td>
+                {{ input.script.script_types|join(', ') }}
+            </td>
         </tr>
+            {% if input.script.script_types[0] == 'p2sh_multisig' %}
+            <tr>
+                <td>Description</td>
+                <td>Multisig {{ input.signatures|length }} of {{ input.keys|length }}</td>
+            </tr>
+            {% endif %}
         <tr>
             <td>Unlocking Script Hex</td>
             <td style="word-break: break-all;">{{ input.script.raw.hex() }}</td>
