@@ -2,16 +2,6 @@
 
 {% block app_content %}
     <table class="pure-table" style="width: 800px; font-size: 80%;">
-        {% if script.keys %}
-        <tr>
-            <td>Public {% if script.keys|length > 1 %}Keys{% else %} Key{% endif %}</td>
-            <td style="word-break: break-all;">
-                {% for key in script.keys %}
-                    <p><a href="{{ url_for('main.key', network=network, key=key) }}">{{ key }}</a></p>
-                {% endfor %}
-            </td>
-        </tr>
-        {% endif %}
         <tr>
             <td>Script Type</td>
             <td>{{ script.script_types|join(', ') }}</td>
@@ -44,6 +34,24 @@
         <tr>
             <td>Redeemscript Hex</td>
             <td style="word-break: break-all;">{{ script.redeemscript.hex() }}</td>
+        </tr>
+        {% endif %}
+
+        {% if script.keys %}
+        <tr>
+            <td>Public {% if script.keys|length > 1 %}Keys{% else %} Key{% endif %}</td>
+            <td style="word-break: break-all;">
+                {% for key in script.keys %}
+                    <p><a href="{{ url_for('main.key', network=network, key=key) }}">{{ key }}</a></p>
+                {% endfor %}
+            </td>
+        </tr>
+        {% endif %}
+
+        {% if script.public_hash %}
+        <tr>
+            <td>Public Hash</td>
+            <td style="word-break: break-all;">{{ script.public_hash.hex() }}</td>
         </tr>
         {% endif %}
 
