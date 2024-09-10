@@ -5,7 +5,11 @@
     <table class="pure-table" style="width: 800px;">
         <tr>
             <td>ID</td>
-            <td>{{ transaction.txid }}</td>
+            <td>
+                <span id="copy-txid">{{ transaction.txid }}</span>
+                <a class="blocksmurfer-fa-link" title="copy-txid" onclick="copyContent(this.title);">
+                    <i class="fa fa-clone"></i></a>
+            </td>
         </tr>
         <tr>
             <td>Network</td>
@@ -103,9 +107,11 @@
         <tr>
             <td>Raw</td>
             <td>
-                <p hidden><input type="text" value="{{ transaction.raw_hex() }}" id="text2copy"></p>
+                <abbr title="{{ transaction.raw_hex() }}" id="copy-raw-tx">
                     {{ transaction.raw_hex() | truncate(55) }}
-                <a class="blocksmurfer-fa-link" onclick="copyContent()"><i class="fa fa-clone"></i></a>
+                </abbr>
+                <a class="blocksmurfer-fa-link" title="copy-raw-tx" onclick="copyContentTitle(this.title);">
+                    <i class="fa fa-clone"></i></a>
             </td>
         </tr>
         {% if config.ENABLE_API %}

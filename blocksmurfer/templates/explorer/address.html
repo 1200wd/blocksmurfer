@@ -8,7 +8,11 @@
             <table class="pure-table" style="width: 550px;">
             <tr>
                 <td>Address</td>
-                <td>{{ address.address }}</td>
+                <td>
+                    {{ address.address }}
+                    <p hidden><input type="text" value="{{ address.address }}" id="text2copy"></p>
+                    <a class="blocksmurfer-fa-link" onclick="copyContent()"><i class="fa fa-clone"></i></a>
+                </td>
             </tr>
             <tr>
                 <td>Network</td>
