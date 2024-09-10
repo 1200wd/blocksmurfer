@@ -18,6 +18,7 @@
             <link rel="stylesheet" href="{{url_for('static', filename='side-menu.css')}}">
             <link rel="stylesheet" href="{{url_for('static', filename='fontawesome/css/fontawesome.css')}}">
             <link rel="stylesheet" href="{{url_for('static', filename='fontawesome/css/solid.css')}}">
+            <link rel="stylesheet" href="{{url_for('static', filename='blocksmurfer.css')}}">
         {% endblock styles%}
         <link rel="manifest" href="/static/manifest.json">
         <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon">
@@ -140,5 +141,8 @@
 </div>
 
 {% endblock body %}
+
+<script type="text/javascript" src="{{url_for('static', filename='javainclude.js')}}"></script>
+
 </body>
 </html>

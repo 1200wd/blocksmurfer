@@ -53,10 +53,6 @@
             <td>Coinbase</td>
             <td>{{ transaction.coinbase }}</td>
         </tr>
-        <tr>
-            <td>Size{% if transaction.vsize %} / VSize{% endif %}</td>
-            <td>{{ transaction.size }}{% if transaction.vsize %} / {{ transaction.vsize }}{% endif %}</td>
-        </tr>
         {% if transaction.input_total != None %}
         <tr>
             <td>Total Input</td>
@@ -73,15 +69,24 @@
             </td>
         </tr>
         {% endif %}
+        <tr>
+            <td>Size{% if transaction.vsize %} (VSize){% endif %}</td>
+            <td>{{ transaction.size }}{% if transaction.vsize %} ({{ transaction.vsize }}){% endif %}</td>
+        </tr>
         {% if transaction.fee != None %}
         <tr>
             <td>Fee</td>
             <td>
                 {{  "{:,.8f}".format(transaction.fee / 100000000) }} {{ transaction.network.currency_code }}
-                | {{ transaction.fee }} satoshi
-                {% if transaction.vsize and transaction.fee %} |
+                ({{ transaction.fee }} satoshi)
+            </td>
+        </tr>
+        <tr>
+            <td>Fee / Byte</td>
+            <td>
+                {% if transaction.vsize and transaction.fee %}
                     {{ (transaction.fee / transaction.vsize)|round(1) }} sat/vB
-                {% elif transaction.size and transaction.fee %} |
+                {% elif transaction.size and transaction.fee %}
                     {{ (transaction.fee / transaction.size)|round(1) }} sat/B
                 {% endif %}
             </td>
@@ -98,10 +103,9 @@
         <tr>
             <td>Raw</td>
             <td>
-                <p hidden><input type="text" value="{{ transaction.raw_hex() }}" id="myInput"></p>
-                <abbr title="{{ transaction.raw_hex() }}">
+                <p hidden><input type="text" value="{{ transaction.raw_hex() }}" id="text2copy"></p>
                     {{ transaction.raw_hex() | truncate(55) }}
-                </abbr>
+                <a class="blocksmurfer-fa-link" onclick="copyContent()"><i class="fa fa-clone"></i></a>
             </td>
         </tr>
         {% if config.ENABLE_API %}
