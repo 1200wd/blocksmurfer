@@ -78,7 +78,10 @@
         {% endif %}
         <tr>
             <td>Locking Script Hex</td>
-            <td style="word-break: break-all;">{{ output.script.raw.hex() }}</td>
+            <td style="word-break: break-all;">
+                <a href="{{ url_for('main.script', network=network, script_hex=output.script.raw.hex()) }}">
+                    {{ output.script.raw.hex() }}</a>
+            </td>
         </tr>
         <tr>
             <td>Locking Script OP</td>

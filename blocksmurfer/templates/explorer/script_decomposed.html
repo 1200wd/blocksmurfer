@@ -33,7 +33,10 @@
         </tr>
         <tr>
             <td>Redeemscript Hex</td>
-            <td style="word-break: break-all;">{{ script.redeemscript.hex() }}</td>
+            <td style="word-break: break-all;">
+                <a href="{{ url_for('main.script', network=network, script_hex=script.redeemscript.hex()) }}">
+                    {{ script.redeemscript.hex() }}</a>
+            </td>
         </tr>
         {% endif %}
 

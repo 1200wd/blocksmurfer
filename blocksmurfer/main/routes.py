@@ -433,11 +433,15 @@ def block(network, blockid):
 
 
 @bp.route('/<network>/script', methods=['GET', 'POST'])
-def script(network):
+@bp.route('/<network>/script/<script_hex>', methods=['GET', 'POST'])
+def script(network, script_hex=""):
     form = ScriptForm()
-    if form.validate_on_submit():
+    if form.validate_on_submit() or script_hex:
         try:
-            script = Script.parse_hex(form.script_hex.data)
+            script_hex = script_hex or form.script_hex.data
+            if not form.script_hex.data:
+                form.script_hex.data = script_hex
+            script = Script.parse_hex(script_hex)
         except (ScriptError, ValueError) as e:
             flash(_('Could not parse script. Error: %s' % e), category='error')
             return redirect(url_for('main.script', network=network))

@@ -89,7 +89,10 @@
         </tr>
         <tr>
             <td>Locking Script Hex</td>
-            <td style="word-break: break-all;">{{ script.as_hex() }}</td>
+            <td style="word-break: break-all;">
+                <a href="{{ url_for('main.script', network=network, script_hex=script.as_hex()) }}">
+                    {{ script.as_hex() }}</a>
+            </td>
         </tr>
         <tr>
             <td>Locking Script OP</td>
