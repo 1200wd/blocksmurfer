@@ -9,9 +9,9 @@
             <tr>
                 <td>Address</td>
                 <td>
-                    {{ address.address }}
-                    <p hidden><input type="text" value="{{ address.address }}" id="text2copy"></p>
-                    <a class="blocksmurfer-fa-link" onclick="copyContent()"><i class="fa fa-clone"></i></a>
+                    <span id="copy-address">{{ address.address }}</span>
+                    <a class="blocksmurfer-fa-link" title="copy-address" onclick="copyContent(this.title);">
+                    <i class="fa fa-clone"></i></a>
                 </td>
             </tr>
             <tr>
