@@ -79,7 +79,8 @@
                 SIGHASH_{{ definitions.SIGHASH_FLAGS[sig.hash_type][0] }}</a> ({{ '%02x' % sig.hash_type }})
             </td>
         </tr>
-        {% endif %}        {% endfor %}
+        {% endif %}
+        {% endfor %}
         {% if script.script_types == ['nulldata'] %}
         <tr>
             <td>Nulldata</td>

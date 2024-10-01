@@ -25,12 +25,11 @@ td {
 	table, thead, tbody, th, td, tr {
 		display: block;
 	}
-    tr { border: 1px solid #eee; }
+    tr { border: 1px solid #aae; }
 	td {
 		border: none;
-		border-bottom: 1px solid #eee;
+		border-bottom: 1px solid #aae;
 		position: relative;
-		padding-left: 50%;
 	}
     .blocksmurfer-td-value {text-align: left;}
     .blocksmurfer-table {width: 100%;}
