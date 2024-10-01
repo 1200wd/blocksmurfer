@@ -5,7 +5,7 @@
     <table style="width: 1000px;">
     <tr>
         <td>
-            <table class="pure-table" style="width: 550px;">
+            <table class="pure-table" style="width: 100%;">
             <tr>
                 <td>Address</td>
                 <td>
@@ -89,14 +89,14 @@
         </tr>
         <tr>
             <td>Locking Script Hex</td>
-            <td style="word-break: break-all;">
+            <td>
                 <a href="{{ url_for('main.script', network=network, script_hex=script.as_hex()) }}">
                     {{ script.as_hex() }}</a>
             </td>
         </tr>
         <tr>
             <td>Locking Script OP</td>
-            <td style="word-break: break-all;">{{ script }}</td>
+            <td>{{ script }}</td>
         </tr>
     </table>
 

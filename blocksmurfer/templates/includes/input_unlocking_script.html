@@ -1,5 +1,5 @@
 {% if input %}
-    <table class="pure-table" style="width: 800px; font-size: 80%;">
+    <table class="pure-table blocksmurfer-table-sf">
         <thead>
             <tr>
                 <td colspan="5">
@@ -26,14 +26,14 @@
             {% endif %}
         <tr>
             <td>Unlocking Script Hex</td>
-            <td style="word-break: break-all;">
+            <td>
                 <a href="{{ url_for('main.script', network=network, script_hex=input.script.raw.hex()) }}">
                     {{ input.script.raw.hex() }}</a>
             </td>
         </tr>
         <tr>
             <td>Unlocking Script OP</td>
-            <td style="word-break: break-all;">{{ input.script }}</td>
+            <td>{{ input.script }}</td>
         </tr>
             {% if input.script.hash_type %}
             <tr>
@@ -48,7 +48,7 @@
         {% if witness.hex() != '00' %}
         <tr>
             <td>Witness</td>
-            <td style="word-break: break-all;">{{ witness.hex() }}</td>
+            <td>{{ witness.hex() }}</td>
         </tr>
         {% endif %}
         {% endfor %}
@@ -56,7 +56,7 @@
         {% for key in input.keys %}
         <tr>
             <td>Key</td>
-            <td style="word-break: break-all;">
+            <td>
                 <a href="{{ url_for('main.key', network=network, key=key.hex(), witness_type=key.witness_type) }}">
                 {{ key.hex() }}</a>
         </td>
@@ -65,7 +65,7 @@
         {% for sig in input.signatures %}
         <tr>
             <td>Signature</td>
-            <td style="word-break: break-all;">
+            <td>
                 <a href="{{ url_for('main.signature', network=network, signature=sig.hex()) }}">
                 {{ sig.hex() }}
                 </a>

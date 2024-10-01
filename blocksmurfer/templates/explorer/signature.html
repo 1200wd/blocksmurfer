@@ -5,25 +5,25 @@
     <table class="pure-table blocksmurfer-table">
         <tr>
             <td>Signature HEX</td>
-            <td style="word-break: break-all;">
+            <td>
                 {{ sig.hex() }}
             </td>
         </tr>
         <tr>
             <td>Signature DER</td>
-            <td style="word-break: break-all;">
+            <td>
                 {{ sig.as_der_encoded().hex() }}
             </td>
         </tr>
         <tr>
             <td>r value</td>
-            <td style="word-break: break-all;">
+            <td>
                 {{ sig.r }}
             </td>
         </tr>
         <tr>
             <td>s value</td>
-            <td style="word-break: break-all;">
+            <td>
                 {{ sig.s }}
             </td>
         </tr>

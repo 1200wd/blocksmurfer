@@ -12,12 +12,12 @@
         {% if key.wif() and key.compressed %}
             <tr>
                 <td>Extended WIF</td>
-                <td style="word-break: break-all;">{{ key.wif() }}</td>
+                <td>{{ key.wif() }}</td>
             </tr>
         {% endif %}
         <tr>
             <td>Public Key (hex)</td>
-            <td style="word-break: break-all;">{{ key.public_hex }}</td>
+            <td>{{ key.public_hex }}</td>
         </tr>
         <tr>
             <td>Network</td>
@@ -30,19 +30,19 @@
         {% if key.secret %}
         <tr>
             <td>Private Key (hex)</td>
-            <td style="word-break: break-all;">{{ key.private_hex }}</td>
+            <td>{{ key.private_hex }}</td>
         </tr>
         <tr>
             <td>Private Key (long)</td>
-            <td style="word-break: break-all;">{{ key.secret }}</td>
+            <td>{{ key.secret }}</td>
         </tr>
         <tr>
             <td>WIF Extended Private</td>
-            <td style="word-break: break-all;">{{ key.wif_private() }}</td>
+            <td>{{ key.wif_private() }}</td>
         </tr>
         <tr>
             <td>WIF Private</td>
-            <td style="word-break: break-all;">{{ key.wif_key() }}</td>
+            <td>{{ key.wif_key() }}</td>
         </tr>
         {% endif %}
         <tr>
@@ -68,7 +68,7 @@
         </tr>
         {% endif %}
         <tr>
-            <td style="word-break: break-all;">Public Point (x, y)</td>
+            <td>Public Point (x, y)</td>
             <td>{{ key.public_point()[0] }}, {{ key.public_point()[1] }}</td>
         </tr>
         <thead>

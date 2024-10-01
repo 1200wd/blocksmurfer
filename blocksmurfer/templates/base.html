@@ -108,7 +108,7 @@
     <div id="main">
         <div class="header">
             {% if title %}<h1>{{ title }}</h1>{% endif %}
-            {% if subtitle %}<h2 style="word-break: break-all;">{{ subtitle }}</h2>{% endif %}
+            {% if subtitle %}<h2>{{ subtitle }}</h2>{% endif %}
         </div>
         <div class="content">
             {% with messages = get_flashed_messages() %}

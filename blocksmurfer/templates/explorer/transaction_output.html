@@ -80,14 +80,14 @@
         {% endif %}
         <tr>
             <td>Locking Script Hex</td>
-            <td style="word-break: break-all;">
+            <td>
                 <a href="{{ url_for('main.script', network=network, script_hex=output.script.raw.hex()) }}">
                     {{ output.script.raw.hex() }}</a>
             </td>
         </tr>
         <tr>
             <td>Locking Script OP</td>
-            <td style="word-break: break-all;">{{ output.script }}</td>
+            <td>{{ output.script }}</td>
         </tr>
         {% if output.script.script_types == ['nulldata'] %}
         <tr>

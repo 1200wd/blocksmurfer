@@ -17,6 +17,10 @@
     text-align: right;
 }
 
+td {
+    word-break: break-all;
+}
+
 @media screen and (max-width:1000px) {
 	table, thead, tbody, th, td, tr {
 		display: block;

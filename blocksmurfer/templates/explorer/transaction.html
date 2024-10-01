@@ -152,7 +152,7 @@
                     </a>
                 {% endif %}
             </td>
-            <td style="text-align:right">{{ "{:,.8f}".format(inp.value / 100000000) }}</td>
+            <td class="blocksmurfer-td-value">{{ "{:,.8f}".format(inp.value / 100000000) }}</td>
             <td>{{ inp.script_type }}</td>
             <td>
                 {% if not transaction.coinbase %}
@@ -181,14 +181,14 @@
                     {{ out.output_n }}
                 </a>
             </td>
-            <td style="word-break: break-all;">
+            <td>
                 {% if out.address %}
                 <a href="{{ url_for('main.address', network=network, address=out.address) }}">{{ out.address }}</a>
                 {% else %}
                     Nulldata: {{ out.lock_script[2:].decode(errors='ignore') }}
                 {% endif %}
             </td>
-            <td style="text-align:right">{{ "{:,.8f}".format(out.value / 100000000) }}</td>
+            <td class="blocksmurfer-td-value">{{ "{:,.8f}".format(out.value / 100000000) }}</td>
             <td>{{ out.script_type }}</td>
             <td>
                 {% if out.spent %}

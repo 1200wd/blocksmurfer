@@ -61,7 +61,7 @@
     {% for out in t.outputs[:5] %}
     <tr>
         <td>out</td>
-        <td style="word-break: break-all;">
+        <td>
             {% if out.address %}
             <a href="{{ url_for('main.address', network=network, address=out.address) }}">{{ out.address }}</a></td>
             {% else %}

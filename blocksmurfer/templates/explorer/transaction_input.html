@@ -61,7 +61,7 @@
         </tr>
         <tr>
             <td>Public {% if input.keys|length > 1 %}Keys{% else %} Key{% endif %}</td>
-            <td style="word-break: break-all;">
+            <td>
                 {% for key in input.keys %}
                     <p><a href="{{ url_for('main.key', network=network, key=key) }}">{{ key }}</a></p>
                 {% endfor %}
