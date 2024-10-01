@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-{#    <table style="border: 0; width: 100%">#}
-    <table class="pure-table" style="width: 800px;">
+
+    <table class="pure-table blocksmurfer-table">
     <thead>
         <tr>
             <td style="width: 200px; border-left: 0;">
@@ -16,7 +16,7 @@
     </table>
 
     <h3>{{ _('Network Status') }}</h3>
-    <table class="pure-table" style="width: 800px;">
+    <table class="pure-table blocksmurfer-table">
         <tr>
             <td>Block count</td>
             <td>
@@ -53,7 +53,7 @@
     </table>
 
     <h3>{{ _('Network Definitions') }}</h3>
-    <table class="pure-table" style="width: 800px; font-size: 80%;">
+    <table class="pure-table blocksmurfer-table-sf">
         <tr>
             <td>Network name</td>
             <td>{{ network_details.name }}</td>
@@ -102,7 +102,7 @@
     </table>
 
     <h3>{{ _('WIF Prefixes') }}</h3>
-    <table class="pure-table" style="width: 800px; font-size: 80%;">
+    <table class="pure-table blocksmurfer-table-sf">
         <thead>
             <tr>
                 <td>Prefix</td>
