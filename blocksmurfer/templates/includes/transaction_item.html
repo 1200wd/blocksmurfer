@@ -5,7 +5,9 @@
             <a href="{{ url_for('main.transaction', network=network, txid=t.txid) }}">{{ t.txid }}</a>
         </td>
         <td style="border-left: 0;">
-            {% if t.date %}{{ t.date.replace(microsecond=0).replace(tzinfo=None) }}{% endif %}
+            {% if t.date %}
+                {{ t.date.replace(tzinfo=tzutc).timestamp() | ctime }}
+            {% endif %}
         </td>
         <td style="border-left: 0;">
             {% if t.confirmations %}

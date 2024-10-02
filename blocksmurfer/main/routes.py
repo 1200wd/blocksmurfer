@@ -156,10 +156,11 @@ def transactions(network='btc'):
     if blockid:
         subtitle = _('Block %s transactions' % blockid)
 
+    tzutc = timezone.utc
     return render_template('explorer/transactions.html', title=_('Transactions'), total_txs=total_txs,
                            subtitle=subtitle, block=block, network=network,
                            form=form, transactions=transactions, page=page, limit=limit,
-                           prev_url=prev_url, next_url=next_url)
+                           prev_url=prev_url, next_url=next_url, tzutc=tzutc)
 
 
 @bp.route('/<network>/transaction/<txid>')
@@ -333,11 +334,12 @@ def address(network, address):
                            sum([i.value for i in t.inputs if i.address == address])
         inputs += [i for i in t.inputs if i.address == address]
     input = None if not inputs else inputs[0]
-                           
+
+    tzutc = timezone.utc
     return render_template('explorer/address.html', title=_('Address'), subtitle=address,
                            transactions=txs, address=address_obj, balance=balance_tot, network=network,
                            next_url=next_url, prev_url=prev_url, address_info=address_info, after_txid=after_txid,
-                           limit=limit, script=script, input=input)
+                           limit=limit, script=script, input=input, tzutc=tzutc)
 
 
 @bp.route('/<network>/key/<key>')
@@ -428,8 +430,9 @@ def block(network, blockid):
     if page > 1:
         prev_url = url_for('main.block', network=network, blockid=blockid, limit=limit, page=page-1)
 
+    tzutc = timezone.utc
     return render_template('explorer/block.html', title=_('Block'), subtitle=blockid, block=block, network=network,
-                           coinbase_data=coinbase_data, prev_url=prev_url, next_url=next_url)
+                           coinbase_data=coinbase_data, prev_url=prev_url, next_url=next_url, tzutc=tzutc)
 
 
 @bp.route('/<network>/script', methods=['GET', 'POST'])
@@ -492,9 +495,10 @@ def store_data(network):  # pragma: no cover
         if w.balance():
             lock_script = b'\x6a' + varstr(form.data.data)
             t = w.send([Output(0, lock_script=lock_script)], fee=form.transaction_fee.data)
+            tzutc = timezone.utc
             return render_template('explorer/store_data_send.html', title=_('Push Transaction'),
                                    subtitle=_('Embed the data on the %s network' % srv.network.name),
-                                   transaction=t, t=t)
+                                   transaction=t, t=t, tzutc=tzutc)
         else:
             k = w.get_key()
             message = "Store%20Data%20-%20Blocksmurfer"
