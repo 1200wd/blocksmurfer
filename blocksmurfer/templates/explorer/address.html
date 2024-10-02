@@ -108,7 +108,7 @@
     <p>{{ _('No transactions found') }}</p>
     {% endif %}
     {% for t in transactions %}
-        {% include 'explorer/_transaction_item.html' %}
+        {% include 'includes/transaction_item.html' %}
         <p></p>
     {% endfor %}
     <nav aria-label="...">
