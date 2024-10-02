@@ -236,11 +236,12 @@ def transaction_decompose(network):
             # TODO: Retrieving prev_tx input values should be included in bitcoinlib
             try:
                 for n, i in enumerate(t.inputs):
-                    ti = srv.gettransaction(i.prev_txid.hex())
-                    if not ti:
-                        flash(_('Could not verify transaction: previous transaction not found'), category='warning')
-                        break
-                    t.inputs[n].value = ti.outputs[i.output_n_int].value
+                    if i.prev_txid != b'\0' * 32:
+                        ti = srv.gettransaction(i.prev_txid.hex())
+                        if not ti:
+                            flash(_('Could not verify transaction: previous transaction not found'), category='warning')
+                            break
+                        t.inputs[n].value = ti.outputs[i.output_n_int].value
                 t.verify()
             except TransactionError as e:
                 flash(_('Could not verify transaction: %s' % e), category='warning')
