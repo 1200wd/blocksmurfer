@@ -44,7 +44,7 @@
             {% endif %}
             <tr>
                 <td>Balance</td>
-                <td>{{ "{:,.8f}".format(balance / 100000000) }}</td>
+                <td>{{ "{:,.8f}".format(balance / 100000000) }} {{ address.network.currency_code }}</td>
             </tr>
             {% if address_info.n_txs is not none %}
             <tr>
