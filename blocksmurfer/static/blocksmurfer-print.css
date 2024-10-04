@@ -1,0 +1,7 @@
+a {
+    color: #333;
+}
+
+.pure-menu, .menu-link, .blocksmurfer-fa-link {
+    display: none;
+}
