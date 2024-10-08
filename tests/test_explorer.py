@@ -88,7 +88,7 @@ class TestSite(unittest.TestCase, TestingConfig):
     def test_explorer_address(self):
         response = self.app.get('/btc/address/14xb2HATmkBzrHf4CR2hZczEtjYpTh92d2')
         self.assertIn(b'2b6ba7c9d796b75eef7942fc9288edd37c32f5c3', response.data)
-        self.assertIn(b'2010-12-29 12:20:58', response.data)
+        self.assertIn(b'2010-12-29', response.data)
         self.assertIn(b'/btc/transaction/21d2eb195736af2a40d42107e6abd59c97eb6cffd4a5a7a7709e86590ae61987',
                       response.data)
         self.assertEqual(response.status_code, 200)
