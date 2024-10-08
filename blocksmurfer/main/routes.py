@@ -56,8 +56,8 @@ def api(network='btc'):
     api_url = request.host_url + 'api/v1/'
     if Config.API_BASE_URL:
         api_url = Config.API_BASE_URL
-    return render_template('api.html', title=_('API'), subtitle=_('Bitcoin blockchain API'), network=network,
-                           api_url=api_url)
+    return render_template('api.html', title=_('API'), subtitle=_('Bitcoin blockchain API'),
+                           network=network, api_url=api_url, examples=definitions.BLOCKSMURFER_EXAMPLES)
 
 
 @bp.route('/about')

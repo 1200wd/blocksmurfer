@@ -41,6 +41,19 @@
             <a href="{{ url_for('main.search', search_string='1222222', network='tbtc') }}">
                 1222222</a>
         </p>
+    {% elif network == 'ltc' %}
+        <p style="font-size:80%">Some suggestions:
+            <a href="{{ url_for('main.search', search_string='LfcUcxALy1gSeqZLrixAm4ETZbEWA7GLat') }}">
+                LfcUcxALy1gSeqZLrixAm4ETZbEWA7GLat</a>,
+            <a href="{{ url_for('main.search', search_string='ltc1qn9y4meexknw2dklpkc2gjjzxlzvdcu8tlwvjya') }}">
+                ltc1qn9y4meexknw2dklpkc2gjjzxlzvdcu8tlwvjya</a>,
+            <a href="{{ url_for('main.search', search_string='f17dd941a48860d00f930b7c0d67df3cb41d05dffd77932c4d5985529ae5af0c', network='ltc') }}">
+                f17dd941a48860d00f930b7c0d67df3cb41d05dffd77932c4d5985529ae5af0c</a>,
+            <a href="{{ url_for('main.search', search_string='Mtub2mGjjfp7sYT6N4YayFr1MAhsvgCTiN2Lfuj6Szi3te4XNDUthHP9wWbrZY6w4eYYioSjrY2LxqUTF8Dk6Yhuk5G7XLs1mEAAcf2pMaVUoYR,') }}">
+                Mtub2mGjjfp7sYT6N4YayFr1MAhsvgCTiN2Lfuj6Szi3te4XNDUthHP9wWbrZY6w4eYYioSjrY2LxqUTF8Dk6Yhuk5G7XLs1mEAAcf2pMaVUoYR</a>,
+            <a href="{{ url_for('main.search', search_string='2769955', network='ltc') }}">
+                2769955</a>
+        </p>
     {% endif %}
      <p style="font-size:80%">Last block:
          <a href="{{ url_for('main.search', search_string='%s' % blockcount, network=network) }}">
