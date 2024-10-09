@@ -521,6 +521,7 @@ def store_data(network):  # pragma: no cover
 
 @bp.route('/<network>/op_code/<op_code>', methods=['GET'])
 def op_code(network, op_code):
+    opcodenames_lower = [x[3:].lower() for x in opcodenames.values()]
     if op_code.startswith('op_'):
         method_str = op_code.split('_', 1)[1]
         if method_str.isnumeric() and int(method_str) >= 0 and int(method_str) <= 16:
@@ -534,8 +535,7 @@ def op_code(network, op_code):
             except Exception as e:
                 flash(_('Source code for op_code not found: %s') % e, category='error')
                 opcodeint = opcodeints[op_code.upper()]
-                opcodenames_lower = [x[3:].lower() for x in opcodenames.values()]
-                all_methods = ['op_' + i for i in difflib.get_close_matches('sig', opcodenames_lower, cutoff=0)]
+                all_methods = ['op_' + i for i in difflib.get_close_matches(op_code[3:], opcodenames_lower, cutoff=0)]
                 all_methods += ['op_verify', 'op_add', 'op_if']
                 all_methods = list(set(all_methods))
                 method_code = ''
@@ -549,9 +549,9 @@ def op_code(network, op_code):
 
     opcodeint = opcodeints[op_code.upper()]
     all_methods = re.findall(r'op_\w+', method_code)
-    all_methods.append(opcodenames.get(opcodeint-1))
-    all_methods.append(opcodenames.get(opcodeint+1))
-    all_methods = list(set([m.lower() for m in all_methods if m != 'OP_RESERVED' and m != 'op_as_number']))
+    all_methods += ['op_' + i for i in difflib.get_close_matches(op_code[3:], opcodenames_lower, cutoff=0)]
+    all_methods =\
+        list(set([m.lower() for m in all_methods if m != 'OP_RESERVED' and m != 'op_as_number']))
     return render_template('explorer/op_code.html', title=_('%s opcode' % op_code[3:].upper()),
                            subtitle=_('%s bitcoin script command' % op_code), network=network, op_code=op_code,
                            method_code=method_code, opcodeint=opcodeint, all_methods=all_methods)
