@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    <p>Opcodes are used in Bitcoin Scripts to represent commands or methods. Below you can find the value of the
+        {{ op_code }} code and an implementation in Python. A bitcoin script works with a stack of items.
+        The op_code representing a method, usually takes or puts 1 or more items from the top of the stack.</p>
+
+    <table class="pure-table blocksmurfer-table-sf" style="width: 250px">
+    <thead>
+        <tr>
+            <td colspan="2">{{ op_code.upper() }}</td>
+        </tr>
+    </thead>
+    <tr>
+        <td>Integer value</td>
+        <td>{{ opcodeint }}</td>
+    </tr>
+    <tr>
+        <td>Hex value</td>
+        <td>0x{{ '%02x' % opcodeint }}</td>
+    </tr>
+    </table>
+
+    <h3>Python code representation as used Bitcoinlib</h3>
+    {% if method_code %}
+        <pre>{{ method_code }}</pre>
+    {% else %}
+        <p>No source code found for this method</p>
+    {% endif %}
+
+    {% if all_methods %}
+        <h3>Links to related method</h3>
+        <ul>
+        {% for method in all_methods %}
+            <li>
+                <a href="{{ url_for('main.op_code', network=network, op_code=method) }}">{{ method }}</a>
+            </li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+
+{% endblock %}

@@ -14,6 +14,9 @@ from flask import render_template, flash, redirect, url_for, request, current_ap
 from flask_babel import _
 from datetime import timezone
 import time
+import inspect
+import re
+import difflib
 from config import Config
 from blocksmurfer import definitions
 from blocksmurfer.main import bp
@@ -22,9 +25,10 @@ from blocksmurfer.explorer.search import search_query
 from blocksmurfer.explorer.service import *
 from bitcoinlib.keys import HDKey, Signature
 from bitcoinlib.transactions import Transaction, Output, TransactionError
-from bitcoinlib.scripts import Script, ScriptError
+from bitcoinlib.scripts import Script, ScriptError, Stack
 from bitcoinlib.encoding import Quantity
 from bitcoinlib.wallets import wallet_create_or_open
+from bitcoinlib.config.opcodes import opcodeints, opcodenames
 
 
 @bp.route('/', methods=['GET', 'POST'])
@@ -514,3 +518,40 @@ def store_data(network):  # pragma: no cover
     return render_template('explorer/store_data.html', title=_('Store data'),
                            subtitle=_('Embed data on the %s blockchain' % srv.network.name), form=form,
                            tx_fee=tx_fee)
+
+@bp.route('/<network>/op_code/<op_code>', methods=['GET'])
+def op_code(network, op_code):
+    if op_code.startswith('op_'):
+        method_str = op_code.split('_', 1)[1]
+        if method_str.isnumeric() and int(method_str) >= 0 and int(method_str) <= 16:
+            method_code = ("# Representation of Bitcoin script number. Value between 0 and 16\n"
+                           "# Numeric value %s\n"
+                           "Stack.op_%s"
+                           % (method_str, method_str))
+        else:
+            try:
+                method_code = inspect.getsource(getattr(Stack, op_code))
+            except Exception as e:
+                flash(_('Source code for op_code not found: %s') % e, category='error')
+                opcodeint = opcodeints[op_code.upper()]
+                opcodenames_lower = [x[3:].lower() for x in opcodenames.values()]
+                all_methods = ['op_' + i for i in difflib.get_close_matches('sig', opcodenames_lower, cutoff=0)]
+                all_methods += ['op_verify', 'op_add', 'op_if']
+                all_methods = list(set(all_methods))
+                method_code = ''
+                return render_template('explorer/op_code.html', title=_('%s opcode' % op_code[3:].upper()),
+                                       subtitle=_('%s bitcoin script command' % op_code), network=network,
+                                       op_code=op_code,
+                                       method_code=method_code, opcodeint=opcodeint, all_methods=all_methods)
+    else:
+        flash(_('Unknown op_code'), category='error')
+        return redirect(url_for('main.index', network=network))
+
+    opcodeint = opcodeints[op_code.upper()]
+    all_methods = re.findall(r'op_\w+', method_code)
+    all_methods.append(opcodenames.get(opcodeint-1))
+    all_methods.append(opcodenames.get(opcodeint+1))
+    all_methods = list(set([m.lower() for m in all_methods if m != 'OP_RESERVED' and m != 'op_as_number']))
+    return render_template('explorer/op_code.html', title=_('%s opcode' % op_code[3:].upper()),
+                           subtitle=_('%s bitcoin script command' % op_code), network=network, op_code=op_code,
+                           method_code=method_code, opcodeint=opcodeint, all_methods=all_methods)
