@@ -3,6 +3,8 @@
 {% block app_content %}
     <div style="text-align: center;">
     <h2>{{ _('Search the %s Blockchain' % network_name.capitalize()) }}</h2>
+    <p>for transactions, blocks, addresses and keys. Go into all the nerdy details of transactions or blocks
+        and analyse scripts, keys, OP codes, signatures and more.</p>
     <form action="" method="post" novalidate class="pure-form">
         {{ form.hidden_tag() }}
         <p>
@@ -11,16 +13,16 @@
         <p>{{ form.submit(class_="pure-button pure-button-primary") }}</p>
     </form>
     {% if network == 'btc' %}
-        <p style="font-size:80%">Some suggestions:
+        <p>Some suggestions:
             <a href="{{ url_for('main.search', search_string='bc1qxfrgfhs49d7dtcfzlhp7f7cwsp8zpp60hywp0f') }}">
-                bc1qxfrgfhs49d7dtcfzlhp7f7cwsp8zpp60hywp0f</a>,
+                bc1qxfrgfhs49d7dtcfzlhp7f7cwsp8zpp60hywp0f</a> &middot;
             <a href="{{ url_for('main.search', search_string='3EkQ11eacyfodKBRha9aJ8KTPsnSVTvSz8') }}">
-                3EkQ11eacyfodKBRha9aJ8KTPsnSVTvSz8</a>,
+                3EkQ11eacyfodKBRha9aJ8KTPsnSVTvSz8</a> &middot;
             <a href="{{ url_for('main.search', search_string='1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1') }}">
-                1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1</a>,
+                1HLoD9E4SDFFPDiYfNYnkBLQ85Y51J3Zb1</a> &middot;
             <a href="{{ url_for('main.search',
                 search_string='258478e8b7a3b78301661e78b4f93a792af878b545442498065ab272eaacf035') }}">
-                258478e8b7a3b78301661e78b4f93a792af878b545442498065ab272eaacf035</a>,
+                258478e8b7a3b78301661e78b4f93a792af878b545442498065ab272eaacf035</a> &middot;
             <a href="{{ url_for('main.search',
                 search_string='xpub661MyMwAqRbcGpWkuXwKRMAnJUnwBBSFo3KpormL4ti5m5i7q8D7Rih8fvCAHWXhCA3aF3KvGWw4PZtqc9ymsSrkCLbC9Xgeqao6t5eWbrD') }}">
                 xpub661MyMwAqRbcGpWkuXwKRMAnJUnwBBSFo3KpormL4ti5m5i7q8D7Rih8fvCAHWXhCA3aF3KvGWw4PZtqc9ymsSrkCLbC9Xgeqao6t5eWbrD
@@ -29,33 +31,33 @@
                 420024</a>
         </p>
     {% elif network == 'tbtc' %}
-        <p style="font-size:80%">Some suggestions:
+        <p>Some suggestions:
             <a href="{{ url_for('main.search', search_string='n3GNqMveyvaPvUbH469vDRadqpJMPc84JA') }}">
-                n3GNqMveyvaPvUbH469vDRadqpJMPc84JA</a>,
+                n3GNqMveyvaPvUbH469vDRadqpJMPc84JA</a> &middot;
             <a href="{{ url_for('main.search', search_string='tb1qzf2wpucjq6hc5qam2aw7rd5ujfq3emjdn73jm2') }}">
-                tb1qzf2wpucjq6hc5qam2aw7rd5ujfq3emjdn73jm2</a>,
+                tb1qzf2wpucjq6hc5qam2aw7rd5ujfq3emjdn73jm2</a> &middot;
             <a href="{{ url_for('main.search', search_string='005f9f4258f03d3393477edb2cfece51666015b19be30737e719deaee41bea0f', network='tbtc') }}">
-                005f9f4258f03d3393477edb2cfece51666015b19be30737e719deaee41bea0f</a>,
+                005f9f4258f03d3393477edb2cfece51666015b19be30737e719deaee41bea0f</a> &middot;
             <a href="{{ url_for('main.search', search_string='tpubD6NzVbkrYhZ4YkkELZNAMB8XXJycuig3SEdWRMLFD51Jeou26v48hknci1CE39bj6jngSgDpktrKXGtgr7D2rXJinvHyKWiap7sMbegxge9') }}">
-                tpubD6NzVbkrYhZ4YkkELZNAMB8XXJycuig3SEdWRMLFD51Jeou26v48hknci1CE39bj6jngSgDpktrKXGtgr7D2rXJinvHyKWiap7sMbegxge9</a>,
+                tpubD6NzVbkrYhZ4YkkELZNAMB8XXJycuig3SEdWRMLFD51Jeou26v48hknci1CE39bj6jngSgDpktrKXGtgr7D2rXJinvHyKWiap7sMbegxge9</a> &middot;
             <a href="{{ url_for('main.search', search_string='1222222', network='tbtc') }}">
                 1222222</a>
         </p>
     {% elif network == 'ltc' %}
-        <p style="font-size:80%">Some suggestions:
+        <p>Some suggestions:
             <a href="{{ url_for('main.search', search_string='LfcUcxALy1gSeqZLrixAm4ETZbEWA7GLat') }}">
-                LfcUcxALy1gSeqZLrixAm4ETZbEWA7GLat</a>,
+                LfcUcxALy1gSeqZLrixAm4ETZbEWA7GLat</a> &middot;
             <a href="{{ url_for('main.search', search_string='ltc1qn9y4meexknw2dklpkc2gjjzxlzvdcu8tlwvjya') }}">
-                ltc1qn9y4meexknw2dklpkc2gjjzxlzvdcu8tlwvjya</a>,
+                ltc1qn9y4meexknw2dklpkc2gjjzxlzvdcu8tlwvjya</a> &middot;
             <a href="{{ url_for('main.search', search_string='f17dd941a48860d00f930b7c0d67df3cb41d05dffd77932c4d5985529ae5af0c', network='ltc') }}">
-                f17dd941a48860d00f930b7c0d67df3cb41d05dffd77932c4d5985529ae5af0c</a>,
+                f17dd941a48860d00f930b7c0d67df3cb41d05dffd77932c4d5985529ae5af0c</a> &middot;
             <a href="{{ url_for('main.search', search_string='Mtub2mGjjfp7sYT6N4YayFr1MAhsvgCTiN2Lfuj6Szi3te4XNDUthHP9wWbrZY6w4eYYioSjrY2LxqUTF8Dk6Yhuk5G7XLs1mEAAcf2pMaVUoYR,') }}">
-                Mtub2mGjjfp7sYT6N4YayFr1MAhsvgCTiN2Lfuj6Szi3te4XNDUthHP9wWbrZY6w4eYYioSjrY2LxqUTF8Dk6Yhuk5G7XLs1mEAAcf2pMaVUoYR</a>,
+                Mtub2mGjjfp7sYT6N4YayFr1MAhsvgCTiN2Lfuj6Szi3te4XNDUthHP9wWbrZY6w4eYYioSjrY2LxqUTF8Dk6Yhuk5G7XLs1mEAAcf2pMaVUoYR</a> &middot;
             <a href="{{ url_for('main.search', search_string='2769955', network='ltc') }}">
                 2769955</a>
         </p>
     {% endif %}
-     <p style="font-size:80%">Last block:
+     <p>Last block:
          <a href="{{ url_for('main.search', search_string='%s' % blockcount, network=network) }}">
             {{ blockcount }}</a></p>
     </div>
