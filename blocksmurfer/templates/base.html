@@ -55,26 +55,29 @@
                 <li class="pure-menu-item{% if title=='Blocks' %} pure-menu-selected{% endif %}">
                     <a href="{{ url_for('main.blocks', network=network) }}" class="pure-menu-link">Blocks</a>
                 </li>
-                <li class="pure-menu-item{% if title=='Script' %} pure-menu-selected{% endif %}">
-                    <a href="{{ url_for('main.script', network=network) }}" class="pure-menu-link">Scripts</a>
-                </li>
                 <li class="pure-menu-item{% if title=='Network' %} pure-menu-selected{% endif %}">
                     <a href="{{ url_for('main.network', network=network) }}" class="pure-menu-link">Network</a>
                 </li>
-                <li class="pure-menu-item{% if title=='About' %} pure-menu-selected{% endif %}">
-                    <a href="{{ url_for('main.about', network=network) }}" class="pure-menu-link">About</a>
+                <li class="pure-menu-item{% if title=='Script' %} pure-menu-selected{% endif %}">
+                    <a href="{{ url_for('main.script', network=network) }}" class="pure-menu-link">Scripts</a>
                 </li>
-                {% endif %}
-                {% if config.ENABLE_API %}
-                    <li class="pure-menu-item{% if title=='API' %} pure-menu-selected{% endif %}">
-                    <a href="{{ url_for('main.api', network=network) }}" class="pure-menu-link">API</a>
+                <li class="pure-menu-item{% if title=='Decompose Transaction' %} pure-menu-selected{% endif %}">
+                    <a href="{{ url_for('main.transaction_decompose', network=network) }}" class="pure-menu-link">
+                        Decompose Tx</a>
+                </li>
+                <li class="pure-menu-item{% if title=='Send Transaction' %} pure-menu-selected{% endif %}">
+                    <a href="{{ url_for('main.transaction_broadcast', network=network) }}" class="pure-menu-link">
+                        Broadcast Tx</a>
+                </li>
+                <li class="pure-menu-item{% if title=='Store Data' %} pure-menu-selected{% endif %}">
+                    <a href="{{ url_for('main.store_data', network=network) }}" class="pure-menu-link">
+                        Store Data &beta;</a>
+                </li>
+                {% else %}
+                    <li class="pure-menu-item{% if title=='About' %} pure-menu-selected{% endif %}">
+                        <a href="{{ url_for('main.about', network=network) }}" class="pure-menu-link">About</a>
                     </li>
-                {% elif config.API_BASE_URL %}
-                    <a href="{{ config.API_BASE_URL }}" class="pure-menu-link">API</a>
                 {% endif %}
-                <li class="pure-menu-item{% if title=='Status' %} pure-menu-selected{% endif %}">
-                    <a href="https://status.coineva.com/" class="pure-menu-link">Status</a>
-                </li>
             </ul>
             <p>&nbsp;</p>
 
@@ -125,6 +128,18 @@
             {% block app_content %}{% endblock %}
         </div>
         <div class="footer" style="font-size: 80%">
+            <p>
+                <a href="{{ url_for('main.about', network=network) }}">About</a>
+                &middot;
+                {% if config.ENABLE_API %}
+                    <a href="{{ url_for('main.api', network=network) }}">API</a>
+                    &middot;
+                {% elif config.API_BASE_URL %}
+                    <a href="{{ config.API_BASE_URL }}">API</a>
+                    &middot;
+                {% endif %}
+                <a href="https://status.coineva.com/">Status</a>
+            </p>
             <p>
                 Thank you for using Blocksmurfer Bitcoin block explorer!
             </p>

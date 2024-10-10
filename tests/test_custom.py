@@ -7,6 +7,7 @@
 
 
 from datetime import datetime
+import re
 
 
 class CustomAssertions:
@@ -51,3 +52,7 @@ class CustomAssertions:
                         continue
                 if result_dict[k] is not None or k not in none_allowed:
                     raise AssertionError("Different value for '%s': %s != %s" % (k, result_dict[k], expected_dict[k]))
+
+
+def strip_html_whitespace(data):
+    return re.sub('<[^<]+?>', '', data.decode('utf-8')).replace(' ', '').replace('\n', '')

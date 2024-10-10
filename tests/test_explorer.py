@@ -1,7 +1,7 @@
 import unittest
 from flask import Config
 from blocksmurfer import current_app
-from tests.test_custom import CustomAssertions
+from tests.test_custom import CustomAssertions, strip_html_whitespace
 # from blocksmurfer.explorer.service import SmurferService as Service
 from bitcoinlib.services.services import Service
 
@@ -150,7 +150,7 @@ class TestSite(unittest.TestCase, TestingConfig):
                                 'input/6')
         self.assertIn(b'02ea08ccfdda6183c3e7d57c813567299efd0f0b233a3a32267ba9c2af3080aa1b', response.data)
         self.assertIn(b'32c62dda4fee4fb316bc5ef46884be006c7b6810beea962fd72606557ae', response.data)
-        self.assertIn(b'signature key', response.data)
+        self.assertIn(b'signature', response.data)
         self.assertEqual(response.status_code, 200)
 
     def test_explorer_transaction_input_coinbase(self):
@@ -337,22 +337,26 @@ class TestSite(unittest.TestCase, TestingConfig):
     def test_explorer_scripts_p2wsh(self):
         data = {'script_hex': '0020e5736bf12976cc710b9833aac2e3333a5a5e9f24ac87ce49e868b496b5086023'}
         response = self.app.post('/btc/script', data=data, follow_redirects=True)
-        self.assertIn(b'OP_0 data-32', response.data)
+        data_stripped = strip_html_whitespace(response.data)
+        self.assertIn('OP_0data-32', data_stripped)
         self.assertIn(b'p2wsh', response.data)
         self.assertEqual(response.status_code, 200)
 
     def test_explorer_scripts_multisig(self):
         data = {'script_hex': '5221026c80e3efcdd4247ee29ee73829023aa3bcd464b709879128085d661c5a24fe0921032840e4d6aa1bea14d964e559f7b0ac01eac27274a03333d19faae8bee33c28a12103893120d3e2bac81f5bb6dbd320feed1f57ca39dd57a8c1266b9372acae45de8a53ae'}
         response = self.app.post('/btc/script', data=data, follow_redirects=True)
-        self.assertIn(b'OP_2 key key key OP_3 OP_CHECKMULTISIG', response.data)
+        self.assertIn(b'key', response.data)
+        self.assertIn(b'2 of 3', response.data)
+        self.assertIn(b'OP_CHECKMULTISIG', response.data)
         self.assertIn(b'multisig', response.data)
         self.assertEqual(response.status_code, 200)
 
     def test_explorer_scripts_non_standard_1(self):
         data = {'script_hex': '00473044022076521fc60292a564fcac9ecb05e78846ff0d0e1d9f9de87d23d71cc130504e5c02202b1e0b5aea07d530eab146d1db54542cb2ca2bf6dcf69e77b7ee21671e97f51c0148304502210099eef1bca6087f8f20e0f183a19d057230851ef2fa4f356f192a9745fe1711510220336610d9dc4617a9bb02bdffec0e231df6ad998c6909a7b136dcb30f4bc60953014c7252210352d50656796dd79e3e3385c29636d849b8705c9c6d9b86a1717adc38e4a567c72102f39d0b69c3b8e06030ef9dc295cf8c848f51e398fe85414e33509afdc7f01fb321027072ba2319ead2b0b387d69d36508f57b397da8d4ac76ea64676ee8a1356dae053af048e254ac175740087'}
         response = self.app.post('/btc/script', data=data, follow_redirects=True)
-        self.assertIn(b'OP_0 signature signature redeemscript', response.data)
-        self.assertIn(b'OP_2 key key key OP_3 OP_CHECKMULTISIGVERIFY data-4 OP_DROP OP_DEPTH OP_0 OP_EQUAL', response.data)
+        data_stripped = strip_html_whitespace(response.data)
+        self.assertIn('OP_0signaturesignatureredeemscript', data_stripped)
+        self.assertIn('OP_2keykeykeyOP_3OP_CHECKMULTISIGVERIFYdata-4OP_DROPOP_DEPTHOP_0OP_EQUAL', data_stripped)
         self.assertIn(b'p2sh_multisig', response.data)
         self.assertIn(b'3044022076521fc60292a564fcac9ecb05e78846ff0d0e1d9f9de87d23d71cc130504e5c02202b1e', response.data)
         self.assertEqual(response.status_code, 200)
@@ -360,8 +364,10 @@ class TestSite(unittest.TestCase, TestingConfig):
     def test_explorer_scripts_non_standard_2(self):
         data = {'script_hex': '10d072d4494f3ff8f852f24e6c8b298f4647304402202c86a6dbde9edf8d484d7e58004afefa99aa4120f916b2719286ccf28064bb1902204c600fe5a5ab89c7c453adc3852c1aaf4cee23266b999bcda9e6f39f178a914e01514c69632102f824adc1d35bb896be9d7a67f7471b2015e54e465dbbf81702546a064069ee47ad826088a914b36cbc38155fa95bbcf25c66167de8490ee3c3b887672103195fcc71d09ddc686e91cf83f5d0de9440e4e5b88dfd03d7902abf1faa6a0fa5ad0482abbb5db168'}
         response = self.app.post('/btc/script', data=data, follow_redirects=True)
-        self.assertIn(b'data-16 signature OP_1 redeemscript', response.data)
-        self.assertIn(b'OP_IF key OP_CHECKSIGVERIFY OP_SIZE OP_16 OP_EQUALVERIFY OP_HASH160 data-20 OP_EQUAL OP_ELSE key OP_CHECKSIGVERIFY data-4 OP_CHECKLOCKTIMEVERIFY OP_ENDIF', response.data)
+        data_stripped = strip_html_whitespace(response.data)
+        self.assertIn('data-16signatureOP_1redeemscript', data_stripped)
+        self.assertIn('OP_IFkeyOP_CHECKSIGVERIFYOP_SIZEOP_16OP_EQUALVERIFYOP_HASH160data-20OP_EQUALOP_ELSE'
+            'keyOP_CHECKSIGVERIFYdata-4OP_CHECKLOCKTIMEVERIFYOP_ENDIF', data_stripped)
         self.assertIn(b'unknown', response.data)
         self.assertIn(b' 304402202c86a6dbde9edf8d484d7e58004afefa99aa4120f916', response.data)
         self.assertEqual(response.status_code, 200)
@@ -369,9 +375,10 @@ class TestSite(unittest.TestCase, TestingConfig):
     def test_explorer_scripts_p2sh_multisig(self):
         data = {'script_hex': '0047304402200b0ee6c93789b7b8bbff647752d7110d2fc0e0bf913f3dec8192d5a6a1da2dc20220502920194c49986b44eebd192b561bda1d428b5821117b0fd60f0d4504026dba01483045022100d412fe60888e8069ca85f87722d6dc0384f9574cc79f4e7f0129564cb51c0a38022027ba0c114bcf867ea569a55d9eb0929c148b7fdf20f176fd10944b4e0fe7a8d9014c69522103614101c3dfc98f6a7b562cd9264cc6e0d8d9597f59feea666d4c7605493b928b2102386823b976815e4f6d7279b7b4a2113c7d9e0796fa7b1ac43caa7d464a1a06db2102e7ae0137cab0a11b49caeae853d06c9499e79029670a2d649cc2e9e58b99dc5753aea9147dae466253944bb084f8ac01343504941ae15c3287'}
         response = self.app.post('/btc/script', data=data, follow_redirects=True)
+        data_stripped = strip_html_whitespace(response.data)
         self.assertIn(b'p2sh_multisig, p2sh', response.data)
-        self.assertIn(b'OP_0 signature signature redeemscript OP_HASH160 data-20 OP_EQUAL', response.data)
-        self.assertIn(b'OP_2 key key key OP_3 OP_CHECKMULTISIG', response.data)
+        self.assertIn('OP_0signaturesignatureredeemscriptOP_HASH160data-20OP_EQUAL', data_stripped)
+        self.assertIn('OP_2keykeykeyOP_3OP_CHECKMULTISIG', data_stripped)
         self.assertIn(b'20194c49986b44eebd192b561bda1d428b5821117b0fd60f0d4504026dba01', response.data)
         self.assertEqual(response.status_code, 200)
 

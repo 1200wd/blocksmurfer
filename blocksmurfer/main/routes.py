@@ -499,11 +499,11 @@ def store_data(network):  # pragma: no cover
         w.scan(scan_gap_limit=1)
         if w.balance():
             lock_script = b'\x6a' + varstr(form.data.data)
-            t = w.send([Output(0, lock_script=lock_script)], fee=form.transaction_fee.data)
+            t = w.send([Output(0, lock_script=lock_script)], fee=form.transaction_fee.data, broadcast=True)
             tzutc = timezone.utc
             return render_template('explorer/store_data_send.html', title=_('Push Transaction'),
                                    subtitle=_('Embed the data on the %s network' % srv.network.name),
-                                   transaction=t, t=t, tzutc=tzutc)
+                                   transaction=t, t=t, tzutc=tzutc, network=network)
         else:
             k = w.get_key()
             message = "Store%20Data%20-%20Blocksmurfer"
@@ -513,11 +513,11 @@ def store_data(network):  # pragma: no cover
                                    subtitle=_('Fund the %s transaction and store data on the blockchain' %
                                               srv.network.name),
                                    address=k.address, tx_fee=form.transaction_fee.data, data=form.data.data,
-                                   paymentlink=paymentlink)
+                                   paymentlink=paymentlink, network=network)
 
-    return render_template('explorer/store_data.html', title=_('Store data'),
+    return render_template('explorer/store_data.html', title=_('Store Data'),
                            subtitle=_('Embed data on the %s blockchain' % srv.network.name), form=form,
-                           tx_fee=tx_fee)
+                           tx_fee=tx_fee, network=network)
 
 @bp.route('/<network>/op_code/<op_code>', methods=['GET'])
 def op_code(network, op_code):
