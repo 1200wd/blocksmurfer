@@ -2,7 +2,7 @@
 
 {% block app_content %}
     <h2>{{ _('Details') }}</h2>
-    <table class="pure-table" style="width: 800px; font-size: 80%;">
+    <table class="pure-table blocksmurfer-table-sf">
         <tr>
             <td style="width: 110px;">TXID</td>
             <td>
@@ -34,13 +34,13 @@
         <tr>
             <td>Previous TXID</td>
             <td>
-                {% if input.prev_txid.hex() == '0' * 64 %}
-                    Coinbase
-                {% else %}
-                    <a href="{{ url_for('main.transaction', network=network, txid=input.prev_txid.hex()) }}">
-                        {{ input.prev_txid.hex() }}
-                    </a>
-                {% endif %}
+            {% if input.prev_txid.hex() == '0' * 64 %}
+                {{ input.prev_txid.hex() }}
+            {% else %}
+                <a href="{{ url_for('main.transaction', network=network, txid=input.prev_txid.hex()) }}">
+                    {{ input.prev_txid.hex() }}
+                </a>
+            {% endif %}
             </td>
         </tr>
         <tr>
@@ -61,63 +61,16 @@
         </tr>
         <tr>
             <td>Public {% if input.keys|length > 1 %}Keys{% else %} Key{% endif %}</td>
-            <td style="word-break: break-all;">
+            <td>
                 {% for key in input.keys %}
                     <p><a href="{{ url_for('main.key', network=network, key=key) }}">{{ key }}</a></p>
                 {% endfor %}
             </td>
         </tr>
     </table>
-    <p></p>
-    <table class="pure-table" style="width: 800px; font-size: 80%;">
-        <thead>
-            <tr>
-                <td colspan="5">
-                    {% if input.witness_type == 'segwit' %}
-                        {{ _('Witnesses') }}
-                    {% else %}
-                        {{ _('Unlocking Script') }}
-                    {% endif %}
-                </td>
-            </tr>
-        </thead>
-        {% if input.script %}
-        <tr>
-            <td>Script Type</td>
-            <td>{{ input.script.script_types|join(', ') }}</td>
-        </tr>
-        <tr>
-            <td>Unlocking Script Hex</td>
-            <td style="word-break: break-all;">{{ input.script.raw.hex() }}</td>
-        </tr>
-        <tr>
-            <td>Unlocking Script OP</td>
-            <td style="word-break: break-all;">{{ input.script }}</td>
-        </tr>
-            {% if input.script.hash_type %}
-            <tr>
-                <td>Hash Type</td>
-                <td>{{ '%0x' % input.script.hash_type }}</td>
-            </tr>
-            {% endif %}
-        {% endif %}
 
-        {% if input.witness_type == 'segwit' %}
-        {% for witness in input.witnesses %}
-        {% if witness.hex() != '00' %}
-        <tr>
-            <td>Witness</td>
-            <td style="word-break: break-all;">{{ witness.hex() }}</td>
-        </tr>
-        {% endif %}
-        {% endfor %}
-        {% endif %}
-        {% for sig in input.signatures %}
-        <tr>
-            <td>Signature</td>
-            <td style="word-break: break-all;">{{ sig.hex() }}</td>
-        </tr>
-        {% endfor %}
-    </table>
+    <p></p>
+    {% include 'includes/input_unlocking_script.html' %}
+
 
 {% endblock %}

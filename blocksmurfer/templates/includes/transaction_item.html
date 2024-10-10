@@ -1,11 +1,13 @@
-<table class="pure-table" style="width: 800px; font-size: 80%;">
+<table class="pure-table blocksmurfer-table-sf">
     <thead>
     <tr>
         <td style="border-left: 0;">
             <a href="{{ url_for('main.transaction', network=network, txid=t.txid) }}">{{ t.txid }}</a>
         </td>
         <td style="border-left: 0;">
-            {% if t.date %}{{ t.date.replace(microsecond=0) }}{% endif %}
+            {% if t.date %}
+                {{ t.date.replace(tzinfo=tzutc).timestamp() | ctime }}
+            {% endif %}
         </td>
         <td style="border-left: 0;">
             {% if t.confirmations %}
@@ -17,7 +19,7 @@
     </tr>
     </thead>
 </table>
-<table class="pure-table" style="width: 800px; font-size: 80%">
+<table class="pure-table blocksmurfer-table-sf">
     <tbody>
     {% for inp in t.inputs[:5] %}
     <tr>
@@ -36,7 +38,7 @@
                 {% endif %}
             {% endif %}
         </td>
-        <td style="text-align:right">{{ "{:,.8f}".format(inp.value / 100000000) }}</td>
+        <td class="blocksmurfer-td-value">{{ "{:,.8f}".format(inp.value / 100000000) }}</td>
         <td>
             {% if inp.prev_txid %}
                 <a href="{{ url_for('main.transaction', network=network, txid=inp.prev_txid.hex()) }}">
@@ -54,20 +56,20 @@
             <a href="{{ url_for('main.transaction', network=network, txid=t.txid) }}">transaction</a>
             for all {{ t.inputs|length }} inputs
         </td>
-        <td style="text-align:right">{{ "{:,.8f}".format(t.inputs[5:]|sum(attribute='value') / 100000000) }}</td>
+        <td class="blocksmurfer-td-value">{{ "{:,.8f}".format(t.inputs[5:]|sum(attribute='value') / 100000000) }}</td>
         <td></td>
     </tr>
     {% endif %}
     {% for out in t.outputs[:5] %}
     <tr>
         <td>out</td>
-        <td style="word-break: break-all;">
+        <td>
             {% if out.address %}
             <a href="{{ url_for('main.address', network=network, address=out.address) }}">{{ out.address }}</a></td>
             {% else %}
                 Nulldata: {{ out.lock_script[2:].decode(errors='ignore') }}
             {% endif %}
-        <td style="text-align:right">{{ "{:,.8f}".format(out.value / 100000000) }}</td>
+        <td class="blocksmurfer-td-value">{{ "{:,.8f}".format(out.value / 100000000) }}</td>
         <td>
             {% if out.spent %}
                 {% if out.spending_txid %}
@@ -91,7 +93,7 @@
             <a href="{{ url_for('main.transaction', network=network, txid=t.txid) }}">transaction</a>
             for all {{ t.outputs|length }} outputs
         </td>
-        <td style="text-align:right">{{ "{:,.8f}".format(t.outputs[5:]|sum(attribute='value') / 100000000) }}</td>
+        <td class="blocksmurfer-td-value">{{ "{:,.8f}".format(t.outputs[5:]|sum(attribute='value') / 100000000) }}</td>
         <td></td>
     </tr>
     {% endif %}
@@ -100,7 +102,7 @@
     <tfoot>
     <tr>
         <td colspan="2">{{ _('Balance change') }}</td>
-        <td style="text-align:right">{{ "{:,.8f}".format(t.balance_change / 100000000) }}</td>
+        <td class="blocksmurfer-td-value">{{ "{:,.8f}".format(t.balance_change / 100000000) }}</td>
         <td></td>
     </tr>
     </tfoot>

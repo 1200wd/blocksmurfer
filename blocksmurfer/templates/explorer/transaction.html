@@ -2,10 +2,14 @@
 
 {% block app_content %}
     <h2>{{ _('Details') }}</h2>
-    <table class="pure-table" style="width: 800px;">
+    <table class="pure-table blocksmurfer-table">
         <tr>
             <td>ID</td>
-            <td>{{ transaction.txid }}</td>
+            <td>
+                <span id="copy-txid">{{ transaction.txid }}</span>
+                <a class="blocksmurfer-fa-link" title="copy-txid" onclick="copyContent(this.title);">
+                    <i class="fa fa-clone"></i></a>
+            </td>
         </tr>
         <tr>
             <td>Network</td>
@@ -53,18 +57,40 @@
             <td>Coinbase</td>
             <td>{{ transaction.coinbase }}</td>
         </tr>
+        {% if transaction.input_total != None %}
         <tr>
-            <td>Size{% if transaction.vsize %} / VSize{% endif %}</td>
-            <td>{{ transaction.size }}{% if transaction.vsize %} / {{ transaction.vsize }}{% endif %}</td>
+            <td>Total Input</td>
+            <td>
+                {{ "{:,.8f}".format(transaction.input_total / 100000000) }} {{ transaction.network.currency_code }}
+            </td>
+        </tr>
+        {% endif %}
+        {% if transaction.output_total != None %}
+        <tr>
+            <td>Total Output</td>
+            <td>
+                {{ "{:,.8f}".format(transaction.output_total / 100000000) }} {{ transaction.network.currency_code }}
+            </td>
+        </tr>
+        {% endif %}
+        <tr>
+            <td>Size{% if transaction.vsize %} (VSize){% endif %}</td>
+            <td>{{ transaction.size }}{% if transaction.vsize %} ({{ transaction.vsize }}){% endif %}</td>
         </tr>
         {% if transaction.fee != None %}
         <tr>
             <td>Fee</td>
             <td>
-                {{ transaction.fee }} satoshi
-                {% if transaction.vsize and transaction.fee %},
+                {{  "{:,.8f}".format(transaction.fee / 100000000) }} {{ transaction.network.currency_code }}
+                &middot; {{ transaction.fee }} satoshi
+            </td>
+        </tr>
+        <tr>
+            <td>Fee / Byte</td>
+            <td>
+                {% if transaction.vsize and transaction.fee %}
                     {{ (transaction.fee / transaction.vsize)|round(1) }} sat/vB
-                {% elif transaction.size and transaction.fee %},
+                {% elif transaction.size and transaction.fee %}
                     {{ (transaction.fee / transaction.size)|round(1) }} sat/B
                 {% endif %}
             </td>
@@ -81,10 +107,11 @@
         <tr>
             <td>Raw</td>
             <td>
-                <p hidden><input type="text" value="{{ transaction.raw_hex() }}" id="myInput"></p>
-                <abbr title="{{ transaction.raw_hex() }}">
+                <abbr title="{{ transaction.raw_hex() }}" id="copy-raw-tx">
                     {{ transaction.raw_hex() | truncate(55) }}
                 </abbr>
+                <a class="blocksmurfer-fa-link" title="copy-raw-tx" onclick="copyContentTitle(this.title);">
+                    <i class="fa fa-clone"></i></a>
             </td>
         </tr>
         {% if config.ENABLE_API %}
@@ -98,7 +125,7 @@
         {% endif %}
     </table>
     <p></p>
-    <table class="pure-table" style="width: 800px; font-size: 80%;">
+    <table class="pure-table blocksmurfer-table-sf">
         <thead>
             <tr>
                 <td colspan="5">{{ _('Inputs') }}</td>
@@ -125,7 +152,7 @@
                     </a>
                 {% endif %}
             </td>
-            <td style="text-align:right">{{ "{:,.8f}".format(inp.value / 100000000) }}</td>
+            <td class="blocksmurfer-td-value">{{ "{:,.8f}".format(inp.value / 100000000) }}</td>
             <td>{{ inp.script_type }}</td>
             <td>
                 {% if not transaction.coinbase %}
@@ -139,7 +166,7 @@
         </tbody>
     </table>
     <p></p>
-    <table class="pure-table" style="width: 800px; font-size: 80%;">
+    <table class="pure-table blocksmurfer-table-sf">
         <thead>
             <tr>
                 <td colspan="5">{{ _('Outputs') }}</td>
@@ -154,14 +181,14 @@
                     {{ out.output_n }}
                 </a>
             </td>
-            <td style="word-break: break-all;">
+            <td>
                 {% if out.address %}
                 <a href="{{ url_for('main.address', network=network, address=out.address) }}">{{ out.address }}</a>
                 {% else %}
                     Nulldata: {{ out.lock_script[2:].decode(errors='ignore') }}
                 {% endif %}
             </td>
-            <td style="text-align:right">{{ "{:,.8f}".format(out.value / 100000000) }}</td>
+            <td class="blocksmurfer-td-value">{{ "{:,.8f}".format(out.value / 100000000) }}</td>
             <td>{{ out.script_type }}</td>
             <td>
                 {% if out.spent %}

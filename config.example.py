@@ -16,11 +16,9 @@ class Config(object):
     NETWORKS_ENABLED = {
         'btc': 'bitcoin',
         'ltc': 'litecoin',
-        # 'dash': 'dash',
         # 'doge': 'doge',
         'tbtc': 'testnet',
         # 'xlt': 'litecoin_testnet',
-        # 'tdash': 'dash_testnet',
         # 'tdoge': 'doge_testnet',
         # 'reg': 'regtest',
     }

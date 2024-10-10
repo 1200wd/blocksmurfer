@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    <div style="text-align: center;">
+    <p>
+        The signature hash flag determines what part of the transaction the specific signatures signs.
+        Default and most common is the SIGHASH_ALL flag which signs the full transaction. But a signature can also sign
+        only inputs or only a specific input or output.
+    </p>
+    <table class="pure-table blocksmurfer-table">
+        <tr>
+            <td>Flag</td>
+            <td>SIGHASH_{{ flag_name }}</td>
+        </tr>
+        <tr>
+            <td>Value</td>
+            <td>{{ flag }}</td>
+        </tr>
+        <tr>
+            <td>Description</td>
+            <td>{{ flag_desc }}</td>
+        </tr>
+    </table>
+    </div>
+
+{% endblock %}

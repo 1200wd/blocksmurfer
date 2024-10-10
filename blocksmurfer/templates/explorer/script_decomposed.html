@@ -1,37 +1,78 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-    <table class="pure-table" style="width: 800px; font-size: 80%;">
+    <table class="pure-table blocksmurfer-table-sf">
+        <tr>
+            <td>Script Type</td>
+            <td>{{ script.script_types|join(', ') }}</td>
+        </tr>
+        {%  if 'p2sh_multisig' in script.script_types or 'multisig' in script.script_types %}
+        <tr>
+            <td>Signatures required</td>
+            <td>{{ script.sigs_required }} of {{ script.keys|length }}</td>
+        </tr>
+        {% endif %}
+        <tr>
+            <td>Commands OP</td>
+            <td>
+                {% for s_item in script.view(blueprint=True, as_list=True) %}
+                    {% if s_item.startswith('OP_') %}
+                        <a href="{{ url_for('main.op_code', network=network, op_code=s_item.lower()) }}">
+                            {{ s_item }}</a>
+                    {% else %}
+                        {{ s_item }}
+                    {% endif %}
+                {% endfor %}
+            </td>
+        </tr>
+        <tr>
+            <td>Commands Hex</td>
+            <td>
+                {% for cmd in script.view(blueprint=False, as_list=True, op_code_numbers=True) %}
+                    {% if cmd is number %}{{ '%02x' | format(cmd) }}
+                    {% else %}{{ cmd }}
+                    {% endif %}
+                {% endfor %}
+            </td>
+        </tr>
+        {% if script.redeemscript_obj and script.raw != script.redeemscript %}
+        <tr>
+            <td>Redeemscript OP</td>
+            <td>
+                {% for s_item in script.redeemscript_obj.view(blueprint=True, as_list=True) %}
+                    {% if s_item.startswith('OP_') %}
+                        <a href="{{ url_for('main.op_code', network=network, op_code=s_item.lower()) }}">
+                            {{ s_item }}</a>
+                    {% else %}
+                        {{ s_item }}
+                    {% endif %}
+                {% endfor %}
+            </td>
+        </tr>
+        <tr>
+            <td>Redeemscript Hex</td>
+            <td>
+                <a href="{{ url_for('main.script', network=network, script_hex=script.redeemscript.hex()) }}">
+                    {{ script.redeemscript.hex() }}</a>
+            </td>
+        </tr>
+        {% endif %}
+
         {% if script.keys %}
         <tr>
             <td>Public {% if script.keys|length > 1 %}Keys{% else %} Key{% endif %}</td>
-            <td style="word-break: break-all;">
+            <td>
                 {% for key in script.keys %}
                     <p><a href="{{ url_for('main.key', network=network, key=key) }}">{{ key }}</a></p>
                 {% endfor %}
             </td>
         </tr>
         {% endif %}
-            <tr>
-            <td>Script Type</td>
-            <td>{{ script.script_types|join(', ') }}</td>
-        </tr>
+
+        {% if script.public_hash %}
         <tr>
-            <td>Commands OP</td>
-            <td style="word-break: break-all;">{{ script }}</td>
-        </tr>
-        <tr>
-            <td>Commands Hex</td>
-            <td style="word-break: break-all;">
-                {% for cmd in script.commands %}
-                    {% if cmd is number %}{{ '%0x' % cmd }}{% else %}{{ cmd.hex() }}{% endif %}
-                {% endfor %}
-            </td>
-        </tr>
-        {% if script.hash_type %}
-        <tr>
-            <td>Hash Type</td>
-            <td>{{ '%0x' % script.hash_type }}</td>
+            <td>Public Hash</td>
+            <td>{{ script.public_hash.hex() }}</td>
         </tr>
         {% endif %}
 
@@ -39,21 +80,29 @@
         {% if witness.hex() != '00' %}
         <tr>
             <td>Witness</td>
-            <td style="word-break: break-all;">{{ witness.hex() }}</td>
+            <td>{{ witness.hex() }}</td>
         </tr>
         {% endif %}
         {% endfor %}
 
         {% for sig in script.signatures %}
         <tr>
-            <td>Signature</td>
-            <td style="word-break: break-all;">{{ sig.hex() }}</td>
+            <td>Signature #{{ script.signatures.index(sig) }}</td>
+            <td>{{ sig.hex() }}</td>
         </tr>
+        {% if sig.hash_type %}
+        <tr>
+            <td>Hash Type #{{ script.signatures.index(sig) }}</td>
+            <td><a href="{{ url_for('main.sighash_flag', network=network, flag=sig.hash_type) }}">
+                SIGHASH_{{ definitions.SIGHASH_FLAGS[sig.hash_type][0] }}</a> ({{ '%02x' % sig.hash_type }})
+            </td>
+        </tr>
+        {% endif %}
         {% endfor %}
         {% if script.script_types == ['nulldata'] %}
         <tr>
             <td>Nulldata</td>
-            <td style="word-break: break-all;">{{ script.commands[1].decode(errors='ignore') }}</td>
+            <td>{{ script.commands[1].decode(errors='ignore') }}</td>
         </tr>
         {% endif %}
     </table>
@@ -68,7 +117,7 @@
         <p>{{ form.submit(class_="pure-button pure-button-primary") }}</p>
     </form>
     <p>
-        Enter the {{ network }} script to decompose. This will parse the script and show data, opcoode commands and
+        Enter the {{ network }} script to decompose. This will parse the script and show data, opcode commands and
         extracts keys and signatures if available.
     </p>
     </div>

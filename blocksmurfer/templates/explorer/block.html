@@ -2,7 +2,7 @@
 
 {% block app_content %}
     <h2>{{ _('Details') }}</h2>
-    <table class="pure-table" style="width: 800px; font-size: 80%">
+    <table class="pure-table blocksmurfer-table-sf">
     <tr>
         <td>Hash</td>
         <td>{{ block.block_hash.hex() }}</td>
@@ -34,7 +34,7 @@
         <td>
             {{ block.bits_int }}
             {% if block.bits %}
-                 ({{ block.bits.hex() }})
+                 &middot; 0x{{ block.bits.hex() }}
             {% endif %}
         </td>
     </tr>
@@ -43,7 +43,7 @@
         <td>
             {{ block.nonce_int }}
             {% if block.nonce %}
-                ({{  block.nonce.hex() }})
+                &middot; 0x{{  block.nonce.hex() }}
             {% endif %}
         </td>
     </tr>
@@ -56,7 +56,7 @@
         <td>
             0b{{ block.version_bin }}
             {% if block.version %}
-                (0x{{ block.version.hex() }})
+                &middot; 0x{{ block.version.hex() }}
             {% endif %}
         </td>
     </tr>
@@ -65,14 +65,14 @@
         <td>
             {% for bip in block.version_bips() %}
                 {{ bip }}
-                {{ "," if not loop.last }}
+                {{ "·" if not loop.last }}
             {% endfor %}
         </td>
     </tr>
     {% if coinbase_data %}
         <tr>
             <td>Coinbase Data</td>
-            <td style="word-break: break-all;">
+            <td>
                 <p>{{ coinbase_data.decode(errors='ignore') }}</p>
             </td>
         </tr>
@@ -97,7 +97,7 @@
     <p>{{ _('No transactions found') }}</p>
     {% endif %}
     {% for t in block.transactions %}
-        {% include 'explorer/_transaction_item.html' %}
+        {% include 'includes/transaction_item.html' %}
         <p></p>
     {% endfor %}
     <nav aria-label="...">

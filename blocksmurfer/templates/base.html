@@ -18,6 +18,8 @@
             <link rel="stylesheet" href="{{url_for('static', filename='side-menu.css')}}">
             <link rel="stylesheet" href="{{url_for('static', filename='fontawesome/css/fontawesome.css')}}">
             <link rel="stylesheet" href="{{url_for('static', filename='fontawesome/css/solid.css')}}">
+            <link rel="stylesheet" href="{{url_for('static', filename='blocksmurfer.css')}}">
+            <link rel="stylesheet" media="print" href="{{url_for('static', filename='blocksmurfer-print.css')}}">
         {% endblock styles%}
         <link rel="manifest" href="/static/manifest.json">
         <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon">
@@ -53,26 +55,29 @@
                 <li class="pure-menu-item{% if title=='Blocks' %} pure-menu-selected{% endif %}">
                     <a href="{{ url_for('main.blocks', network=network) }}" class="pure-menu-link">Blocks</a>
                 </li>
-                <li class="pure-menu-item{% if title=='Script' %} pure-menu-selected{% endif %}">
-                    <a href="{{ url_for('main.script', network=network) }}" class="pure-menu-link">Scripts</a>
-                </li>
                 <li class="pure-menu-item{% if title=='Network' %} pure-menu-selected{% endif %}">
                     <a href="{{ url_for('main.network', network=network) }}" class="pure-menu-link">Network</a>
                 </li>
-                <li class="pure-menu-item{% if title=='About' %} pure-menu-selected{% endif %}">
-                    <a href="{{ url_for('main.about', network=network) }}" class="pure-menu-link">About</a>
+                <li class="pure-menu-item{% if title=='Script' %} pure-menu-selected{% endif %}">
+                    <a href="{{ url_for('main.script', network=network) }}" class="pure-menu-link">Scripts</a>
                 </li>
-                {% endif %}
-                {% if config.ENABLE_API %}
-                    <li class="pure-menu-item{% if title=='API' %} pure-menu-selected{% endif %}">
-                    <a href="{{ url_for('main.api', network=network) }}" class="pure-menu-link">API</a>
+                <li class="pure-menu-item{% if title=='Decompose Transaction' %} pure-menu-selected{% endif %}">
+                    <a href="{{ url_for('main.transaction_decompose', network=network) }}" class="pure-menu-link">
+                        Decompose Tx</a>
+                </li>
+                <li class="pure-menu-item{% if title=='Send Transaction' %} pure-menu-selected{% endif %}">
+                    <a href="{{ url_for('main.transaction_broadcast', network=network) }}" class="pure-menu-link">
+                        Broadcast Tx</a>
+                </li>
+                <li class="pure-menu-item{% if title=='Store Data' %} pure-menu-selected{% endif %}">
+                    <a href="{{ url_for('main.store_data', network=network) }}" class="pure-menu-link">
+                        Store Data &beta;</a>
+                </li>
+                {% else %}
+                    <li class="pure-menu-item{% if title=='About' %} pure-menu-selected{% endif %}">
+                        <a href="{{ url_for('main.about', network=network) }}" class="pure-menu-link">About</a>
                     </li>
-                {% elif config.API_BASE_URL %}
-                    <a href="{{ config.API_BASE_URL }}" class="pure-menu-link">API</a>
                 {% endif %}
-                <li class="pure-menu-item{% if title=='Status' %} pure-menu-selected{% endif %}">
-                    <a href="https://status.coineva.com/" class="pure-menu-link">Status</a>
-                </li>
             </ul>
             <p>&nbsp;</p>
 
@@ -107,7 +112,7 @@
     <div id="main">
         <div class="header">
             {% if title %}<h1>{{ title }}</h1>{% endif %}
-            {% if subtitle %}<h2 style="word-break: break-all;">{{ subtitle }}</h2>{% endif %}
+            {% if subtitle %}<h2>{{ subtitle }}</h2>{% endif %}
         </div>
         <div class="content">
             {% with messages = get_flashed_messages() %}
@@ -122,7 +127,19 @@
             {# application content needs to be provided in the app_content block #}
             {% block app_content %}{% endblock %}
         </div>
-        <div class="footer">
+        <div class="footer" style="font-size: 80%">
+            <p>
+                <a href="{{ url_for('main.about', network=network) }}">About</a>
+                &middot;
+                {% if config.ENABLE_API %}
+                    <a href="{{ url_for('main.api', network=network) }}">API</a>
+                    &middot;
+                {% elif config.API_BASE_URL %}
+                    <a href="{{ config.API_BASE_URL }}">API</a>
+                    &middot;
+                {% endif %}
+                <a href="https://status.coineva.com/">Status</a>
+            </p>
             <p>
                 Thank you for using Blocksmurfer Bitcoin block explorer!
             </p>
@@ -132,7 +149,7 @@
                 explorer@blocksmurfer.io
             </p>
             <p>
-                &copy; 2020-2022 Blocksmurfer by Coineva / 1200wd.com
+                &copy; 2020-2024 Blocksmurfer by Coineva / 1200wd.com
             </p>
         </div>
     </div>
@@ -140,5 +157,9 @@
 </div>
 
 {% endblock body %}
+
+<script type="text/javascript" src="{{url_for('static', filename='javainclude.js')}}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='ui.js')}}"></script>
+
 </body>
 </html>

@@ -13,16 +13,22 @@
 from flask import render_template, flash, redirect, url_for, request, current_app, session
 from flask_babel import _
 from datetime import timezone
+import time
+import inspect
+import re
+import difflib
 from config import Config
+from blocksmurfer import definitions
 from blocksmurfer.main import bp
 from blocksmurfer.main.forms import *
 from blocksmurfer.explorer.search import search_query
 from blocksmurfer.explorer.service import *
-from bitcoinlib.keys import HDKey
+from bitcoinlib.keys import HDKey, Signature
 from bitcoinlib.transactions import Transaction, Output, TransactionError
-from bitcoinlib.scripts import Script, ScriptError
+from bitcoinlib.scripts import Script, ScriptError, Stack
 from bitcoinlib.encoding import Quantity
 from bitcoinlib.wallets import wallet_create_or_open
+from bitcoinlib.config.opcodes import opcodeints, opcodenames
 
 
 @bp.route('/', methods=['GET', 'POST'])
@@ -54,8 +60,8 @@ def api(network='btc'):
     api_url = request.host_url + 'api/v1/'
     if Config.API_BASE_URL:
         api_url = Config.API_BASE_URL
-    return render_template('api.html', title=_('API'), subtitle=_('Bitcoin blockchain API'), network=network,
-                           api_url=api_url)
+    return render_template('api.html', title=_('API'), subtitle=_('Bitcoin blockchain API'),
+                           network=network, api_url=api_url, examples=definitions.BLOCKSMURFER_EXAMPLES)
 
 
 @bp.route('/about')
@@ -67,7 +73,7 @@ def about(network='btc'):
         if '@' in provider[1]['url']:
             provider[1]['url'] = ''
     return render_template('about.html', title=_('About'), subtitle=_('Keep on smurfing!'), providers=providers,
-                           network_name=srv.network.name, network=network)
+                           network_name=srv.network.name, network=network, bitcoinlib_version=BITCOINLIB_VERSION)
 
 
 @bp.route('/providers')
@@ -81,19 +87,41 @@ def providers(network='btc'):
     return render_template('providers.html', title=_('Providers'), subtitle=_('Service providers overview'),
                            providers=providers, network_name=srv.network.name, network=network)
 
+@bp.route('/<network>/providers/status')
+def providers_status(network='btc'):
+    srv = SmurferService(network)
+    provider_stats = {}
+    providers = [x['provider'] for x in SmurferService(network).providers.values()]
+    for provider in providers:
+        blockcount = None
+        request_start_time = time.time()
+        err = ""
+        try:
+            request_start_time = time.time()
+            srv_p = SmurferService(network, providers=[provider], cache_uri='')
+            blockcount = srv_p.blockcount()
+        except Exception as e:
+            err = str(e)
+        request_time = time.time() - request_start_time
+        results = (blockcount, request_time, err)
+        provider_stats.update({provider: results})
+    return render_template('providers_status.html', title=_('Providers Status'),
+                           subtitle=_('Service providers current status'),
+                           provider_stats=provider_stats, network_name=srv.network.name, network=network)
 
 @bp.route('/<network>/transactions', methods=['GET', 'POST'])
 def transactions(network='btc'):
     page = request.args.get('page', 1, type=int)
     blockid = request.args.get('blockid', type=str)
+    show_mempool = request.args.get('show_mempool', type=bool, default=False)
     block = None
     limit = 10
     mempool = []
-    show_mempool = True
+    # show_mempool = True
     transactions = []
 
-    if blockid:
-        show_mempool = False
+    # if blockid:
+    #     show_mempool = False
 
     form = SearchForm()
     form.search.render_kw = {'placeholder': 'enter transaction id'}
@@ -132,10 +160,11 @@ def transactions(network='btc'):
     if blockid:
         subtitle = _('Block %s transactions' % blockid)
 
+    tzutc = timezone.utc
     return render_template('explorer/transactions.html', title=_('Transactions'), total_txs=total_txs,
                            subtitle=subtitle, block=block, network=network,
                            form=form, transactions=transactions, page=page, limit=limit,
-                           prev_url=prev_url, next_url=next_url)
+                           prev_url=prev_url, next_url=next_url, tzutc=tzutc)
 
 
 @bp.route('/<network>/transaction/<txid>')
@@ -211,11 +240,12 @@ def transaction_decompose(network):
             # TODO: Retrieving prev_tx input values should be included in bitcoinlib
             try:
                 for n, i in enumerate(t.inputs):
-                    ti = srv.gettransaction(i.prev_txid.hex())
-                    if not ti:
-                        flash(_('Could not verify transaction: previous transaction not found'), category='warning')
-                        break
-                    t.inputs[n].value = ti.outputs[i.output_n_int].value
+                    if i.prev_txid != b'\0' * 32:
+                        ti = srv.gettransaction(i.prev_txid.hex())
+                        if not ti:
+                            flash(_('Could not verify transaction: previous transaction not found'), category='warning')
+                            break
+                        t.inputs[n].value = ti.outputs[i.output_n_int].value
                 t.verify()
             except TransactionError as e:
                 flash(_('Could not verify transaction: %s' % e), category='warning')
@@ -286,6 +316,8 @@ def address(network, address):
     except:
         flash(_('Invalid address'), category='error')
         return redirect(url_for('main.index'))
+    else:
+        script = Script(public_hash=address_obj.hash_bytes, script_types=[address_obj.script_type])
 
     txs = srv.gettransactions(address, after_txid=after_txid, limit=limit)
     address_info = srv.getcacheaddressinfo(address)
@@ -301,20 +333,26 @@ def address(network, address):
     if after_txid:
         prev_url = url_for('main.address', network=network, address=address)
 
+    inputs = []
     for t in txs:
         t.balance_change = sum([o.value for o in t.outputs if o.address == address]) - \
                            sum([i.value for i in t.inputs if i.address == address])
-                           
-    return render_template('explorer/address.html', title=_('Address'), subtitle=address, transactions=txs,
-                           address=address_obj, balance=balance_tot, network=network, next_url=next_url,
-                           prev_url=prev_url, address_info=address_info, after_txid=after_txid, limit=limit)
+        inputs += [i for i in t.inputs if i.address == address]
+    input = None if not inputs else inputs[0]
+
+    tzutc = timezone.utc
+    return render_template('explorer/address.html', title=_('Address'), subtitle=address,
+                           transactions=txs, address=address_obj, balance=balance_tot, network=network,
+                           next_url=next_url, prev_url=prev_url, address_info=address_info, after_txid=after_txid,
+                           limit=limit, script=script, input=input, tzutc=tzutc)
 
 
 @bp.route('/<network>/key/<key>')
 def key(network, key):
     network_name = Config.NETWORKS_ENABLED[network]
+    witness_type = request.args.get('witness_type', DEFAULT_WITNESS_TYPE, type=str)
     try:
-        k = HDKey(key, network=network_name)
+        k = HDKey(key, network=network_name, witness_type=witness_type)
     except Exception as e:
         flash(_('Invalid key: %s' % e), category='error')
         return redirect(url_for('main.index'))
@@ -323,6 +361,19 @@ def key(network, key):
         flash(_('Never post your private key online. Only use this for test keys or in an offline environment!'),
               category='error')
     return render_template('explorer/key.html', title=_('Key'), subtitle=k.wif(), key=k, network=network)
+
+
+@bp.route('/<network>/signature/<signature>')
+def signature(network, signature):
+    try:
+        sig = Signature.parse(signature)
+        subtitle = sig.hex()[:12] + "..." + sig.hex()[-12:]
+    except Exception as e:
+        flash(_('Invalid signature: %s' % e), category='error')
+        return redirect(url_for('main.index'))
+
+    return render_template('explorer/signature.html', title=_('Signature'), subtitle=subtitle,
+                           sig=sig, network=network, definitions=definitions)
 
 
 @bp.route('/<network>/blocks', methods=['GET', 'POST'])
@@ -384,25 +435,42 @@ def block(network, blockid):
     if page > 1:
         prev_url = url_for('main.block', network=network, blockid=blockid, limit=limit, page=page-1)
 
+    tzutc = timezone.utc
     return render_template('explorer/block.html', title=_('Block'), subtitle=blockid, block=block, network=network,
-                           coinbase_data=coinbase_data, prev_url=prev_url, next_url=next_url)
+                           coinbase_data=coinbase_data, prev_url=prev_url, next_url=next_url, tzutc=tzutc)
 
 
 @bp.route('/<network>/script', methods=['GET', 'POST'])
-def script(network):
+@bp.route('/<network>/script/<script_hex>', methods=['GET', 'POST'])
+def script(network, script_hex=""):
     form = ScriptForm()
-    if form.validate_on_submit():
+    if form.validate_on_submit() or script_hex:
         try:
-            script = Script.parse_hex(form.script_hex.data)
+            script_hex = script_hex or form.script_hex.data
+            if not form.script_hex.data:
+                form.script_hex.data = script_hex
+            script = Script.parse_hex(script_hex)
         except (ScriptError, ValueError) as e:
             flash(_('Could not parse script. Error: %s' % e), category='error')
             return redirect(url_for('main.script', network=network))
         return render_template('explorer/script_decomposed.html', title=_('Decomposed Script'),
                                subtitle=_('Parse script and extract type, data and opcodes'), form=form,
-                               script=script, network=network)
+                               script=script, network=network, definitions=definitions)
 
     return render_template('explorer/script.html', title=_('Script'), subtitle=_('Decompose Scripts'),
                            form=form, network=network)
+
+@bp.route('/<network>/sighash_flag/<flag>', methods=['GET'])
+def sighash_flag(network, flag):
+    try:
+        flag_int = int(flag)
+        flag_name = definitions.SIGHASH_FLAGS[flag_int][0]
+        flag_desc = definitions.SIGHASH_FLAGS[flag_int][1]
+    except Exception as e:
+        flash(_("SIGHASH flag not recognised"), category='error')
+        return redirect(url_for('main.index'))
+    return render_template('explorer/sighash_flag.html', title=_('SIGHASH Flag'), network=network,
+                           flag=flag, flag_name=flag_name, flag_desc=flag_desc)
 
 
 @bp.route('/<network>/network')
@@ -431,10 +499,11 @@ def store_data(network):  # pragma: no cover
         w.scan(scan_gap_limit=1)
         if w.balance():
             lock_script = b'\x6a' + varstr(form.data.data)
-            t = w.send([Output(0, lock_script=lock_script)], fee=form.transaction_fee.data)
+            t = w.send([Output(0, lock_script=lock_script)], fee=form.transaction_fee.data, broadcast=True)
+            tzutc = timezone.utc
             return render_template('explorer/store_data_send.html', title=_('Push Transaction'),
                                    subtitle=_('Embed the data on the %s network' % srv.network.name),
-                                   transaction=t, t=t)
+                                   transaction=t, t=t, tzutc=tzutc, network=network)
         else:
             k = w.get_key()
             message = "Store%20Data%20-%20Blocksmurfer"
@@ -444,8 +513,45 @@ def store_data(network):  # pragma: no cover
                                    subtitle=_('Fund the %s transaction and store data on the blockchain' %
                                               srv.network.name),
                                    address=k.address, tx_fee=form.transaction_fee.data, data=form.data.data,
-                                   paymentlink=paymentlink)
+                                   paymentlink=paymentlink, network=network)
 
-    return render_template('explorer/store_data.html', title=_('Store data'),
+    return render_template('explorer/store_data.html', title=_('Store Data'),
                            subtitle=_('Embed data on the %s blockchain' % srv.network.name), form=form,
-                           tx_fee=tx_fee)
+                           tx_fee=tx_fee, network=network)
+
+@bp.route('/<network>/op_code/<op_code>', methods=['GET'])
+def op_code(network, op_code):
+    opcodenames_lower = [x[3:].lower() for x in opcodenames.values()]
+    if op_code.startswith('op_'):
+        method_str = op_code.split('_', 1)[1]
+        if method_str.isnumeric() and int(method_str) >= 0 and int(method_str) <= 16:
+            method_code = ("# Representation of Bitcoin script number. Value between 0 and 16\n"
+                           "# Numeric value %s\n"
+                           "Stack.op_%s"
+                           % (method_str, method_str))
+        else:
+            try:
+                method_code = inspect.getsource(getattr(Stack, op_code))
+            except Exception as e:
+                flash(_('Source code for op_code not found: %s') % e, category='error')
+                opcodeint = opcodeints[op_code.upper()]
+                all_methods = ['op_' + i for i in difflib.get_close_matches(op_code[3:], opcodenames_lower, cutoff=0)]
+                all_methods += ['op_verify', 'op_add', 'op_if']
+                all_methods = list(set(all_methods))
+                method_code = ''
+                return render_template('explorer/op_code.html', title=_('%s opcode' % op_code[3:].upper()),
+                                       subtitle=_('%s bitcoin script command' % op_code), network=network,
+                                       op_code=op_code,
+                                       method_code=method_code, opcodeint=opcodeint, all_methods=all_methods)
+    else:
+        flash(_('Unknown op_code'), category='error')
+        return redirect(url_for('main.index', network=network))
+
+    opcodeint = opcodeints[op_code.upper()]
+    all_methods = re.findall(r'op_\w+', method_code)
+    all_methods += ['op_' + i for i in difflib.get_close_matches(op_code[3:], opcodenames_lower, cutoff=0)]
+    all_methods =\
+        list(set([m.lower() for m in all_methods if m != 'op_as_number']))
+    return render_template('explorer/op_code.html', title=_('%s opcode' % op_code[3:].upper()),
+                           subtitle=_('%s bitcoin script command' % op_code), network=network, op_code=op_code,
+                           method_code=method_code, opcodeint=opcodeint, all_methods=all_methods)

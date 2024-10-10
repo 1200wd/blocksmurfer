@@ -2,7 +2,7 @@
 
 {% block app_content %}
     <h2>{{ _('Details') }}</h2>
-    <table class="pure-table" style="width: 800px; font-size: 80%;">
+    <table class="pure-table blocksmurfer-table-sf">
         <tr>
             <td style="width:110px">TXID</td>
             <td>
@@ -56,8 +56,10 @@
             </td>
         </tr>
     </table>
+
     <p></p>
-    <table class="pure-table" style="width: 800px; font-size: 80%;">
+
+    <table class="pure-table blocksmurfer-table-sf">
         <thead>
             <tr>
                 <td colspan="5">{{ _('Locking Script') }}</td>
@@ -78,11 +80,23 @@
         {% endif %}
         <tr>
             <td>Locking Script Hex</td>
-            <td style="word-break: break-all;">{{ output.script.raw.hex() }}</td>
+            <td>
+                <a href="{{ url_for('main.script', network=network, script_hex=output.script.raw.hex()) }}">
+                    {{ output.script.raw.hex() }}</a>
+            </td>
         </tr>
         <tr>
             <td>Locking Script OP</td>
-            <td style="word-break: break-all;">{{ output.script }}</td>
+            <td>
+                {% for s_item in output.script.view(blueprint=True, as_list=True) %}
+                    {% if s_item.startswith('OP_') %}
+                        <a href="{{ url_for('main.op_code', network=network, op_code=s_item.lower()) }}">
+                            {{ s_item }}</a>
+                    {% else %}
+                        {{ s_item }}
+                    {% endif %}
+                {% endfor %}
+            </td>
         </tr>
         {% if output.script.script_types == ['nulldata'] %}
         <tr>

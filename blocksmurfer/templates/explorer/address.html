@@ -2,13 +2,17 @@
 
 {% block app_content %}
     <h2>{{ _('Details') }}</h2>
-    <table style="width: 800px;">
+    <table class="blocksmurfer-table">
     <tr>
         <td>
-            <table class="pure-table" style="width: 550px;">
+            <table class="pure-table" style="width: 100%;">
             <tr>
                 <td>Address</td>
-                <td>{{ address.address }}</td>
+                <td>
+                    <span id="copy-address">{{ address.address }}</span>
+                    <a class="blocksmurfer-fa-link" title="copy-address" onclick="copyContent(this.title);">
+                    <i class="fa fa-clone"></i></a>
+                </td>
             </tr>
             <tr>
                 <td>Network</td>
@@ -17,10 +21,6 @@
             <tr>
                 <td>Hashed data</td>
                 <td>{{ address.hashed_data }}</td>
-            </tr>
-            <tr>
-                <td>Script type</td>
-                <td>{{ address.script_type }}</td>
             </tr>
             <tr>
                 <td>Witness type</td>
@@ -44,7 +44,7 @@
             {% endif %}
             <tr>
                 <td>Balance</td>
-                <td>{{ "{:,.8f}".format(balance / 100000000) }}</td>
+                <td>{{ "{:,.8f}".format(balance / 100000000) }} {{ address.network.currency_code }}</td>
             </tr>
             {% if address_info.n_txs is not none %}
             <tr>
@@ -64,7 +64,7 @@
                 <td>
                     <a href="{{ url_for('api.transactions', network=network, address=address.address,
                                         after_txid=after_txid, limit=limit) }}">txs</a>,
-                    <a href="{{ url_for('api.utxos', network=network, address=address.address) }}">utxos</a>
+                    <a href="{{ url_for('api.utxos', network=network, address=address.address) }}">utxos</a>,
                     <a href="{{ url_for('api.address_balance', network=network, address=address.address) }}">balance</a>
                 </td>
             </tr>
@@ -76,12 +76,48 @@
         </td>
     </tr>
     </table>
+    <p></p>
+    <table class="pure-table blocksmurfer-table-sf">
+        <thead>
+            <tr>
+                <td colspan="5">{{ _('Locking Script') }}</td>
+            </tr>
+        </thead>
+        <tr>
+            <td>Script Type</td>
+            <td>{{ address.script_type }}</td>
+        </tr>
+        <tr>
+            <td>Locking Script Hex</td>
+            <td>
+                <a href="{{ url_for('main.script', network=network, script_hex=script.as_hex()) }}">
+                    {{ script.as_hex() }}</a>
+            </td>
+        </tr>
+        <tr>
+            <td>Locking Script OP</td>
+            <td>
+                {% for s_item in script.view(blueprint=True, as_list=True) %}
+                    {% if s_item.startswith('OP_') %}
+                        <a href="{{ url_for('main.op_code', network=network, op_code=s_item.lower()) }}">
+                            {{ s_item }}</a>
+                    {% else %}
+                        {{ s_item }}
+                    {% endif %}
+                {% endfor %}
+            </td>
+        </tr>
+    </table>
+
+    <p></p>
+    {% include 'includes/input_unlocking_script.html' %}
+
     <h2>{{ _('Transactions') }}</h2>
     {% if not transactions %}
     <p>{{ _('No transactions found') }}</p>
     {% endif %}
     {% for t in transactions %}
-        {% include 'explorer/_transaction_item.html' %}
+        {% include 'includes/transaction_item.html' %}
         <p></p>
     {% endfor %}
     <nav aria-label="...">

@@ -1,0 +1,37 @@
+.blocksmurfer-fa-link {
+    font-size: 90%;
+    cursor: pointer;
+    color: #00E;
+}
+
+.blocksmurfer-table {
+    width: 1000px;
+}
+
+.blocksmurfer-table-sf {
+    width: 1000px;
+    font-size: 80%;
+}
+
+.blocksmurfer-td-value {
+    text-align: right;
+}
+
+td {
+    word-break: break-all;
+}
+
+@media screen and (max-width:1000px) {
+	table, thead, tbody, th, td, tr {
+		display: block;
+	}
+    tr { border: 1px solid #aae; }
+	td {
+		border: none;
+		border-bottom: 1px solid #aae;
+		position: relative;
+	}
+    .blocksmurfer-td-value {text-align: left;}
+    .blocksmurfer-table {width: 100%;}
+    .blocksmurfer-table-sf {width: 100%;}
+}

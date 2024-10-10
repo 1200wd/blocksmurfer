@@ -5,8 +5,9 @@
     <p>The following service providers are used by the Blocksmurfer explorer. The providers in top of the list
     with the highest priority are queried first. If a method is not available or the API query was unsuccessful
     the next provider in the list is used.</p>
-    <p>For details about the providers and methods used check out the Python code at
-        <a href="https://github.com/1200wd/bitcoinlib/tree/master/bitcoinlib/services">Github</a>.</p>
+    <p>For details about the providers and methods used check out the
+        <a href="https://github.com/1200wd/bitcoinlib/tree/master/bitcoinlib/services">Bitcoinlib Python code</a> at
+        Github.</p>
     <table class="pure-table" style="width: 800px; font-size: 80%">
     <thead>
         <tr>
@@ -17,12 +18,17 @@
     </thead>
     {% for provider in providers %}
     <tr>
-        <td>{{ provider[0] }}</td>
+        <td>{{ provider[1]['provider']|capitalize }}</td>
         <td>{{ provider[1]['url'] }}</td>
         <td>{{ provider[1]['priority'] }}</td>
     </tr>
 
     {% endfor %}
     </table>
+
+    <p>Check current
+        <a href="{{ url_for('main.providers_status', network=network) }}">provider status</a>.
+        Warning: this page could take some time to load!
+    </p>
 
 {% endblock %}

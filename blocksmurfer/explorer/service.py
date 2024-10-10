@@ -30,7 +30,7 @@ class SmurferService(Service):
     def __init__(self, network_code='btc', timeout=5, *args, **kwargs):
         if network_code in current_app.config['NETWORKS_ENABLED'].keys():
             network = current_app.config['NETWORKS_ENABLED'][network_code]
-            Service.__init__(self, network=network, timeout=timeout, *args, **kwargs)
+            Service.__init__(self, network=network, timeout=timeout, strict=False, *args, **kwargs)
         else:
             abort(422, "Error opening network with specified code")
 
