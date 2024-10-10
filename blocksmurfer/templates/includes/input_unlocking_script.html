@@ -33,7 +33,16 @@
         </tr>
         <tr>
             <td>Unlocking Script OP</td>
-            <td>{{ input.script }}</td>
+            <td>
+                {% for s_item in input.script.view(blueprint=True, as_list=True) %}
+                    {% if s_item.startswith('OP_') %}
+                        <a href="{{ url_for('main.op_code', network=network, op_code=s_item.lower()) }}">
+                            {{ s_item }}</a>
+                    {% else %}
+                        {{ s_item }}
+                    {% endif %}
+                {% endfor %}
+            </td>
         </tr>
             {% if input.script.hash_type %}
             <tr>

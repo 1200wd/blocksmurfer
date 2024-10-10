@@ -551,7 +551,7 @@ def op_code(network, op_code):
     all_methods = re.findall(r'op_\w+', method_code)
     all_methods += ['op_' + i for i in difflib.get_close_matches(op_code[3:], opcodenames_lower, cutoff=0)]
     all_methods =\
-        list(set([m.lower() for m in all_methods if m != 'OP_RESERVED' and m != 'op_as_number']))
+        list(set([m.lower() for m in all_methods if m != 'op_as_number']))
     return render_template('explorer/op_code.html', title=_('%s opcode' % op_code[3:].upper()),
                            subtitle=_('%s bitcoin script command' % op_code), network=network, op_code=op_code,
                            method_code=method_code, opcodeint=opcodeint, all_methods=all_methods)

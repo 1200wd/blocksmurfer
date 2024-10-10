@@ -14,7 +14,16 @@
         {% endif %}
         <tr>
             <td>Commands OP</td>
-            <td>{{ script }}</td>
+            <td>
+                {% for s_item in script.view(blueprint=True, as_list=True) %}
+                    {% if s_item.startswith('OP_') %}
+                        <a href="{{ url_for('main.op_code', network=network, op_code=s_item.lower()) }}">
+                            {{ s_item }}</a>
+                    {% else %}
+                        {{ s_item }}
+                    {% endif %}
+                {% endfor %}
+            </td>
         </tr>
         <tr>
             <td>Commands Hex</td>
@@ -29,7 +38,16 @@
         {% if script.redeemscript_obj and script.raw != script.redeemscript %}
         <tr>
             <td>Redeemscript OP</td>
-            <td>{{ script.redeemscript_obj }}</td>
+            <td>
+                {% for s_item in script.redeemscript_obj.view(blueprint=True, as_list=True) %}
+                    {% if s_item.startswith('OP_') %}
+                        <a href="{{ url_for('main.op_code', network=network, op_code=s_item.lower()) }}">
+                            {{ s_item }}</a>
+                    {% else %}
+                        {{ s_item }}
+                    {% endif %}
+                {% endfor %}
+            </td>
         </tr>
         <tr>
             <td>Redeemscript Hex</td>
