@@ -12,7 +12,7 @@ Create a virtual environment
 
 .. code-block:: bash
 
-    $ virtualenv -p python3 venv/blocksmurfer
+    $ python3 -m venv venv/blocksmurfer
     $ source venv/blocksmurfer/bin/activate
 
 
@@ -22,7 +22,7 @@ Download Blocksmurfer and install requirements.
 
     $ git clone https://github.com/1200wd/blocksmurfer.git
     $ cd blocksmurfer
-    $ pip install -r requirements.txt
+    $ python3 -m pip install -r requirements.txt
 
 Copy configuration file and update secret key
 
@@ -59,6 +59,14 @@ You can also create a basic local node with a docker image
     $ docker container run --rm --name blocksmurfer -d -p 5000:5000 blocksmurfer/blocksmurfer
 
 For more information about this image: https://hub.docker.com/r/blocksmurfer/blocksmurfer
+
+Or build and run locally from Dockerfile configuration
+
+.. code-block:: bash
+
+    $ docker build -t blocksmurfer:latest .
+    $ docker run --rm -p 0.0.0.0:5000:5000 -it blocksmurfer
+
 
 Configuration
 -------------
