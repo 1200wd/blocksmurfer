@@ -12,14 +12,14 @@
     <thead>
         <tr>
             <th>Provider</th>
-            <th>url</th>
-            <th>priority</th>
+            <th>Reference</th>
+            <th>Priority</th>
         </tr>
     </thead>
     {% for provider in providers %}
     <tr>
         <td>{{ provider[1]['provider']|capitalize }}</td>
-        <td>{{ provider[1]['url'] }}</td>
+        <td>{{ provider[0] }}</td>
         <td>{{ provider[1]['priority'] }}</td>
     </tr>
 
