@@ -89,23 +89,14 @@ def providers(network='btc'):
 
 @bp.route('/<network>/providers/status')
 def providers_status(network='btc'):
-    srv = SmurferService(network)
     provider_stats = {}
-    provider_stats = {}
-    for provider_item in SmurferService(network).providers:
-        provider = SmurferService(network).providers[provider_item]['provider']
-        blockcount = None
-        request_start_time = time.time()
-        err = ""
-        try:
-            request_start_time = time.time()
-            srv_p = SmurferService(network, providers=[provider], cache_uri='')
-            blockcount = srv_p.blockcount()
-        except Exception as e:
-            err = str(e)
-        request_time = time.time() - request_start_time
-        results = (blockcount, request_time, err, provider)
-        provider_stats.update({provider_item: results})
+    srv = SmurferService(network, min_providers=100, cache_uri='')
+    srv.blockcount()
+
+    for p in srv.results:
+        provider_stats.update({p: (srv.results[p], 0, '')})
+    for p in srv.errors:
+        provider_stats.update({p: (0, 0, srv.errors[p])})
 
     return render_template('providers_status.html', title=_('Providers Status'),
                            subtitle=_('Service providers current status'),
