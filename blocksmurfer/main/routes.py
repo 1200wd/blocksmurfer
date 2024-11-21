@@ -104,8 +104,8 @@ def providers_status(network='btc'):
         except Exception as e:
             err = str(e)
         request_time = time.time() - request_start_time
-        results = (blockcount, request_time, err, provider_item)
-        provider_stats.update({provider: results})
+        results = (blockcount, request_time, err, provider)
+        provider_stats.update({provider_item: results})
 
     return render_template('providers_status.html', title=_('Providers Status'),
                            subtitle=_('Service providers current status'),
