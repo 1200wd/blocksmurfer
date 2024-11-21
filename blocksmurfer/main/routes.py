@@ -103,7 +103,9 @@ def providers_status(network='btc'):
         except Exception as e:
             err = str(e)
         request_time = time.time() - request_start_time
-        results = (blockcount, request_time, err)
+        url = SmurferService(network).providers[provider]['url']
+        url = url.split('@')[1] if '@' in url else url
+        results = (blockcount, request_time, err, url)
         provider_stats.update({provider: results})
     return render_template('providers_status.html', title=_('Providers Status'),
                            subtitle=_('Service providers current status'),

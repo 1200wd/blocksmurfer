@@ -10,6 +10,7 @@
     <thead>
         <tr>
             <th>Provider</th>
+            <th>URL</th>
             <th>Latest Block</th>
             <th>Response time (sec)</th>
             <th>Status</th>
@@ -18,6 +19,7 @@
     {% for provider in provider_stats %}
     <tr>
         <td>{{ provider|capitalize }}</td>
+        <td>{{ provider_stats[provider][3] }}</td>
         <td>{{ provider_stats[provider][0] if provider_stats[provider][0] else "-" }}</td>
         <td>{{ "{:,.3f}".format(provider_stats[provider][1]) }}</td>
         <td>{{ "OK" if not provider_stats[provider][2] else "Error" }}</td>
