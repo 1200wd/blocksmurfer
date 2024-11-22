@@ -12,7 +12,7 @@
             <th>Provider</th>
 {#            <th>Reference</th>#}
             <th>Latest Block</th>
-{#            <th>Response time (sec)</th>#}
+            <th style="text-align: right;">Response time (msec)</th>
             <th>Status</th>
 {#            <th>Message</th>#}
         </tr>
@@ -22,7 +22,7 @@
 {#        <td>{{ provider_stats[provider][3]|capitalize }}</td>#}
         <td>{{ provider }}</td>
         <td>{{ provider_stats[provider][0] if provider_stats[provider][0] else "-" }}</td>
-{#        <td>{{ "{:,.3f}".format(provider_stats[provider][1]) }}</td>#}
+        <td style="text-align: right;">{{ "{:,.2f}".format(provider_stats[provider][1]) }}</td>
         <td>{{ "OK" if not provider_stats[provider][2] else "Error" }}</td>
 {#        <td>{{ provider_stats[provider][2] }}</td>#}
     </tr>

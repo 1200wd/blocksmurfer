@@ -12,7 +12,7 @@
 
 from flask import render_template, flash, redirect, url_for, request, current_app, session
 from flask_babel import _
-from datetime import timezone
+from datetime import timezone, datetime
 import time
 import inspect
 import re
@@ -90,17 +90,20 @@ def providers(network='btc'):
 @bp.route('/<network>/providers/status')
 def providers_status(network='btc'):
     provider_stats = {}
-    srv = SmurferService(network, min_providers=100, cache_uri='')
-    srv.blockcount()
 
-    for p in srv.results:
-        provider_stats.update({p: (srv.results[p], 0, '')})
-    for p in srv.errors:
-        provider_stats.update({p: (0, 0, srv.errors[p])})
+    for provider in SmurferService(network).providers:
+        start_time = datetime.now()
+        try:
+            srv = SmurferService(network, provider_name=provider, cache_uri='')
+            blockcount = srv.blockcount()
+            provider_stats.update({provider: (blockcount, srv.execution_time or 0, '')})
+        except Exception as e:
+            execution_time = (datetime.now() - start_time).total_seconds() * 1000
+            provider_stats.update({provider: (0, execution_time, str(e))})
 
     return render_template('providers_status.html', title=_('Providers Status'),
                            subtitle=_('Service providers current status'),
-                           provider_stats=provider_stats, network_name=srv.network.name, network=network)
+                           provider_stats=provider_stats, network=network)
 
 @bp.route('/<network>/transactions', methods=['GET', 'POST'])
 def transactions(network='btc'):
