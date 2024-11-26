@@ -1,6 +1,16 @@
 User-agent: SemrushBot
 User-agent: PetalBot
 User-agent: mj12bot
+User-agent: blowfish
+User-agent: CatchBot
+User-agent: BecomeBot
+User-agent: Bytespider
+User-agent: spider
+User-agent: Amazonbot
+User-agent: bytedance
+User-agent: claudebot
+User-agent: bing
+User-agent: yandex
 Disallow: /
 
 User-agent: *
