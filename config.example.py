@@ -18,6 +18,7 @@ class Config(object):
         'ltc': 'litecoin',
         # 'doge': 'doge',
         'tbtc': 'testnet',
+        'tbtc4': 'testnet4',
         # 'xlt': 'litecoin_testnet',
         # 'tdoge': 'doge_testnet',
         # 'reg': 'regtest',

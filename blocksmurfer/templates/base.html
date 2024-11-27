@@ -89,7 +89,8 @@
                             {% for nw, nw_name in config.NETWORKS_ENABLED.items() %}
                             <td>
                                 <a href="{{ url_for('main.index', network=nw) }}" class="pure-menu-link">
-                                    <img src="/static/images/{{ nw }}.png" alt="{{ nw }}" style="width:32px;height:32px;">
+                                    <img src="/static/images/{{ nw }}.png" alt="{{ nw }}"
+                                         title="{{ nw_name|capitalize }}" style="width:32px;height:32px;">
                                 </a>
                             </td>
                             {% if loop.index % 4 == 0 %}</tr><tr>{% endif %}
