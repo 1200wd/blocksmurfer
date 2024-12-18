@@ -16,5 +16,14 @@ Disallow: /
 User-agent: *
 Disallow: /api/
 Disallow: /btc/address/
+Disallow: /tbtc/address/
+Disallow: /tbtc3/address/
+Disallow: /tbtc4/address/
+Disallow: /ltc/address/
+Disallow: /reg/
+Disallow: /doge/address/
+Disallow: /tdoge/address/
+Disallow: /dash/address/
+Disallow: /tdash/address/
 Sitemap: https://blocksmurfer.io/sitemap.xml
 Crawl-delay: 60
