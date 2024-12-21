@@ -1,0 +1,17 @@
+[Unit]
+Description=Blocksmurfer Gunicorn Service
+After=network.target
+
+[Service]
+User=blocksmurfer
+Group=blocksmurfer
+WorkingDirectory=/home/blocksmurfer/code/blocksmurfer
+Environment="PATH=/home/blocksmurfer/venv/bin"
+ExecStart=/home/blocksmurfer/venv/blocksmurfer/bin/gunicorn -b 0.0.0.0:5000 --access-logfile - --error-logfile - app:app --workers 4
+ExecReload=/bin/kill -s HUP $MAINPID
+KillMode=mixed
+TimeoutStopSec=5
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
