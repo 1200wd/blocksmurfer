@@ -118,3 +118,27 @@ Check the Apache config file example in blocksmurfer/examples/apache-example.con
 * Copy the apache config file to /etc/apache2/sites-available, update the settings and create the link in /etc/apache2/sites-available
 
 * Now run blocksmurfer/boot.sh and your blockexplorer should be up and running
+
+
+Nginx with Gunicorn
+-------------------
+
+Make sure flask gunicorn and nginx are installed.
+
+Copy the blocksmurfer/examples/nginx-example to the /etc/nginx/sites-available directory, update to your local settings and link to /etc/nginx/sites-enabled.
+
+.. code-block:: bash
+
+    $ sudo nano /etc/nginx/sites-available/blocksmurfer
+    $ sudo ln -s /etc/nginx/sites-available/blocksmurfer /etc/nginx/sites-enabled
+    $ sudo nginx - t
+    $ sudo systemctl restart nginx
+    $ sudo ufw allow 'Nginx Full'
+
+Run Blocksmurfer as service with Gunicorn, you can find an example of a systemd service file in /blocksmurfer/examples/blocksmurfer.service.
+
+.. code-block:: bash
+
+    $ sudo nano /etc/systemd/system/blocksmurfer.service
+    $ sudo systemctl start blocksmurfer.service
+    $ sudo systemctl enable blocksmurfer.service

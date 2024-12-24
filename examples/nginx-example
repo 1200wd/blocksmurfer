@@ -1,0 +1,7 @@
+server {
+    server_name hazelworm.blocksmurfer.io;
+    location / {
+        include proxy_params;
+        proxy_pass http://unix:/home/blocksmurfer/blocksmurfer/blocksmurfer.sock;
+    }
+}
