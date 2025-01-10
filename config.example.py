@@ -24,6 +24,8 @@ class Config(object):
         # 'reg': 'regtest',
     }
     NETWORK_DEFAULT = 'btc'  # Has no effect yet, only works for 'btc' at the moment
-    ENABLE_API = True
     API_BASE_URL = ''  # Enter full url to redirect API to another server
     ENABLE_WEBSITE = True
+    ENABLE_API = True
+    ENABLE_API_KEY_AUTHENTICATION = False
+    API_AUTH_DATABASE_FILE = 'blocksmurfer-api-keys.db'

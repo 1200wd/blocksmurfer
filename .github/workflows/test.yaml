@@ -21,7 +21,7 @@ jobs:
           pip install scrypt
           python setup.py install
           cp config.example.py config.py
-          git clone https://github.com/1200wd/bitcoinlib.git 1200wd/bitcoinlib -b service-class-stats
+          git clone https://github.com/1200wd/bitcoinlib.git 1200wd/bitcoinlib
           ln -s 1200wd/bitcoinlib/bitcoinlib bitcoinlib
       - name: Test with covarage
         run: coverage run --source=blocksmurfer -m unittest -v

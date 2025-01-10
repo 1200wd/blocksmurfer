@@ -13,7 +13,7 @@
 import datetime
 from flask import Flask, send_from_directory, request
 from flask_babel import Babel
-from blocksmurfer.main import errors
+from blocksmurfer.main import errors, auth, db
 from config import Config
 from flask_qrcode import QRcode
 from flask_limiter import Limiter
@@ -52,6 +52,9 @@ def current_app(config_class=Config):
     if Config.ENABLE_API and isinstance(Config.ENABLE_API, bool):
         from blocksmurfer.api import bp as api_bp
         app.register_blueprint(api_bp, url_prefix='/api/v1')
+        if Config.ENABLE_API_KEY_AUTHENTICATION:
+            db.init_db()
+            app.register_blueprint(auth.auth)
         limiter.init_app(app)
 
     return app
