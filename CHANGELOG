@@ -1,0 +1,6 @@
+RELEASE 0.1.2 - Testnet4, API keys, Nginx support
+=================================================
+* Support for Bitcoin testnet 4
+* Authentication key system for API
+* Nginx examples
+* Systemd service example

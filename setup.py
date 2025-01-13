@@ -22,7 +22,7 @@ from setuptools import setup
 import os
 
 here = os.path.abspath(os.path.dirname(__file__))
-version = '1.1'
+version = '1.2'
 
 # Get the long description from the relevant file
 readmetxt = ''
