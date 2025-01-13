@@ -7,4 +7,3 @@ flask_wtf>=1.1.1
 Werkzeug>=2.3.6
 WTForms>=3.0.1
 gunicorn>=20.1.0
-Flask-Limiter>=3.3.1

@@ -41,7 +41,6 @@ install_requires = [
     'flask_qrcode==3.1.0',
     'flask_restful==0.3.10',
     'flask_wtf==1.1.0',
-    'Flask-Limiter==3.3.1',
     'Werkzeug==2.3.6',
     'WTForms==3.0.1',
     'gunicorn==20.1.0',
