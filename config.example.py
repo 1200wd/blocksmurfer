@@ -28,4 +28,5 @@ class Config(object):
     ENABLE_WEBSITE = True
     ENABLE_API = True
     ENABLE_API_KEY_AUTHENTICATION = False
+    ENABLE_API_CREDITS_COUNTER = False
     API_AUTH_DATABASE_FILE = 'blocksmurfer-api-keys.db'
