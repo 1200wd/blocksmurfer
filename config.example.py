@@ -19,6 +19,7 @@ class Config(object):
         # 'doge': 'dogecoin',
         'tbtc': 'testnet',
         'tbtc4': 'testnet4',
+        'sbtc': 'signet',
         # 'xlt': 'litecoin_testnet',
         # 'tdoge': 'doge_testnet',
         # 'reg': 'regtest',
