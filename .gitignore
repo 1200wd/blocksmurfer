@@ -48,4 +48,5 @@ bitcoinlib
 
 # Blocksmurfer
 config.py
+boot.local.sh
 db/
