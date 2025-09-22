@@ -24,7 +24,7 @@ class Config(object):
         # 'tdoge': 'doge_testnet',
         # 'reg': 'regtest',
     }
-    NETWORK_DEFAULT = 'btc'  # Has no effect yet, only works for 'btc' at the moment
+    NETWORK_DEFAULT = 'btc'
     API_BASE_URL = ''  # Enter full url to redirect API to another server
     ENABLE_WEBSITE = True
     ENABLE_API = True

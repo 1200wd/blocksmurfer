@@ -12,6 +12,7 @@
 
 from flask import jsonify, request, render_template, Blueprint
 from flask_babel import _
+from config import Config
 import logging
 
 
@@ -51,7 +52,7 @@ def handle_errors(e):
         resp.status_code = code
         return resp, 500 if not code else code
     # return render_template("error.html", title=('Error: %s' % name), description=description, code=code), code
-    network = 'btc'
+    network = Config.NETWORK_DEFAULT
     if request.view_args:
         network = request.view_args.get('network', 'btc')
     return render_template("error.html", title="Something went wrong", name=name, description=description,

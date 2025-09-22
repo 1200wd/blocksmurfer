@@ -35,7 +35,7 @@ from bitcoinlib.config.opcodes import opcodeints, opcodenames
 @bp.route('/<network>/index', methods=['GET', 'POST'])
 @bp.route('/index', methods=['GET', 'POST'])
 @bp.route('/<network>/index', methods=['GET', 'POST'])
-def index(network='btc'):
+def index(network=Config.NETWORK_DEFAULT):
     form = SearchForm()
     if form.validate_on_submit():
         return search_query(form.search.data, network=network)
@@ -47,13 +47,13 @@ def index(network='btc'):
 
 @bp.route('/search/<search_string>')
 @bp.route('/<network>/search/<search_string>')
-def search(search_string, network='btc'):
+def search(search_string, network=Config.NETWORK_DEFAULT):
     return search_query(search_string, network)
 
 
 @bp.route('/api')
 @bp.route('/<network>/api')
-def api(network='btc'):
+def api(network=Config.NETWORK_DEFAULT):
     if not Config.ENABLE_API:
         flash(_('API not available'), category='error')
         return redirect(url_for('main.index'))
@@ -66,7 +66,7 @@ def api(network='btc'):
 
 @bp.route('/about')
 @bp.route('/<network>/about')
-def about(network='btc'):
+def about(network=Config.NETWORK_DEFAULT):
     srv = SmurferService(network)
     providers = sorted(srv.providers.items(), key=lambda x: x[1]['priority'], reverse=True)
     for provider in providers:
@@ -78,7 +78,7 @@ def about(network='btc'):
 
 @bp.route('/providers')
 @bp.route('/<network>/providers')
-def providers(network='btc'):
+def providers(network=Config.NETWORK_DEFAULT):
     srv = SmurferService(network)
     providers = sorted(srv.providers.items(), key=lambda x: x[1]['priority'], reverse=True)
     for provider in providers:
@@ -88,7 +88,7 @@ def providers(network='btc'):
                            providers=providers, network_name=srv.network.name, network=network)
 
 @bp.route('/<network>/providers/status')
-def providers_status(network='btc'):
+def providers_status(network=Config.NETWORK_DEFAULT):
     provider_stats = {}
 
     for provider in SmurferService(network).providers:
@@ -106,7 +106,7 @@ def providers_status(network='btc'):
                            provider_stats=provider_stats, network=network)
 
 @bp.route('/<network>/transactions', methods=['GET', 'POST'])
-def transactions(network='btc'):
+def transactions(network=Config.NETWORK_DEFAULT):
     page = request.args.get('page', 1, type=int)
     blockid = request.args.get('blockid', type=str)
     show_mempool = request.args.get('show_mempool', type=bool, default=False)
